@@ -44,7 +44,7 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _razorpay = Razorpay();
+    _razorpay = Razorpay("rzp_test_1DP5mmOlF5G5aa");
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
     
