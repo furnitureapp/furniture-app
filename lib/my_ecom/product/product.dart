@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/product_service.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 import 'package:furniture_ecom_app/my_ecom/product/resuable_product.dart';
@@ -28,7 +29,7 @@ class _ProductPageState extends State<ProductPage> {
   void initState() {
     super.initState();
     _checkLoginStatus();
-    _productsFuture = ApiService.fetchProducts(widget.subCategoryId);
+    _productsFuture = ProductService.fetchProducts(widget.subCategoryId);
   }
 
   Future<void> _checkLoginStatus() async {
@@ -252,166 +253,3 @@ class _ProductPageState extends State<ProductPage> {
 
 
 
-
-  // itemBuilder: (context, index) {
-                  //   final product = products[index];
-                  //   final isInWishlist =
-                  //       wishlistManager.isInWishlist(product.id);
-
-                  //   return GestureDetector(
-                  //     onTap: () => Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (context) =>
-                  //             ProductDetailPagep(product: product),
-                  //       ),
-                  //     ),
-                  //     child: Card(
-                  //       elevation: 6,
-                  //       shape: RoundedRectangleBorder(
-                  //         borderRadius: BorderRadius.circular(12),
-                  //       ),
-                  //       color: Colors.white,
-                  //       shadowColor: Colors.grey.shade300,
-                  //       child: Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           Stack(
-                  //             children: [
-                  //               ClipRRect(
-                  //                 borderRadius: const BorderRadius.vertical(
-                  //                     top: Radius.circular(12)),
-                  //                 child: Image.network(
-                  //                   product.images.isNotEmpty
-                  //                       ? product.images[0]
-                  //                       : 'https://via.placeholder.com/150',
-                  //                   fit: BoxFit.cover,
-                  //                   width: double.infinity,
-                  //                   height: isTablet ? 270 : 150,
-                  //                   errorBuilder:
-                  //                       (context, error, stackTrace) =>
-                  //                           Container(
-                  //                     height: isTablet ? 220 : 140,
-                  //                     color: Colors.grey.shade300,
-                  //                     child: const Icon(Icons.broken_image,
-                  //                         size: 50, color: Colors.grey),
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //               Positioned(
-                  //                 top: 8,
-                  //                 left: 8,
-                  //                 child: Container(
-                  //                   padding: const EdgeInsets.symmetric(
-                  //                       horizontal: 8, vertical: 4),
-                  //                   decoration: BoxDecoration(
-                  //                     color: Colors.red.shade600,
-                  //                     borderRadius: BorderRadius.circular(6),
-                  //                   ),
-                  //                   child: Text(
-                  //                     '${(((product.price - product.offerPrice) / product.price) * 100).round()}% OFF',
-                  //                     style: const TextStyle(
-                  //                       color: Colors.white,
-                  //                       fontSize: 12,
-                  //                       fontWeight: FontWeight.bold,
-                  //                     ),
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //               Positioned(
-                  //                 top: 8,
-                  //                 right: 8,
-                  //                 child: GestureDetector(
-                  //                   onTap: () {
-                  //                     if (_isLoggedIn) {
-                  //                       wishlistManager.toggleWishlist(
-                  //                           product.id, context);
-                  //                     } else {
-                  //                       _showLoginPrompt(context);
-                  //                     }
-                  //                   },
-                  //                   child: Container(
-                  //                     padding: const EdgeInsets.all(6),
-                  //                     decoration: const BoxDecoration(
-                  //                       color:
-                  //                           Color.fromRGBO(255, 255, 255, 0.6),
-                  //                       shape: BoxShape.circle,
-                  //                     ),
-                  //                     child: Icon(
-                  //                       isInWishlist
-                  //                           ? Icons.favorite
-                  //                           : Icons.favorite_border,
-                  //                       color: isInWishlist
-                  //                           ? Colors.red
-                  //                           : const Color.fromARGB(
-                  //                               255, 35, 34, 34),
-                  //                     ),
-                  //                   ),
-                  //                 ),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //           Expanded(
-                  //             child: Padding(
-                  //               padding: const EdgeInsets.all(8.0),
-                  //               child: Column(
-                  //                 crossAxisAlignment: CrossAxisAlignment.start,
-                  //                 children: [
-                  //                   Text(
-                  //                     product.title,
-                  //                     style: TextStyle(
-                  //                       fontSize: isTablet ? 20 : 12,
-                  //                       fontWeight: FontWeight.bold,
-                  //                       color: Colors.black,
-                  //                     ),
-                  //                     maxLines: 1,
-                  //                     overflow: TextOverflow.ellipsis,
-                  //                   ),
-                  //                   if (isTablet) const SizedBox(height: 5),
-                  //                   if (isTablet)
-                  //                     Expanded(
-                  //                       child: Text(
-                  //                         product.description,
-                  //                         style: const TextStyle(
-                  //                           fontSize: 18,
-                  //                           color: Color.fromARGB(
-                  //                               255, 100, 99, 99),
-                  //                         ),
-                  //                         maxLines: 4,
-                  //                         overflow: TextOverflow.ellipsis,
-                  //                       ),
-                  //                     ),
-                  //                   const SizedBox(height: 5),
-                  //                   Row(
-                  //                     mainAxisAlignment:
-                  //                         MainAxisAlignment.spaceBetween,
-                  //                     children: [
-                  //                       Text(
-                  //                         '\$${product.offerPrice. round()}',
-                  //                         style: TextStyle(
-                  //                           fontSize: isTablet ? 21 : 14,
-                  //                           fontWeight: FontWeight.bold,
-                  //                           color: Colors.green.shade700,
-                  //                         ),
-                  //                       ),
-                  //                       Text(
-                  //                         '\$${product.price. round()}',
-                  //                         style: TextStyle(
-                  //                           fontSize: isTablet ? 16 : 12,
-                  //                           color: Colors.red,
-                  //                           decoration:
-                  //                               TextDecoration.lineThrough,
-                  //                           decorationColor: Colors.black,
-                  //                         ),
-                  //                       ),
-                  //                     ],
-                  //                   ),
-                  //                 ],
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   );
-                  // },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/orders_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_detail.dart';
@@ -43,7 +44,7 @@ class _OrderListPageState extends State<OrderListPage> {
 
   void _fetchOrders() {
     setState(() {
-      _orderHistory = ApiService.fetchOrderHistory();
+      _orderHistory = OrderService.fetchOrderHistory();
     });
   }
 

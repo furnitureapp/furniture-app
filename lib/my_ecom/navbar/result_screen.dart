@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/product_service.dart';
+import 'package:furniture_ecom_app/core/services/search_service.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 import 'package:furniture_ecom_app/my_ecom/product/productwidget.dart';
 import 'package:furniture_ecom_app/my_ecom/wishlist/wishlist_manager.dart';
@@ -25,7 +28,7 @@ class _ResultScreenState extends State<ResultScreen> {
   void initState() {
     super.initState();
     _searchResultsFuture = fetchProducts(widget.query);
-    _allProductsFuture = ApiService.fetchAllProducts();
+    _allProductsFuture = ProductService.fetchAllProducts();
     _checkLoginStatus();
   }
 
@@ -37,18 +40,33 @@ class _ResultScreenState extends State<ResultScreen> {
     });
   }
 
+  // Future<List<Product>> fetchProducts(String query) async {
+  //   try {
+  //     final apiService = SearchService();
+  //     final fetchedProducts = await apiService.searchProducts(query);
+  //     print(fetchedProducts);
+  //     return fetchedProducts
+  //         .map<Product>((data) => Product.fromJson(data))
+  //         .toList();
+  //   } catch (e) {
+  //     return [];
+  //   }
+  // }
+
+
   Future<List<Product>> fetchProducts(String query) async {
-    try {
-      final apiService = ApiService();
-      final fetchedProducts = await apiService.searchProductss(query);
-      print(fetchedProducts);
-      return fetchedProducts
-          .map<Product>((data) => Product.fromJson(data))
-          .toList();
-    } catch (e) {
-      return [];
-    }
+  try {
+    final fetchedProducts = await SearchService.searchProducts(query);
+    print(fetchedProducts);
+    return fetchedProducts
+        .map<Product>((data) => Product.fromJson(data))
+        .toList();
+  } catch (e) {
+    print("Search error: $e");
+    return [];
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +120,7 @@ class _ResultScreenState extends State<ResultScreen> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
                   child: CircularProgressIndicator(
-                color: Color.fromARGB(255, 13, 75, 15),
+                color: mythemecolor,
               ));
             } else if (snapshot.hasError || snapshot.data == null) {
               return const Center(child: Text('Error loading products.'));
@@ -215,238 +233,5 @@ class _ResultScreenState extends State<ResultScreen> {
     );
   }
 }
-
-
-
-
-  // Widget _buildNoResultsUI(
-  //     WishlistManager wishlistManager, int crossAxisCount) {
-  //   return Column(
-  //     children: [
-  //       const SizedBox(
-  //         height: 80,
-  //       ),
-  //       Image.asset(
-  //         'assets/images/nosuch.png',
-  //         height: 200,
-  //         width: 200,
-  //         fit: BoxFit.cover,
-  //       ),
-  //       const SizedBox(
-  //         height: 30,
-  //       ),
-  //       Text(
-  //         'No such products, you may like these!',
-  //         style: TextStyle(
-  //             fontSize: 18,
-  //             fontWeight: FontWeight.w500,
-  //             color: const Color.fromARGB(255, 128, 10, 75)),
-  //       ),
-  //       const SizedBox(
-  //         height: 10,
-  //       ),
-  //       FutureBuilder<List<Product>>(
-  //         future: _allProductsFuture,
-  //         builder: (context, snapshot) {
-  //           if (snapshot.connectionState == ConnectionState.waiting) {
-  //             return const Padding(
-  //               padding: EdgeInsets.symmetric(vertical: 20),
-  //               child: CircularProgressIndicator(),
-  //             );
-  //           } else if (snapshot.hasError || snapshot.data == null) {
-  //             return const Padding(
-  //               padding: EdgeInsets.symmetric(vertical: 20),
-  //               child: Text('Error loading products.'),
-  //             );
-  //           }
-
-  //           final allProducts = snapshot.data!;
-  //           return Padding(
-  //             padding: const EdgeInsets.symmetric(horizontal: 10),
-  //             child: _buildProductGrid(
-  //               allProducts,
-  //               wishlistManager,
-  //               crossAxisCount,
-  //               isInsideScrollView: true,
-  //             ),
-  //           );
-  //         },
-  //       ),
-  //     ],
-  //   );
-  // }
-
-
-
- // Widget _buildProductGrid(List<Product> products,
-  //     WishlistManager wishlistManager, int crossAxisCount) {
-  //   return GridView.builder(
-  //     padding: const EdgeInsets.all(10),
-  //    shrinkWrap: true,
-  //   physics: const NeverScrollableScrollPhysics(),
-  //     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-  //       crossAxisCount: crossAxisCount,
-  //       crossAxisSpacing: 8,
-  //       mainAxisSpacing: 8,
-  //       childAspectRatio: 0.75,
-  //     ),
-  //     itemCount: products.length,
-  //     itemBuilder: (context, index) {
-  //       final product = products[index];
-  //       return ProductWidget(
-  //         product: product,
-  //         onTap: () => Navigator.push(
-  //           context,
-  //           MaterialPageRoute(
-  //             builder: (context) =>
-  //                 ProductDetailPagep(product: product, productId: product.id),
-  //           ),
-  //         ),
-  //         isLoggedIn: _isLoggedIn,
-  //       );
-  //     },
-  //   );
-  // }
-
-
-// import 'package:flutter/material.dart';
-// import 'package:model_app/authentication/api_service.dart';
-// import 'package:model_app/product/product_detail.dart';
-// import 'package:model_app/product/productwidget.dart';
-// import 'package:model_app/wishlist/wishlist_manager.dart';
-// import 'package:provider/provider.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-
-// class ResultScreen extends StatefulWidget {
-//   final String query;
-
-//   const ResultScreen({super.key, required this.query});
-
-//   @override
-//   _ResultScreenState createState() => _ResultScreenState();
-// }
-
-// class _ResultScreenState extends State<ResultScreen> {
-//   late Future<List<Product>> _searchResultsFuture;
-//   late Future<List<Product>> _allProductsFuture;
-//   bool _isLoggedIn = false;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _searchResultsFuture = fetchProducts(widget.query);
-//     _allProductsFuture = ApiService.fetchAllProducts();
-//     _checkLoginStatus();
-//   }
-
-//   Future<void> _checkLoginStatus() async {
-//     final prefs = await SharedPreferences.getInstance();
-//     final token = prefs.getString('auth_token');
-//     setState(() {
-//       _isLoggedIn = token != null && token.isNotEmpty;
-//     });
-//   }
-
-//   Future<List<Product>> fetchProducts(String query) async {
-//     try {
-//       final apiService = ApiService();
-//       final fetchedProducts = await apiService.searchProductss(query);
-//       return fetchedProducts.map<Product>((data) => Product.fromJson(data)).toList();
-//     } catch (e) {
-//       return [];
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final wishlistManager = Provider.of<WishlistManager>(context);
-//     final screenWidth = MediaQuery.of(context).size.width;
-//     final bool isTablet = screenWidth >= 600;
-//     final int crossAxisCount = isTablet ? 4 : 2;
-
-//     return Scaffold(
-//       appBar: AppBar(title: const Text('Search Results')),
-//       body: FutureBuilder<List<Product>>(
-//         future: _searchResultsFuture,
-//         builder: (context, snapshot) {
-//           if (snapshot.connectionState == ConnectionState.waiting) {
-//             return const Center(child: CircularProgressIndicator());
-//           } else if (snapshot.hasError || snapshot.data == null) {
-//             return const Center(child: Text('Error loading products.'));
-//           }
-
-//           final products = snapshot.data!;
-//           if (products.isEmpty) {
-//             return _buildNoResultsUI(wishlistManager, crossAxisCount);
-//           }
-
-//           return _buildProductGrid(products, wishlistManager, crossAxisCount);
-//         },
-//       ),
-//     );
-//   }
-
-//   Widget _buildNoResultsUI(WishlistManager wishlistManager, int crossAxisCount) {
-//     return SingleChildScrollView(
-//       child: Column(
-//         children: [
-//           const Padding(
-//             padding: EdgeInsets.all(16.0),
-//             child: Text(
-//               'No such products, you may like these!',
-//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//             ),
-//           ),
-//           FutureBuilder<List<Product>>(
-//             future: _allProductsFuture,
-//             builder: (context, snapshot) {
-//               if (snapshot.connectionState == ConnectionState.waiting) {
-//                 return const Center(child: CircularProgressIndicator());
-//               } else if (snapshot.hasError || snapshot.data == null) {
-//                 return const Center(child: Text('Error loading products.'));
-//               }
-
-//               final allProducts = snapshot.data!;
-//               return _buildProductGrid(allProducts, wishlistManager, crossAxisCount);
-//             },
-//           ),
-//         ],
-//       ),
-//     );
-//   }
-
-//   Widget _buildProductGrid(List<Product> products, WishlistManager wishlistManager, int crossAxisCount) {
-//     return GridView.builder(
-//       padding: const EdgeInsets.all(10),
-//       shrinkWrap: true,
-//       physics: const NeverScrollableScrollPhysics(),
-//       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//         crossAxisCount: crossAxisCount,
-//         crossAxisSpacing: 10,
-//         mainAxisSpacing: 8,
-//         childAspectRatio: 0.75,
-//       ),
-//       itemCount: products.length,
-//       itemBuilder: (context, index) {
-//         final product = products[index];
-//         return ProductWidget(
-//           product: product,
-//           onTap: () => Navigator.push(
-//             context,
-//             MaterialPageRoute(
-//               builder: (context) => ProductDetailPagep(product: product),
-//             ),
-            
-//           ),
-//          isLoggedIn: _isLoggedIn,
-//         );
-//       },
-//     );
-//   }
-// }
-
-
-
-
 
 

@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/services/auth_service.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/provider/login_provider.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
@@ -123,7 +124,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     });
 
     try {
-      final result = await ApiService.verifyOtp(userEmail, _otp);
+      final result = await AuthService.verifyOtp(userEmail, _otp);
 
       if (result['message'] == 'OTP verified successfully') {
         _countdownTimer?.cancel();
@@ -193,7 +194,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     });
 
     try {
-      final result = await ApiService.resendOtp(userEmail);
+      final result = await AuthService.resendOtp(userEmail);
       setState(() {
         _message = result['message'];
       });
@@ -401,7 +402,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
                       if (!_otpError)
                         _isLoading
                             ? const CircularProgressIndicator(
-                                color: Colors.green)
+                                color: mythemecolor)
                             : ElevatedButton(
                                 onPressed: _verifyOtp,
                                 style: ElevatedButton.styleFrom(

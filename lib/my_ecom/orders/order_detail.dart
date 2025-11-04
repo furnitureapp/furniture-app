@@ -1,7 +1,9 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/invoice_service.dart';
+import 'package:furniture_ecom_app/core/services/offers_service.dart';
+import 'package:furniture_ecom_app/core/services/orders_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 import 'package:intl/intl.dart';
@@ -11,10 +13,7 @@ import 'package:permission_handler/permission_handler.dart';
 
 class OrderDetailsScreen extends StatefulWidget {
   final String orderId;
-  const OrderDetailsScreen({
-    super.key,
-    required this.orderId,
-  });
+  const OrderDetailsScreen({super.key, required this.orderId});
 
   @override
   State<OrderDetailsScreen> createState() => _OrderDetailsScreenState();
@@ -44,7 +43,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
 
   void fetchOfferPrices() async {
     try {
-      offerPrices = await ApiService.fetchOnlyOfferPrices(widget.orderId);
+      offerPrices = await OfferService.fetchOnlyOfferPrices(widget.orderId);
       print("Fetched Offer Prices: $offerPrices");
 
       setState(() {
@@ -100,7 +99,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
 
   Future<void> _downloadInvoice(BuildContext context) async {
     try {
-      final result = await ApiService.downloadInvoice(widget.orderId);
+      final result = await InvoiceDetailsService.downloadInvoice(
+        widget.orderId,
+      );
       if (result['success']) {
         final filePath = result['filePath'];
         ScaffoldMessenger.of(context).showSnackBar(
@@ -133,10 +134,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
       //     content: Text('Failed to download invoice: $e'),
       //   ),
       // );
-      showTopSnackBar(
-        context,
-        'Failed to download invoice: $e',
-      );
+      showTopSnackBar(context, 'Failed to download invoice: $e');
     }
   }
 
@@ -177,16 +175,20 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero),
+                            borderRadius: BorderRadius.zero,
+                          ),
                         ),
                         child: const Text(
                           "NO",
                           style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
                         ),
                       ),
                       ElevatedButton(
@@ -201,19 +203,24 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                 });
                               },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              isButtonDisabled ? Colors.grey : Colors.red,
+                          backgroundColor: isButtonDisabled
+                              ? Colors.grey
+                              : Colors.red,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
+                            horizontal: 16,
+                            vertical: 8,
+                          ),
                           shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.zero),
+                            borderRadius: BorderRadius.zero,
+                          ),
                         ),
                         child: Text(
                           isButtonDisabled ? "CANCELLING..." : "YES, CANCEL",
                           style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
@@ -229,7 +236,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
 
   Future<void> _cancelOrder(BuildContext context, String orderId) async {
     try {
-      final response = await ApiService.cancelOrder(orderId);
+      final response = await OrderService.cancelOrder(orderId);
       if (response['error'] == true) {
         // _scaffoldMessenger.showSnackBar(
         //   SnackBar(content: Text(response['message'])),
@@ -242,23 +249,14 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
         // _scaffoldMessenger.showSnackBar(
         //   const SnackBar(content: Text('Order cancelled successfully.')),
         // );
-        showTopSnackBar(
-          context,
-          'Order cancelled successfully.',
-        );
+        showTopSnackBar(context, 'Order cancelled successfully.');
         setState(() {});
       }
     } catch (e) {
       // _scaffoldMessenger.showSnackBar(
       //   SnackBar(content: Text('Error: $e')),
       // );
-      showTopSnackBar(
-        context,
-        'Error: $e',
-      );
-
-
-
+      showTopSnackBar(context, 'Error: $e');
     }
   }
 
@@ -293,8 +291,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                 itemCount: order.items.length,
                 itemBuilder: (context, index) {
                   final item = order.items[index];
-                  final offerPrice =
-                      offerPrices.length > index ? offerPrices[index] : 0.0;
+                  final offerPrice = offerPrices.length > index
+                      ? offerPrices[index]
+                      : 0.0;
                   return buildOrderItemCard(item, offerPrice);
                   // return buildOrderItemCard(item);
                 },
@@ -308,8 +307,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
 
                   // return buildOrderItemCard(item);
                   final item = order.items[index];
-                  final offerPrice =
-                      offerPrices.length > index ? offerPrices[index] : 0.0;
+                  final offerPrice = offerPrices.length > index
+                      ? offerPrices[index]
+                      : 0.0;
                   return buildOrderItemCard(item, offerPrice);
                 },
               );
@@ -353,7 +353,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    '₹${offerPrice. round()}',
+                    '₹${offerPrice.round()}',
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -370,27 +370,30 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
   }
 
   Widget buildTimeline(
-      String currentStatus, List<OrderStatusEntry> statusHistory) {
+    String currentStatus,
+    List<OrderStatusEntry> statusHistory,
+  ) {
     List<Map<String, String>> statuses = [
       {'status': 'Placed', 'icon': '✅'},
       {'status': 'Shipped', 'icon': '🚚'},
-      {'status': 'Delivered', 'icon': '📦'}
+      {'status': 'Delivered', 'icon': '📦'},
     ];
 
     if (currentStatus == 'Cancelled') {
       statuses = [
         {'status': 'Placed', 'icon': '✅'},
-        {'status': 'Cancelled', 'icon': '❌'}
+        {'status': 'Cancelled', 'icon': '❌'},
       ];
     } else if (currentStatus == 'Failed') {
       statuses = [
         {'status': 'Placed', 'icon': '✅'},
-        {'status': 'Failed', 'icon': '⚠️'}
+        {'status': 'Failed', 'icon': '⚠️'},
       ];
     }
 
-    final currentIndex =
-        statuses.indexWhere((element) => element['status'] == currentStatus);
+    final currentIndex = statuses.indexWhere(
+      (element) => element['status'] == currentStatus,
+    );
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -406,9 +409,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                         if (i.isEven) {
                           int index = i ~/ 2;
                           bool isActive = index <= currentIndex;
-                          bool isCancelled = currentStatus == 'Cancelled' &&
+                          bool isCancelled =
+                              currentStatus == 'Cancelled' &&
                               index == currentIndex;
-                          bool isFailed = currentStatus == 'Failed' &&
+                          bool isFailed =
+                              currentStatus == 'Failed' &&
                               index == currentIndex;
 
                           return Expanded(
@@ -423,16 +428,21 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                   decoration: BoxDecoration(
                                     color: (isCancelled || isFailed)
                                         ? const Color.fromARGB(
-                                            255, 249, 149, 142)
+                                            255,
+                                            249,
+                                            149,
+                                            142,
+                                          )
                                         : (isActive
-                                            ? Colors.green
-                                            : Colors.grey.shade300),
+                                              ? Colors.green
+                                              : Colors.grey.shade300),
                                     shape: BoxShape.circle,
                                     boxShadow: isActive
                                         ? [
                                             BoxShadow(
-                                                color: Colors.green.shade400,
-                                                blurRadius: 8)
+                                              color: Colors.green.shade400,
+                                              blurRadius: 8,
+                                            ),
                                           ]
                                         : [],
                                   ),
@@ -460,7 +470,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                       ? [Colors.green.shade400, Colors.green]
                                       : [
                                           Colors.grey.shade300,
-                                          Colors.grey.shade400
+                                          Colors.grey.shade400,
                                         ],
                                   begin: Alignment.centerLeft,
                                   end: Alignment.centerRight,
@@ -485,12 +495,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                             (entry) =>
                                 entry.status == statuses[index]['status'],
                             orElse: () => OrderStatusEntry(
-                                status: '', timestamp: DateTime(2000)),
+                              status: '',
+                              timestamp: DateTime(2000),
+                            ),
                           );
 
                           final updatedText = matchingEntry.status.isNotEmpty
                               ? formatDate(matchingEntry.timestamp.toLocal())
-
                               //  formatDate(matchingEntry.timestamp)
                               : '—';
                           final status = statuses[index]['status'] ?? '';
@@ -503,8 +514,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                   style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color:
-                                        isActive ? Colors.black : Colors.grey,
+                                    color: isActive
+                                        ? Colors.black
+                                        : Colors.grey,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -534,15 +546,28 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                     bool isFailed =
                         currentStatus == 'Failed' && index == currentIndex;
 
+                    // final OrderStatusEntry? matchingEntry = statusHistory
+                    //     .firstWhereOrNull(
+                    //       (entry) => entry.status == statuses[index]['status'],
+                    //     );
                     final OrderStatusEntry? matchingEntry =
-                        statusHistory.firstWhereOrNull(
-                      (entry) => entry.status == statuses[index]['status'],
-                    );
+                        statusHistory.isNotEmpty
+                        ? statusHistory.firstWhere(
+                            (entry) =>
+                                entry.status == statuses[index]['status'],
+                            orElse: () => OrderStatusEntry(
+                              status: '',
+                              timestamp: DateTime(2000),
+                            ),
+                          )
+                        : null;
 
                     Text(
                       "Updated: ${matchingEntry != null ? formatDate(matchingEntry.timestamp) : '—'}",
-                      style:
-                          TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade600,
+                      ),
                     );
 
                     final icon = statuses[index]['icon'] ?? '';
@@ -565,14 +590,15 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                   color: (isCancelled || isFailed)
                                       ? const Color.fromARGB(255, 249, 149, 142)
                                       : (isActive
-                                          ? Colors.green
-                                          : Colors.grey.shade300),
+                                            ? Colors.green
+                                            : Colors.grey.shade300),
                                   shape: BoxShape.circle,
                                   boxShadow: isActive
                                       ? [
                                           BoxShadow(
-                                              color: Colors.green.shade400,
-                                              blurRadius: 8)
+                                            color: Colors.green.shade400,
+                                            blurRadius: 8,
+                                          ),
                                         ]
                                       : [],
                                 ),
@@ -591,11 +617,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                       colors: index < currentIndex
                                           ? [
                                               Colors.green.shade400,
-                                              Colors.green
+                                              Colors.green,
                                             ]
                                           : [
                                               Colors.grey.shade300,
-                                              Colors.grey.shade400
+                                              Colors.grey.shade400,
                                             ],
                                       begin: Alignment.topCenter,
                                       end: Alignment.bottomCenter,
@@ -607,8 +633,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                           const SizedBox(width: 15),
                           Expanded(
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8.0,
+                              ),
                               child: AnimatedOpacity(
                                 duration: Duration(milliseconds: 500),
                                 opacity: isActive ? 1.0 : 0.6,
@@ -682,7 +709,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
             gradient: LinearGradient(
               colors: [
                 Color.fromARGB(255, 149, 220, 124),
-          Color.fromARGB(255, 41, 97, 67),
+                Color.fromARGB(255, 41, 97, 67),
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -704,7 +731,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
         ),
       ),
       body: FutureBuilder<Order>(
-        future: ApiService.fetchOrderDetail(widget.orderId),
+        future: OrderService.fetchOrderDetail(widget.orderId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: AnimationPage1());
@@ -742,17 +769,21 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                         child: Text(
                           'Order ID - ${order.orderId}',
                           style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 7, 91, 26)),
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 7, 91, 26),
+                          ),
                         ),
                       ),
                       const Divider(
-                          height: 24,
-                          color: Color.fromARGB(255, 108, 109, 108)),
+                        height: 24,
+                        color: Color.fromARGB(255, 108, 109, 108),
+                      ),
                       buildTimeline(order.status, order.statusHistory),
                       const Divider(
-                          height: 24, color: Color.fromARGB(255, 99, 100, 99)),
+                        height: 24,
+                        color: Color.fromARGB(255, 99, 100, 99),
+                      ),
                       isTablet
                           ? Padding(
                               padding: const EdgeInsets.fromLTRB(20, 5, 20, 20),
@@ -764,7 +795,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                     width: 600,
                                     child: Card(
                                       color: const Color.fromARGB(
-                                          255, 244, 245, 245),
+                                        255,
+                                        244,
+                                        245,
+                                        245,
+                                      ),
                                       elevation: 10,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
@@ -776,96 +811,6 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            // Row(
-                                            //   children: [
-                                            //     Text(" 📍 "),
-                                            //     const SizedBox(width: 8),
-                                            //     Text(
-                                            //       "Shipping Address",
-                                            //       style: TextStyle(
-                                            //         fontSize: 20,
-                                            //         fontWeight: FontWeight.bold,
-                                            //         color: Color.fromARGB(
-                                            //             255, 6, 40, 100),
-                                            //       ),
-                                            //     ),
-                                            //   ],
-                                            // ),
-                                            // const Divider(
-                                            //     height: 24,
-                                            //     color: Color.fromARGB(
-                                            //         255, 28, 117, 20)),
-                                            // const SizedBox(height: 10),
-                                            // Text(
-                                            //   order.username,
-                                            //   style: const TextStyle(
-                                            //     fontSize: 18,
-                                            //     fontWeight: FontWeight.bold,
-                                            //     color: Colors.black87,
-                                            //   ),
-                                            // ),
-                                            // const SizedBox(height: 6),
-                                            // Text(
-                                            //   order.phoneNo,
-                                            //   style: TextStyle(
-                                            //       fontSize: 18,
-                                            //       fontWeight: FontWeight.bold,
-                                            //       color: Colors.grey[800]),
-                                            // ),
-                                            // const SizedBox(height: 6),
-                                            // Row(children: [
-                                            //   Text(
-                                            //     order.houseNo,
-                                            //     maxLines: 5,
-                                            //     style: TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //         fontSize: 18,
-                                            //         overflow:
-                                            //             TextOverflow.ellipsis,
-                                            //         color: Colors.grey[800]),
-                                            //   ),
-                                            //   Text(
-                                            //     order.streetName,
-                                            //     maxLines: 5,
-                                            //     style: TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //         fontSize: 18,
-                                            //         overflow:
-                                            //             TextOverflow.ellipsis,
-                                            //         color: Colors.grey[800]),
-                                            //   ),
-                                            //   Text(
-                                            //     order.city,
-                                            //     maxLines: 5,
-                                            //     style: TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //         fontSize: 18,
-                                            //         overflow:
-                                            //             TextOverflow.ellipsis,
-                                            //         color: Colors.grey[800]),
-                                            //   ),
-                                            //   Text(
-                                            //     order.state,
-                                            //     maxLines: 5,
-                                            //     style: TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //         fontSize: 18,
-                                            //         overflow:
-                                            //             TextOverflow.ellipsis,
-                                            //         color: Colors.grey[800]),
-                                            //   ),
-                                            //   Text(
-                                            //     order.pinCode,
-                                            //     maxLines: 5,
-                                            //     style: TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //         fontSize: 18,
-                                            //         overflow:
-                                            //             TextOverflow.ellipsis,
-                                            //         color: Colors.grey[800]),
-                                            //   ),
-                                            // ]),
-
                                             Row(
                                               children: [
                                                 Text(" 📍 "),
@@ -876,21 +821,32 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
                                                     color: Color.fromARGB(
-                                                        255, 6, 40, 100),
+                                                      255,
+                                                      6,
+                                                      40,
+                                                      100,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
                                             ),
                                             const Divider(
-                                                height: 24,
-                                                color: Color.fromARGB(
-                                                    255, 28, 117, 20)),
+                                              height: 24,
+                                              color: Color.fromARGB(
+                                                255,
+                                                28,
+                                                117,
+                                                20,
+                                              ),
+                                            ),
                                             const SizedBox(height: 10),
 
                                             Row(
                                               children: [
-                                                Icon(Icons.person,
-                                                    color: Colors.green),
+                                                Icon(
+                                                  Icons.person,
+                                                  color: Colors.green,
+                                                ),
                                                 const SizedBox(width: 8),
                                                 Text(
                                                   order.username,
@@ -905,16 +861,18 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                             const SizedBox(height: 6),
                                             Row(
                                               children: [
-                                                Icon(Icons.phone,
-                                                    color: Colors.green),
+                                                Icon(
+                                                  Icons.phone,
+                                                  color: Colors.green,
+                                                ),
                                                 const SizedBox(width: 8),
                                                 Text(
                                                   order.phoneNo,
                                                   style: TextStyle(
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.grey[800]),
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.grey[800],
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -924,8 +882,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Icon(Icons.home,
-                                                    color: Colors.green),
+                                                Icon(
+                                                  Icons.home,
+                                                  color: Colors.green,
+                                                ),
                                                 const SizedBox(width: 8),
                                                 Expanded(
                                                   child: Text(
@@ -934,11 +894,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 18,
-                                                        color:
-                                                            Colors.grey[800]),
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 18,
+                                                      color: Colors.grey[800],
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -952,7 +912,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                     width: 600,
                                     child: Card(
                                       color: const Color.fromARGB(
-                                          255, 244, 245, 245),
+                                        255,
+                                        244,
+                                        245,
+                                        245,
+                                      ),
                                       elevation: 10,
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(12),
@@ -974,14 +938,19 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                                     fontSize: 20,
                                                     fontWeight: FontWeight.bold,
                                                     color: Color.fromARGB(
-                                                        255, 6, 40, 100),
+                                                      255,
+                                                      6,
+                                                      40,
+                                                      100,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
                                             ),
                                             const Divider(
-                                                thickness: 1,
-                                                color: Colors.grey),
+                                              thickness: 1,
+                                              color: Colors.grey,
+                                            ),
                                             const SizedBox(height: 10),
                                             Text(
                                               'Status of the Order  : ${order.status}',
@@ -1019,167 +988,187 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                             )
                           : SingleChildScrollView(
                               child: Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width - 20,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                padding: const EdgeInsets.all(2),
+                                child: Column(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    SizedBox(
+                                      width:
+                                          MediaQuery.of(context).size.width -
+                                          20,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
 
-                                        children: [
-                                          Row(
-                                            children: [
-                                              const Text(" 📍 "),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                "Shipping Address",
-                                                style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black87),
-                                              ),
-                                            ],
-                                          ),
-                                          const Divider(
-                                              height: 20,
-                                              color: Color.fromARGB(
-                                                  255, 232, 231, 231)),
-                                          const SizedBox(height: 8),
-                                          Row(
-                                            children: [
-                                              const Icon(Icons.person,
-                                                  color: Colors.black87,
-                                                  size: 12),
-                                              const SizedBox(width: 6),
-                                              Expanded(
-                                                child: Text(
-                                                  order.username,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                const Text(" 📍 "),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  "Shipping Address",
                                                   style: const TextStyle(
-                                                    fontSize: 12,
+                                                    fontSize: 16,
                                                     fontWeight: FontWeight.bold,
                                                     color: Colors.black87,
                                                   ),
                                                 ),
+                                              ],
+                                            ),
+                                            const Divider(
+                                              height: 20,
+                                              color: Color.fromARGB(
+                                                255,
+                                                232,
+                                                231,
+                                                231,
                                               ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Row(
-                                            children: [
-                                              const Icon(Icons.phone,
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.person,
                                                   color: Colors.black87,
-                                                  size: 12),
-                                              const SizedBox(width: 6),
-                                              Expanded(
-                                                child: Text(
-                                                  order.phoneNo,
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.grey[800],
+                                                  size: 12,
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Expanded(
+                                                  child: Text(
+                                                    order.username,
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.black87,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              const Icon(Icons.location_on,
+                                              ],
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.phone,
                                                   color: Colors.black87,
-                                                  size: 12),
-                                              const SizedBox(width: 6),
-                                              Expanded(
-                                                child: Text(
-                                                  '${order.houseNo}, ${order.streetName}, ${order.city},\n ${order.state} - ${order.pinCode}',
-                                                  style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.grey[800],
+                                                  size: 12,
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Expanded(
+                                                  child: Text(
+                                                    order.phoneNo,
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey[800],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                              ],
+                                            ),
+                                            const SizedBox(height: 4),
+                                            Row(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                const Icon(
+                                                  Icons.location_on,
+                                                  color: Colors.black87,
+                                                  size: 12,
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Expanded(
+                                                  child: Text(
+                                                    '${order.houseNo}, ${order.streetName}, ${order.city},\n ${order.state} - ${order.pinCode}',
+                                                    style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.grey[800],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  const Divider(
+                                    const Divider(
                                       height: 20,
-                                      color:
-                                          Color.fromARGB(255, 232, 231, 231)),
-                                  SizedBox(
-                                    width: 600,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text("🚚"),
-                                              const SizedBox(width: 8),
-                                              Text(
-                                                "Status of Order",
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.black87,
+                                      color: Color.fromARGB(255, 232, 231, 231),
+                                    ),
+                                    SizedBox(
+                                      width: 600,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text("🚚"),
+                                                const SizedBox(width: 8),
+                                                Text(
+                                                  "Status of Order",
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black87,
+                                                  ),
                                                 ),
+                                              ],
+                                            ),
+                                            const Divider(
+                                              thickness: 1,
+                                              color: Colors.grey,
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Text(
+                                              'Status of Order      : ${order.status}',
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black87,
                                               ),
-                                            ],
-                                          ),
-                                          const Divider(
-                                              thickness: 1, color: Colors.grey),
-                                          const SizedBox(height: 10),
-                                          Text(
-                                            'Status of Order      : ${order.status}',
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
                                             ),
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Text(
-                                            'Date of the Order   : ${formatDate(order.orderDate)}',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
+                                            const SizedBox(height: 6),
+                                            Text(
+                                              'Date of the Order   : ${formatDate(order.orderDate)}',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black87,
+                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(height: 6),
-                                          Text(
-                                            'Payment Method   : ${order.paymentMethod}',
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
+                                            const SizedBox(height: 6),
+                                            Text(
+                                              'Payment Method   : ${order.paymentMethod}',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black87,
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            )),
+                            ),
                       const SizedBox(height: 8),
                       const Divider(
-                          height: 24,
-                          color: Color.fromARGB(255, 224, 223, 223)),
+                        height: 24,
+                        color: Color.fromARGB(255, 224, 223, 223),
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Row(
@@ -1201,7 +1190,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                               ),
                             ),
                             Text(
-                              '₹${order.overallTotal. round()}',
+                              '₹${order.overallTotal.round()}',
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
@@ -1222,36 +1211,51 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                           ),
                         ),
                         tilePadding: const EdgeInsets.symmetric(horizontal: 12),
-                        backgroundColor:
-                            const Color.fromARGB(255, 245, 247, 245),
-                        collapsedBackgroundColor:
-                            const Color.fromARGB(255, 234, 235, 234),
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          245,
+                          247,
+                          245,
+                        ),
+                        collapsedBackgroundColor: const Color.fromARGB(
+                          255,
+                          234,
+                          235,
+                          234,
+                        ),
                         childrenPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 10),
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
                         children: [
-                          buildAmountRow("Payment Method:",
-                              order.paymentMethod.toUpperCase()),
-                          buildAmountRow("Subtotal:",
-                              "₹${(order.overallTotal - order.gstAmount). round()}"),
                           buildAmountRow(
-                              "GST:", "₹${order.gstAmount. round()}"),
+                            "Payment Method:",
+                            order.paymentMethod.toUpperCase(),
+                          ),
+                          buildAmountRow(
+                            "Subtotal:",
+                            "₹${(order.overallTotal - order.gstAmount).round()}",
+                          ),
+                          buildAmountRow("GST:", "₹${order.gstAmount.round()}"),
                           const Divider(),
                           buildAmountRow(
                             "Total Paid:",
-                            "₹${order.overallTotal. round()}",
+                            "₹${order.overallTotal.round()}",
                             isTotal: true,
                           ),
                         ],
                       ),
                       const Divider(
-                          height: 24,
-                          color: Color.fromARGB(255, 224, 223, 223)),
+                        height: 24,
+                        color: Color.fromARGB(255, 224, 223, 223),
+                      ),
                       const Text(
                         "Items Ordered:",
                         style: TextStyle(
-                            color: Color.fromARGB(255, 9, 94, 12),
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold),
+                          color: Color.fromARGB(255, 9, 94, 12),
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       isTablet
                           ? SizedBox(
@@ -1270,7 +1274,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 ProductDetailPagep(
-                                                    productId: item.productId),
+                                                  productId: item.productId,
+                                                ),
                                           ),
                                         );
                                       },
@@ -1278,8 +1283,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                         color: Colors.white,
                                         elevation: 4,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
                                         ),
                                         child: Container(
                                           width: 230,
@@ -1307,7 +1313,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                                       style: const TextStyle(
                                                         fontSize: 18,
                                                         color: Color.fromARGB(
-                                                            255, 83, 82, 82),
+                                                          255,
+                                                          83,
+                                                          82,
+                                                          82,
+                                                        ),
                                                         fontWeight:
                                                             FontWeight.bold,
                                                       ),
@@ -1333,13 +1343,17 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                                         .spaceBetween,
                                                 children: [
                                                   Text(
-                                                    'Original Price: ₹${order.items[index].offerPrice. round()}', // ✅ This is correct
+                                                    'Original Price: ₹${order.items[index].offerPrice.round()}', // ✅ This is correct
                                                     style: const TextStyle(
                                                       fontSize: 18,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                       color: Color.fromARGB(
-                                                          255, 8, 69, 8),
+                                                        255,
+                                                        8,
+                                                        69,
+                                                        8,
+                                                      ),
                                                     ),
                                                   ),
                                                 ],
@@ -1366,7 +1380,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             ProductDetailPagep(
-                                                productId: item.productId),
+                                              productId: item.productId,
+                                            ),
                                       ),
                                     );
                                   },
@@ -1395,11 +1410,12 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                               ),
                                               const SizedBox(height: 8),
                                               Text(
-                                                'Original Price: ₹${(offerPrices.length > index ? offerPrices[index] : 0.0). round()}',
+                                                'Original Price: ₹${(offerPrices.length > index ? offerPrices[index] : 0.0).round()}',
                                                 style: const TextStyle(
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.grey),
+                                                  fontSize: 10,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.grey,
+                                                ),
                                               ),
                                               const SizedBox(height: 8),
                                               Text(
@@ -1407,7 +1423,11 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                                 style: const TextStyle(
                                                   fontSize: 10,
                                                   color: Color.fromARGB(
-                                                      255, 134, 134, 133),
+                                                    255,
+                                                    134,
+                                                    134,
+                                                    133,
+                                                  ),
                                                   fontWeight: FontWeight.bold,
                                                 ),
                                               ),
@@ -1480,595 +1500,3 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
     );
   }
 }
-
-
-
-// Widget buildTimeline(String currentStatus, List<OrderStatusEntry> statusHistory)
-//    {
-
-//     List<Map<String, String>> statuses = [
-//       {'status': 'Placed', 'icon': '✅'},
-//       {'status': 'Shipped', 'icon': '🚚'},
-//       {'status': 'Delivered', 'icon': '📦'}
-//     ];
-
-//     if (currentStatus == 'Cancelled') {
-//       statuses = [
-//         {'status': 'Placed', 'icon': '✅'},
-//         {'status': 'Cancelled', 'icon': '❌'}
-//       ];
-//     } else if (currentStatus == 'Failed') {
-//       statuses = [
-//         {'status': 'Placed', 'icon': '✅'},
-//         {'status': 'Failed', 'icon': '⚠️'}
-//       ];
-//     }
-
-//     final currentIndex =
-//         statuses.indexWhere((element) => element['status'] == currentStatus);
-
-//     return LayoutBuilder(
-//       builder: (context, constraints) {
-//         bool isTablet = constraints.maxWidth > 600;
-
-//         return Card(
-//           color: const Color.fromARGB(255, 244, 245, 245),
-//           elevation: 4,
-//           margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
-//           shape:
-//               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-//           child: Padding(
-//             padding: const EdgeInsets.all(10.0),
-//             child: isTablet
-//                 ? Column(
-//                     children: [
-//                       // Icons with connectors
-//                       Row(
-//                         children: List.generate(statuses.length * 2 - 1, (i) {
-//                           if (i.isEven) {
-//                             int index = i ~/ 2;
-//                             bool isActive = index <= currentIndex;
-//                             bool isCancelled = currentStatus == 'Cancelled' &&
-//                                 index == currentIndex;
-//                             bool isFailed = currentStatus == 'Failed' &&
-//                                 index == currentIndex;
-
-//                             return Expanded(
-//                               flex: 1,
-//                               child: Column(
-//                                 children: [
-//                                   AnimatedContainer(
-//                                     duration: Duration(milliseconds: 500),
-//                                     width: 55,
-//                                     height: 55,
-//                                     alignment: Alignment.center,
-//                                     decoration: BoxDecoration(
-//                                       color: (isCancelled || isFailed)
-//                                           ? const Color.fromARGB(
-//                                               255, 249, 149, 142)
-//                                           : (isActive
-//                                               ? Colors.green
-//                                               : Colors.grey.shade300),
-//                                       shape: BoxShape.circle,
-//                                       boxShadow: isActive
-//                                           ? [
-//                                               BoxShadow(
-//                                                   color: Colors.green.shade400,
-//                                                   blurRadius: 8)
-//                                             ]
-//                                           : [],
-//                                     ),
-//                                     child: Text(
-//                                       statuses[index]['icon']!,
-//                                       style: const TextStyle(fontSize: 27),
-//                                     ),
-//                                   ),
-//                                 ],
-//                               ),
-//                             );
-//                           } else {
-//                             int leftIndex = i ~/ 2;
-//                             bool isActive = leftIndex < currentIndex;
-
-//                             return Expanded(
-//                               flex: 2,
-//                               child: AnimatedContainer(
-//                                 duration: Duration(milliseconds: 800),
-//                                 height: 5,
-//                                 margin:
-//                                     const EdgeInsets.symmetric(horizontal: 4),
-//                                 decoration: BoxDecoration(
-//                                   gradient: LinearGradient(
-//                                     colors: isActive
-//                                         ? [Colors.green.shade400, Colors.green]
-//                                         : [
-//                                             Colors.grey.shade300,
-//                                             Colors.grey.shade400
-//                                           ],
-//                                     begin: Alignment.centerLeft,
-//                                     end: Alignment.centerRight,
-//                                   ),
-//                                 ),
-//                               ),
-//                             );
-//                           }
-//                         }),
-//                       ),
-
-//                       const SizedBox(height: 12),
-//                       Row(
-//                         children: List.generate(statuses.length * 2 - 1, (i) {
-//                           if (i.isEven) {
-//                             int index = i ~/ 2;
-//                             bool isActive = index <= currentIndex;
-
-//                             return Expanded(
-//                               child: Column(
-//                                 children: [
-//                                   Text(
-//                                     statuses[index]['status']!,
-//                                     style: TextStyle(
-//                                       fontSize: 16,
-//                                       fontWeight: FontWeight.bold,
-//                                       color:
-//                                           isActive ? Colors.black : Colors.grey,
-//                                     ),
-//                                   ),
-//                                   const SizedBox(height: 4),
-
-// final matchingEntry = statusHistory.firstWhere(
-//   (entry) => entry.status == statuses[index]['status'],
-//   orElse: () => null,
-// );
-
-// final updatedText = matchingEntry != null
-//     ? formatDate(matchingEntry.timestamp)
-//     : '—';
-
-// Text("Updated: $updatedText")
-
-//                                   // Text(
-//                                   //   "Updated: ${formatDate(DateTime.now())}",
-//                                   //   style: TextStyle(
-//                                   //     fontSize: 13,
-//                                   //     color: Colors.grey.shade600,
-//                                   //   ),
-//                                   // ),
-//                                 ],
-//                               ),
-//                             );
-//                           } else {
-//                             return const Expanded(child: SizedBox());
-//                           }
-//                         }),
-//                       ),
-//                     ],
-//                   )
-//                 : Column(
-//                     mainAxisSize: MainAxisSize.min,
-//                     children: List.generate(statuses.length, (index) {
-//                       bool isActive = index <= currentIndex;
-//                       bool isCancelled =
-//                           currentStatus == 'Cancelled' && index == currentIndex;
-//                       bool isFailed =
-//                           currentStatus == 'Failed' && index == currentIndex;
-
-//                       return AnimatedContainer(
-//                         duration: Duration(milliseconds: 300 + (index * 100)),
-//                         child: Row(
-//                           crossAxisAlignment: CrossAxisAlignment.start,
-//                           children: [
-//                             Column(
-//                               mainAxisSize: MainAxisSize.min,
-//                               children: [
-//                                 // Animated status icon
-//                                 AnimatedContainer(
-//                                   duration: Duration(milliseconds: 500),
-//                                   width: 30,
-//                                   height: 30,
-//                                   alignment: Alignment.center,
-//                                   decoration: BoxDecoration(
-//                                     color: (isCancelled || isFailed)
-//                                         ? const Color.fromARGB(
-//                                             255, 249, 149, 142)
-//                                         : (isActive
-//                                             ? Colors.green
-//                                             : Colors.grey.shade300),
-//                                     shape: BoxShape.circle,
-//                                     boxShadow: isActive
-//                                         ? [
-//                                             BoxShadow(
-//                                                 color: Colors.green.shade400,
-//                                                 blurRadius: 8)
-//                                           ]
-//                                         : [],
-//                                   ),
-//                                   child: Text(
-//                                     statuses[index]['icon']!,
-//                                     style: const TextStyle(fontSize: 18),
-//                                   ),
-//                                 ),
-//                                 if (index != statuses.length - 1)
-//                                   AnimatedContainer(
-//                                     duration: Duration(milliseconds: 800),
-//                                     width: 5,
-//                                     height: 50,
-//                                     decoration: BoxDecoration(
-//                                       gradient: LinearGradient(
-//                                         colors: index < currentIndex
-//                                             ? [
-//                                                 Colors.green.shade400,
-//                                                 Colors.green
-//                                               ]
-//                                             : [
-//                                                 Colors.grey.shade300,
-//                                                 Colors.grey.shade400
-//                                               ],
-//                                         begin: Alignment.topCenter,
-//                                         end: Alignment.bottomCenter,
-//                                       ),
-//                                     ),
-//                                   ),
-//                               ],
-//                             ),
-//                             const SizedBox(width: 15),
-//                             Expanded(
-//                               child: Padding(
-//                                 padding:
-//                                     const EdgeInsets.symmetric(vertical: 8.0),
-//                                 child: AnimatedOpacity(
-//                                   duration: Duration(milliseconds: 500),
-//                                   opacity: isActive ? 1.0 : 0.6,
-//                                   child: Column(
-//                                     crossAxisAlignment:
-//                                         CrossAxisAlignment.start,
-//                                     mainAxisSize: MainAxisSize.min,
-//                                     children: [
-//                                       Text(
-//                                         statuses[index]['status']!,
-//                                         style: TextStyle(
-//                                           color: isActive
-//                                               ? Colors.black
-//                                               : Colors.grey,
-//                                           fontSize: 18,
-//                                           fontWeight: FontWeight.bold,
-//                                         ),
-//                                       ),
-//                                       Text(
-//                                         "Updated: ${formatDate(DateTime.now())}",
-//                                         style: TextStyle(
-//                                           fontSize: 14,
-//                                           color: Colors.grey.shade600,
-//                                         ),
-//                                       ),
-//                                     ],
-//                                   ),
-//                                 ),
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       );
-//                     }),
-//                   ),
-//           ),
-//         );
-//       },
-//     );
-//   }
-
-// IntrinsicHeight(
-                //     child: Row(
-                //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                //       children: statuses.asMap().entries.map((entry) {
-                //         int index = entry.key;
-                //         Map<String, String> status = entry.value;
-                //         bool isActive = index <= currentIndex;
-                //         bool isCancelled = currentStatus == 'Cancelled' &&
-                //             index == currentIndex;
-                //         bool isFailed =
-                //             currentStatus == 'Failed' && index == currentIndex;
-
-                //         return Flexible(
-                //           fit: FlexFit.loose,
-                //           child: Column(
-                //             mainAxisSize: MainAxisSize.min,
-                //             children: [
-                //               // Animated status icon
-                //               AnimatedContainer(
-                //                 duration:
-                //                     Duration(milliseconds: 500 + (index * 200)),
-                //                 width: 50,
-                //                 height: 50,
-                //                 alignment: Alignment.center,
-                //                 decoration: BoxDecoration(
-                //                   color: (isCancelled || isFailed)
-                //                       ? const Color.fromARGB(255, 249, 149, 142)
-                //                       : (isActive
-                //                           ? Colors.green
-                //                           : Colors.grey.shade300),
-                //                   shape: BoxShape.circle,
-                //                   boxShadow: isActive
-                //                       ? [
-                //                           BoxShadow(
-                //                               color: Colors.green.shade400,
-                //                               blurRadius: 10)
-                //                         ]
-                //                       : [],
-                //                 ),
-                //                 child: Text(
-                //                   status['icon']!,
-                //                   style: const TextStyle(fontSize: 24),
-                //                 ),
-                //               ),
-                //               const SizedBox(height: 8),
-                //               // Status text with fade animation
-                //               AnimatedOpacity(
-                //                 duration:
-                //                     Duration(milliseconds: 500 + (index * 200)),
-                //                 opacity: isActive ? 1.0 : 0.6,
-                //                 child: Column(
-                //                   children: [
-                //                     Text(
-                //                       status['status']!,
-                //                       style: TextStyle(
-                //                         fontSize: 18,
-                //                         fontWeight: FontWeight.bold,
-                //                         color: isActive
-                //                             ? Colors.black
-                //                             : Colors.grey,
-                //                       ),
-                //                     ),
-                //                     Text(
-                //                       "Updated: ${formatDate(DateTime.now())}",
-                //                       style: TextStyle(
-                //                         fontSize: 14,
-                //                         color: Colors.grey.shade600,
-                //                       ),
-                //                     ),
-                //                   ],
-                //                 ),
-                //               ),
-                //               if (index != statuses.length - 1)
-                //                 Expanded(
-                //                   child: Center(
-                //                     child: AnimatedContainer(
-                //                       duration: Duration(milliseconds: 800),
-                //                       width: double.infinity,
-                //                       height: 5,
-                //                       margin: const EdgeInsets.symmetric(
-                //                           horizontal: 5, vertical: 10),
-                //                       decoration: BoxDecoration(
-                //                         gradient: LinearGradient(
-                //                           colors: index < currentIndex
-                //                               ? [
-                //                                   Colors.green.shade400,
-                //                                   Colors.green
-                //                                 ]
-                //                               : [
-                //                                   Colors.grey.shade300,
-                //                                   Colors.grey.shade400
-                //                                 ],
-                //                           begin: Alignment.centerLeft,
-                //                           end: Alignment.centerRight,
-                //                         ),
-                //                       ),
-                //                     ),
-                //                   ),
-                //                 ),
-                //             ],
-                //           ),
-                //         );
-                //       }).toList(),
-                //     ),
-                //   )
-// Improved Tablet Timeline View
-
-
-// Widget buildTimeline(String currentStatus) {
-  //   List<Map<String, String>> statuses = [
-  //     {'status': 'Placed', 'icon': '✅'},
-  //     {'status': 'Shipped', 'icon': '🚚'},
-  //     {'status': 'Delivered', 'icon': '📦'}
-  //   ];
-
-  //   if (currentStatus == 'Cancelled') {
-  //     statuses = [
-  //       {'status': 'Placed', 'icon': '✅'},
-  //       {'status': 'Cancelled', 'icon': '❌'}
-  //     ];
-  //   } else if (currentStatus == 'Failed') {
-  //     statuses = [
-  //       {'status': 'Placed', 'icon': '✅'},
-  //       {'status': 'Failed', 'icon': '⚠️'}
-  //     ];
-  //   }
-
-  //   final currentIndex =
-  //       statuses.indexWhere((element) => element['status'] == currentStatus);
-
-  //   return LayoutBuilder(
-  //     builder: (context, constraints) {
-  //       bool isTablet = constraints.maxWidth > 600;
-
-  //       return Card(
-  //         elevation: 4,
-  //         margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-  //         shape:
-  //             RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-  //         child: Padding(
-  //           padding: const EdgeInsets.all(20.0),
-  //           child: isTablet
-  //               ? Row(
-  //                   mainAxisAlignment: MainAxisAlignment.center,
-  //                   children: statuses.asMap().entries.map((entry) {
-  //                     int index = entry.key;
-  //                     Map<String, String> status = entry.value;
-  //                     bool isActive = index <= currentIndex;
-  //                     bool isCancelled =
-  //                         currentStatus == 'Cancelled' && index == currentIndex;
-  //                     bool isFailed =
-  //                         currentStatus == 'Failed' && index == currentIndex;
-
-  //                     return Expanded(
-  //                       child: Row(
-  //                         children: [
-  //                           Column(
-  //                             children: [
-  //                               Container(
-  //                                 width: 50,
-  //                                 height: 50,
-  //                                 alignment: Alignment.center,
-  //                                 decoration: BoxDecoration(
-  //                                   color: (isCancelled || isFailed)
-  //                                       ? const Color.fromARGB(
-  //                                           255, 249, 149, 142)
-  //                                       : (isActive
-  //                                           ? Colors.green
-  //                                           : Colors.grey.shade300),
-  //                                   shape: BoxShape.circle,
-  //                                   boxShadow: isActive
-  //                                       ? [
-  //                                           BoxShadow(
-  //                                               color: Colors.green.shade400,
-  //                                               blurRadius: 10)
-  //                                         ]
-  //                                       : [],
-  //                                 ),
-  //                                 child: Text(
-  //                                   status['icon']!,
-  //                                   style: const TextStyle(fontSize: 24),
-  //                                 ),
-  //                               ),
-  //                               const SizedBox(height: 8),
-  //                               Text(
-  //                                 status['status']!,
-  //                                 style: TextStyle(
-  //                                   fontSize: 18,
-  //                                   fontWeight: FontWeight.bold,
-  //                                   color: Colors.black,
-  //                                 ),
-  //                               ),
-  //                               Text(
-  //                                 "Updated: ${formatDate(DateTime.now())}",
-  //                                 style: TextStyle(
-  //                                     fontSize: 14,
-  //                                     color: Colors.grey.shade600),
-  //                               ),
-  //                             ],
-  //                           ),
-  //                           if (index != statuses.length - 1)
-  //                             Expanded(
-  //                               child: Container(
-  //                                 height: 5,
-  //                                 margin:
-  //                                     const EdgeInsets.symmetric(horizontal: 5),
-  //                                 decoration: BoxDecoration(
-  //                                   gradient: LinearGradient(
-  //                                     colors: index < currentIndex
-  //                                         ? [
-  //                                             Colors.green.shade400,
-  //                                             Colors.green
-  //                                           ]
-  //                                         : [
-  //                                             Colors.grey.shade300,
-  //                                             Colors.grey.shade400
-  //                                           ],
-  //                                     begin: Alignment.centerLeft,
-  //                                     end: Alignment.centerRight,
-  //                                   ),
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                         ],
-  //                       ),
-  //                     );
-  //                   }).toList(),
-  //                 )
-  //               : Column(
-  //                   children: List.generate(statuses.length, (index) {
-  //                     return Row(
-  //                       crossAxisAlignment: CrossAxisAlignment.center,
-  //                       children: [
-  //                         Column(
-  //                           children: [
-  //                             Container(
-  //                               width: 30,
-  //                               height: 30,
-  //                               alignment: Alignment.center,
-  //                               decoration: BoxDecoration(
-  //                                 color: (index <= currentIndex)
-  //                                     ? Colors.green
-  //                                     : Colors.grey.shade300,
-  //                                 shape: BoxShape.circle,
-  //                                 boxShadow: index <= currentIndex
-  //                                     ? [
-  //                                         BoxShadow(
-  //                                             color: Colors.green.shade400,
-  //                                             blurRadius: 8)
-  //                                       ]
-  //                                     : [],
-  //                               ),
-  //                               child: Text(
-  //                                 statuses[index]['icon']!,
-  //                                 style: const TextStyle(fontSize: 18),
-  //                               ),
-  //                             ),
-  //                             if (index != statuses.length - 1)
-  //                               Container(
-  //                                 width: 5,
-  //                                 height: 50,
-  //                                 decoration: BoxDecoration(
-  //                                   gradient: LinearGradient(
-  //                                     colors: index < currentIndex
-  //                                         ? [
-  //                                             Colors.green.shade400,
-  //                                             Colors.green
-  //                                           ]
-  //                                         : [
-  //                                             Colors.grey.shade300,
-  //                                             Colors.grey.shade400  
-  //                                           ],
-  //                                     begin: Alignment.topCenter,
-  //                                     end: Alignment.bottomCenter,
-  //                                   ),
-  //                                 ),
-  //                               ),
-  //                           ],
-  //                         ),
-  //                         const SizedBox(width: 15),
-  //                         Expanded(
-  //                           child: Padding(
-  //                             padding:
-  //                                 const EdgeInsets.symmetric(vertical: 8.0),
-  //                             child: Column(
-  //                               crossAxisAlignment: CrossAxisAlignment.start,
-  //                               children: [
-  //                                 Text(
-  //                                   statuses[index]['status']!,
-  //                                   style: TextStyle(
-  //                                     color: Colors.black,
-  //                                     fontSize: 18,
-  //                                     fontWeight: FontWeight.bold,
-  //                                   ),
-  //                                 ),
-  //                                 Text(
-  //                                   "Updated: ${formatDate(DateTime.now())}",
-  //                                   style: TextStyle(
-  //                                     fontSize: 14,
-  //                                     color: Colors.grey.shade600,
-  //                                   ),
-  //                                 ),
-  //                               ],
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     );
-  //                   }),
-  //                 ),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }

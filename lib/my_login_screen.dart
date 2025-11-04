@@ -1,181 +1,16 @@
-// import 'package:flutter/material.dart';
-
-// class LoginScreen extends StatefulWidget {
-//   const LoginScreen({super.key});
-
-//   @override
-//   State<LoginScreen> createState() => _LoginScreenState();
-// }
-
-// class _LoginScreenState extends State<LoginScreen> {
-//   final _emailController = TextEditingController();
-//   final _passwordController = TextEditingController();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     const primaryColor = Color.fromARGB(255, 38, 81, 99);
-
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       body: SafeArea(
-//         child: Center(
-//           child: SingleChildScrollView(
-//             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.center,
-//               children: [
-//                 // App logo / icon
-//                 Container(
-//                   padding: const EdgeInsets.all(20),
-//                   decoration: BoxDecoration(
-//                     color: primaryColor.withOpacity(0.1),
-//                     shape: BoxShape.circle,
-//                   ),
-//                   child: const Icon(
-//                     Icons.chair, // Furniture vibe
-//                     color: primaryColor,
-//                     size: 80,
-//                   ),
-//                 ),
-//                 const SizedBox(height: 24),
-
-//                 // Title
-//                 const Text(
-//                   "Welcome Back",
-//                   style: TextStyle(
-//                     fontSize: 28,
-//                     fontWeight: FontWeight.bold,
-//                     color: primaryColor,
-//                   ),
-//                 ),
-//                 const SizedBox(height: 8),
-//                 const Text(
-//                   "Login to continue",
-//                   style: TextStyle(
-//                     fontSize: 16,
-//                     color: Colors.black54,
-//                   ),
-//                 ),
-//                 const SizedBox(height: 40),
-
-//                 // Email field
-//                 TextField(
-//                   controller: _emailController,
-//                   decoration: InputDecoration(
-//                     prefixIcon: const Icon(Icons.email_outlined, color: primaryColor),
-//                     hintText: "Email Address",
-//                     filled: true,
-//                     fillColor: Colors.grey.shade100,
-//                     contentPadding: const EdgeInsets.symmetric(vertical: 18),
-//                     border: OutlineInputBorder(
-//                       borderRadius: BorderRadius.circular(16),
-//                       borderSide: BorderSide.none,
-//                     ),
-//                   ),
-//                 ),
-//                 const SizedBox(height: 20),
-
-//                 // Password field
-//                 TextField(
-//                   controller: _passwordController,
-//                   obscureText: true,
-//                   decoration: InputDecoration(
-//                     prefixIcon: const Icon(Icons.lock_outline, color: primaryColor),
-//                     hintText: "Password",
-//                     filled: true,
-//                     fillColor: Colors.grey.shade100,
-//                     contentPadding: const EdgeInsets.symmetric(vertical: 18),
-//                     border: OutlineInputBorder(
-//                       borderRadius: BorderRadius.circular(16),
-//                       borderSide: BorderSide.none,
-//                     ),
-//                   ),
-//                 ),
-//                 const SizedBox(height: 14),
-
-//                 // Forgot password
-//                 Align(
-//                   alignment: Alignment.centerRight,
-//                   child: TextButton(
-//                     onPressed: () {},
-//                     child: const Text(
-//                       "Forgot Password?",
-//                       style: TextStyle(
-//                         color: primaryColor,
-//                         fontWeight: FontWeight.w500,
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 const SizedBox(height: 10),
-
-//                 // Login button
-//                 SizedBox(
-//                   width: double.infinity,
-//                   height: 55,
-//                   child: ElevatedButton(
-//                     style: ElevatedButton.styleFrom(
-//                       backgroundColor: primaryColor,
-//                       shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(16),
-//                       ),
-//                       elevation: 6,
-//                       shadowColor: primaryColor.withOpacity(0.4),
-//                     ),
-//                     onPressed: () {
-//                       // Handle login
-//                     },
-//                     child: const Text(
-//                       "Login",
-//                       style: TextStyle(
-//                         fontSize: 18,
-//                         fontWeight: FontWeight.bold,
-//                         color: Colors.white,
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 const SizedBox(height: 25),
-
-//                 // Register link
-//                 Row(
-//                   mainAxisAlignment: MainAxisAlignment.center,
-//                   children: [
-//                     const Text("Don't have an account? "),
-//                     GestureDetector(
-//                       onTap: () {},
-//                       child: const Text(
-//                         "Register",
-//                         style: TextStyle(
-//                           color: primaryColor,
-//                           fontWeight: FontWeight.w600,
-//                         ),
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/my_register_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class MyLoginScreen extends StatefulWidget {
+  const MyLoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<MyLoginScreen> createState() => _MyLoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _MyLoginScreenState extends State<MyLoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -186,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-     appBar: PreferredSize(
+      appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80.0),
         child: Container(
           decoration: const BoxDecoration(
@@ -218,25 +53,23 @@ class _LoginScreenState extends State<LoginScreen> {
       body: SafeArea(
         child: Stack(
           children: [
-            
             Align(
               alignment: Alignment.topCenter,
               child: Padding(
-                padding: const EdgeInsets.only(top: 40),
+                padding: const EdgeInsets.only(top: 20),
                 child: Container(
-                  padding: const EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(17),
                   decoration: BoxDecoration(
                     color: primaryColor.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.chair, color: primaryColor, size: 80),
+                  child: const Icon(Icons.chair, color: primaryColor, size: 70),
                 ),
               ),
             ),
 
-            // Form content
             Positioned(
-              top: screenHeight * 0.25, // Start below logo
+              top: screenHeight * 0.20, 
               left: 0,
               right: 0,
               bottom: 0,
@@ -248,20 +81,18 @@ class _LoginScreenState extends State<LoginScreen> {
                     const Text(
                       "Welcome Back!",
                       style: TextStyle(
-                        fontSize: 28,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: primaryColor,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    const Text(
-                      "Login to continue",
-                      style: TextStyle(fontSize: 16, color: Colors.black54),
-                    ),
-                    const SizedBox(height: 40),
+                  
+                    const SizedBox(height: 20),
 
                     // Email
                     TextField(
+                      cursorHeight: 20,
+                      cursorColor:primaryColor ,
                       controller: _emailController,
                       decoration: InputDecoration(
                         prefixIcon: const Icon(
@@ -269,10 +100,11 @@ class _LoginScreenState extends State<LoginScreen> {
                           color: primaryColor,
                         ),
                         hintText: "Email Address",
+                        hintStyle: const TextStyle(fontSize: 12),
                         filled: true,
                         fillColor: Colors.grey.shade100,
                         contentPadding: const EdgeInsets.symmetric(
-                          vertical: 18,
+                          vertical: 12,
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
@@ -282,8 +114,9 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    // Password
                     TextField(
+                      cursorHeight: 20,
+                      cursorColor:primaryColor ,
                       controller: _passwordController,
                       obscureText: true,
                       decoration: InputDecoration(
@@ -291,11 +124,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           Icons.lock_outline,
                           color: primaryColor,
                         ),
+                        hintStyle: const TextStyle(fontSize: 12),
+
                         hintText: "Password",
                         filled: true,
                         fillColor: Colors.grey.shade100,
                         contentPadding: const EdgeInsets.symmetric(
-                          vertical: 18,
+                          vertical: 12,
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
@@ -321,27 +156,29 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 10),
 
                     // Login button
-                    SizedBox(
-                      width: double.infinity,
-                      height: 55,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: primaryColor,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                    Center(
+                      child: SizedBox(
+                        width: 120,
+                        height: 50,
+                      
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 6,
+                            shadowColor: primaryColor.withOpacity(0.4),
                           ),
-                          elevation: 6,
-                          shadowColor: primaryColor.withOpacity(0.4),
-                        ),
-                        onPressed: () {
-                          // Handle login
-                        },
-                        child: const Text(
-                          "Login",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                          onPressed: () {
+                          },
+                          child: const Text(
+                            "Login",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),

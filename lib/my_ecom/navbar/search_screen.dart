@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/search_service.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/result_screen.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 
@@ -65,7 +67,7 @@ class _SearchScreenState extends State<SearchScreen> {
     });
 
     try {
-      final suggestions = await ApiService().searchProductsWithRelated(query);
+      final suggestions = await SearchService.searchProductsWithRelated(query);
       setState(() {
         _searchSuggestions = suggestions;
         _isLoading = false;
@@ -97,9 +99,7 @@ class _SearchScreenState extends State<SearchScreen> {
       _focusNode.unfocus();
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => ResultScreen(query: query),
-        ),
+        MaterialPageRoute(builder: (context) => ResultScreen(query: query)),
       ).then((_) {
         searchController.clear();
       });
@@ -124,7 +124,7 @@ class _SearchScreenState extends State<SearchScreen> {
               boxShadow: [
                 BoxShadow(
                   color: _isFocused
-                      ? Colors.green.withOpacity(0.7)
+                      ? mythemecolor
                       : Colors.grey.withOpacity(0.5),
                   spreadRadius: 2,
                   blurRadius: 6,
@@ -132,7 +132,7 @@ class _SearchScreenState extends State<SearchScreen> {
               ],
               border: Border.all(
                 color: _isFocused
-                    ? const Color.fromARGB(255, 8, 86, 10)
+                    ? mythemecolor
                     : Colors.transparent,
                 width: 1.5,
               ),
@@ -171,7 +171,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   icon: const Icon(
                     Icons.search,
                     size: 28,
-                    color: Color.fromARGB(255, 22, 93, 25),
+                    color: mythemecolor
                   ),
                 ),
               ],
@@ -193,9 +193,8 @@ class _SearchScreenState extends State<SearchScreen> {
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 8.0),
               child: Center(
-                  child: CircularProgressIndicator(
-                color: Colors.white,
-              )),
+                child: CircularProgressIndicator(color: Colors.white),
+              ),
             ),
           if (_searchSuggestions.isNotEmpty)
             Container(
@@ -240,15 +239,14 @@ class _SearchScreenState extends State<SearchScreen> {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(
-                        '₹${product.offerPrice. round()}',
+                        '₹${product.offerPrice.round()}',
                         style: const TextStyle(
                           color: Colors.green,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       onTap: () {
-                        print(
-                            "Tapped product ID: ${product.id}"); 
+                        print("Tapped product ID: ${product.id}");
 
                         _focusNode.unfocus();
                         Navigator.push(
@@ -271,137 +269,3 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 }
-
-// import 'package:flutter/material.dart';
-// // import 'package:model_app/constants/snackbar.dart';
-// import 'package:model_app/navbar/result_screen.dart';
-
-// class SearchScreen extends StatefulWidget {
-//   const SearchScreen({super.key});
-
-//   @override
-//   State<SearchScreen> createState() => _SearchScreenState();
-// }
-
-// class _SearchScreenState extends State<SearchScreen> {
-//   final TextEditingController searchController = TextEditingController();
-//   String? _errorText;
-
-//   final FocusNode _focusNode = FocusNode();
-//   bool _isFocused = false;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _focusNode.addListener(() {
-//       setState(() {
-//         _isFocused = _focusNode.hasFocus;
-//       });
-//     });
-//   }
-
-//   @override
-//   void dispose() {
-//     _focusNode.dispose();
-//     searchController.dispose();
-//     super.dispose();
-//   }
-
-//   void navigateToResults(String query) {
-//     if (query.isNotEmpty) {
-//       setState(() {
-//         _errorText = null; // clear error
-//       });
-//       Navigator.push(
-//         context,
-//         MaterialPageRoute(
-//           builder: (context) => ResultScreen(query: query),
-//         ),
-//       ).then((_) {
-//         searchController.clear();
-//       });
-//     } else {
-//       setState(() {
-//         _errorText = "Please enter a search item and proceed! ";
-//       });
-//     }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Padding(
-//       padding: const EdgeInsets.all(16.0),
-//       child: Column(
-//         crossAxisAlignment: CrossAxisAlignment.start,
-//         children: [
-//           Container(
-//             decoration: BoxDecoration(
-//               color: Colors.white,
-//               borderRadius: BorderRadius.circular(8.0),
-//               boxShadow: [
-//                 BoxShadow(
-//                   color: _isFocused
-//                       ? Colors.green.withOpacity(0.7)
-//                       : Colors.grey.withOpacity(0.5),
-//                   spreadRadius: 2,
-//                   blurRadius: 6,
-//                 ),
-//               ],
-//               border: Border.all(
-//                 color: _isFocused
-//                     ? const Color.fromARGB(255, 8, 86, 10)
-//                     : Colors.transparent,
-//                 width: 1.5,
-//               ),
-//             ),
-//             child: Row(
-//               children: [
-//                 Expanded(
-//                   child: Padding(
-//                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-//                     child: TextField(
-//                       focusNode: _focusNode,
-//                       controller: searchController,
-//                       decoration: const InputDecoration(
-//                         hintText:
-//                             'Search by Products, category, title, price..',
-//                         hintStyle: TextStyle(
-//                           color: Color.fromARGB(255, 102, 104, 102),
-//                           fontSize: 15,
-//                         ),
-//                         border: InputBorder.none,
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 IconButton(
-//                   onPressed: () {
-//                     String query = searchController.text.trim();
-//                     navigateToResults(query);
-//                   },
-//                   icon: const Icon(
-//                     Icons.search,
-//                     size: 28,
-//                     color: Color.fromARGB(255, 22, 93, 25),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//           ),
-//           if (_errorText != null) // <-- show error if exists
-//             Padding(
-//               padding: const EdgeInsets.only(top: 8.0, left: 4.0),
-//               child: Text(
-//                 _errorText!,
-//                 style: const TextStyle(
-//                   color: Color.fromARGB(255, 246, 95, 85),
-//                   fontSize: 13,
-//                   fontWeight: FontWeight.bold
-//                 ),
-//               ),
-//             ),
-//         ],
-//       ),
-//     );
-//   }
-// }

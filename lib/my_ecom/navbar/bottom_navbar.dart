@@ -4,6 +4,7 @@ import 'package:furniture_ecom_app/my_ecom/authentication/provider/login_provide
 import 'package:furniture_ecom_app/my_ecom/authentication/user_profile.dart';
 import 'package:furniture_ecom_app/my_ecom/categories.dart';
 import 'package:furniture_ecom_app/my_ecom/homepage.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/favorites.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_list.dart';
 
@@ -56,7 +57,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(Icons.warning_amber_rounded,
-                          size: 50, color: Color.fromARGB(255, 22, 140, 32)),
+                          size: 50, color: mythemecolor),
                       const SizedBox(height: 15),
                       const Text(
                         "Exit App",
@@ -104,7 +105,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                             onPressed: () => Navigator.of(context).pop(true),
                             style: ElevatedButton.styleFrom(
                               backgroundColor:
-                                  const Color.fromARGB(255, 57, 136, 34),
+                                   mythemecolor,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
@@ -164,8 +165,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       currentIndex = index;
                     });
                   },
-                  selectedItemColor: const Color.fromARGB(255, 21, 108, 24),
-                  unselectedItemColor: const Color.fromARGB(255, 68, 67, 67),
+                  selectedItemColor: mythemecolor,
+                  unselectedItemColor: const Color.fromARGB(255, 82, 82, 82),
                   showSelectedLabels: true,
                   showUnselectedLabels: true,
                   selectedLabelStyle: const TextStyle(
@@ -281,7 +282,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 //                     mainAxisSize: MainAxisSize.min,
 //                     children: [
 //                       const Icon(Icons.warning_amber_rounded,
-//                           size: 50, color: Color.fromARGB(255, 22, 140, 32)),
+//                           size: 50, color: mythemecolor),
 //                       const SizedBox(height: 15),
 //                       const Text(
 //                         "Exit App",
@@ -329,7 +330,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 //                             onPressed: () => Navigator.of(context).pop(true),
 //                             style: ElevatedButton.styleFrom(
 //                               backgroundColor:
-//                                   const Color.fromARGB(255, 57, 136, 34),
+//                                   const mythemecolor
 //                               shape: RoundedRectangleBorder(
 //                                 borderRadius: BorderRadius.circular(10),
 //                               ),

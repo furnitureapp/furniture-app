@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/services/wishlist_service.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,7 +26,7 @@ class WishlistManager extends ChangeNotifier {
 
   Future<void> _fetchWishlistFromAPI() async {
     try {
-      final wishlistItems = await ApiService.getWishlistItems();
+      final wishlistItems = await WishlistService.getWishlistItems();
       _wishlist.clear();
       _wishlist.addAll(wishlistItems.map((item) => item['_id'] as String));
       await _saveWishlist(); // Save to local storage
@@ -64,11 +64,11 @@ class WishlistManager extends ChangeNotifier {
 
     try {
       if (alreadyInWishlist) {
-        await ApiService.removeFromWishlist(productId);
+        await WishlistService.removeFromWishlist(productId);
         _wishlist.remove(productId);
         showTopSnackBar(context, "Removed from wishlist");
       } else {
-        await ApiService.addToWishlist(productId);
+        await WishlistService.addToWishlist(productId);
         _wishlist.add(productId);
         showTopSnackBar(context, "Added to wishlist");
       }
@@ -87,7 +87,7 @@ class WishlistManager extends ChangeNotifier {
   Future<void> removeFromWishlist(
       String productId, BuildContext context) async {
     try {
-      await ApiService.removeFromWishlist(productId);
+      await WishlistService.removeFromWishlist(productId);
       _wishlist.remove(productId);
       await _saveWishlist();
       notifyListeners();

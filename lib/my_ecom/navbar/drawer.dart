@@ -1,7 +1,9 @@
 
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/settings_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -9,7 +11,6 @@ import 'package:url_launcher/url_launcher.dart';
 class CustomDrawer extends StatelessWidget {
   const CustomDrawer({super.key});
 
-  static const Color kGreen = Color.fromARGB(255, 4, 73, 6);
 
   Future<void> _launchUrl(String url) async {
     final uri = Uri.parse(url);
@@ -27,7 +28,7 @@ class CustomDrawer extends StatelessWidget {
       backgroundColor: Colors.white,
       width: isTablet ? screenWidth * 0.4 : 304,
       child: FutureBuilder<ShopSettings?>(
-        future: ApiService.fetchShopSettings(),
+        future: SettingsService.fetchShopSettings(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return  Center(child: AnimationPage1());
@@ -45,14 +46,25 @@ class CustomDrawer extends StatelessWidget {
 
               Container(
                 padding: const EdgeInsets.all(16),
-                color: kGreen,
+                color: mythemecolor,
                 child: Row(
                   children: [
                     CircleAvatar(
-                      backgroundImage: NetworkImage(settings.profileImage),
+                      backgroundImage:
+                       NetworkImage(settings.profileImage),
                       radius: isTablet ? 35 : 25,
                     ),
-                   
+                  //  CircleAvatar(
+                  //     radius: isTablet ? 35 : 25,
+                  //     backgroundColor: Colors.white,
+                  //     child: Image.asset(
+                  //       'assets/images/kaii.jpg', 
+                  //       height: isTablet ? 50 : 105,
+                  //       width: isTablet ? 50 : 105,
+                  //       fit: BoxFit.contain,
+                  //     ),
+                  //   ),
+
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
@@ -72,7 +84,7 @@ class CustomDrawer extends StatelessWidget {
                 child: ListView(
                   children: [
                     ListTile(
-                      leading: const Icon(Icons.location_on, color: kGreen),
+                      leading: const Icon(Icons.location_on, color: mythemecolor),
                       title: Text(
                         "Our Location",
                         style: TextStyle(fontSize: isTablet ? 19 : 14),
@@ -80,7 +92,7 @@ class CustomDrawer extends StatelessWidget {
                       onTap: () => _launchUrl(settings.mapLink),
                     ),
                     ListTile(
-                      leading: const Icon(Icons.share, color: kGreen),
+                      leading: const Icon(Icons.share, color: mythemecolor),
                       title: Text(
                         "Invite Friends",
                         style: TextStyle(fontSize: isTablet ? 19 : 14),
@@ -93,7 +105,7 @@ class CustomDrawer extends StatelessWidget {
                       },
                     ),
                     ListTile(
-                      leading: const Icon(Icons.web, color: kGreen),
+                      leading: const Icon(Icons.web, color: mythemecolor),
                       title: Text(
                         "Visit Website",
                         style: TextStyle(fontSize: isTablet ? 19 : 14),
@@ -101,7 +113,7 @@ class CustomDrawer extends StatelessWidget {
                       onTap: () => _launchUrl(settings.websiteUrl),
                     ),
                     ListTile(
-                      leading: const Icon(Icons.call, color: kGreen),
+                      leading: const Icon(Icons.call, color: mythemecolor),
                       title: Text(
                         "24/7 Phone Support",
                         style: TextStyle(fontSize: isTablet ? 19 : 14),
@@ -109,7 +121,7 @@ class CustomDrawer extends StatelessWidget {
                       onTap: () => _launchUrl("tel:${settings.phoneNumber}"),
                     ),
                     ListTile(
-                      leading: const Icon(Icons.chat, color: kGreen),
+                      leading: const Icon(Icons.chat, color: mythemecolor),
                       title: Text(
                         "24/7 Chat Support",
                         style: TextStyle(fontSize: isTablet ? 19 : 14),
@@ -119,7 +131,7 @@ class CustomDrawer extends StatelessWidget {
                     ),
                     const Divider(),
                     ListTile(
-                      leading: const Icon(Icons.privacy_tip, color: kGreen),
+                      leading: const Icon(Icons.privacy_tip, color: mythemecolor),
                       title: Text(
                         "Privacy Policy",
                         style: TextStyle(fontSize: isTablet ? 19 : 14),
@@ -129,7 +141,7 @@ class CustomDrawer extends StatelessWidget {
                       },
                     ),
                     ListTile(
-                      leading: const Icon(Icons.description, color: kGreen),
+                      leading: const Icon(Icons.description, color: mythemecolor),
                       title: Text(
                         "Terms & Conditions",
                         style: TextStyle(fontSize: isTablet ? 19 : 14),

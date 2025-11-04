@@ -1,12 +1,14 @@
 // import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/settings_service.dart';
+import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/update_address.dart';
 import 'package:furniture_ecom_app/my_ecom/payment/payment_options.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
-import 'package:furniture_ecom_app/my_login_screen.dart';
 // import 'package:http/http.dart' as http;
 
 // import 'package:share_plus/share_plus.dart';
@@ -72,7 +74,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
 
   Future<void> _fetchSettings() async {
     try {
-      final settings = await ApiService.getSettings();
+      final settings = await SettingsService.getSettings();
       setState(() {
         _minOrderAmount = settings['minOrderAmount'];
       });
@@ -355,7 +357,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
       ),
 
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(color: mythemecolor,))
           : _isLoggedIn
               ? isTablet
                   ? _buildTabletView(context, product)
@@ -1199,57 +1201,3 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
     );
   }
 }
-
-
- // Padding(
-        //   padding: const EdgeInsets.fromLTRB(20, 10, 20, 60),
-        //   child: Row(
-        //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        //     children: [
-        //       Text(
-        //         "Total: ₹${totalAmount. round()}",
-        //         style: const TextStyle(
-        //             color: Colors.black,
-        //             fontSize: 18,
-        //             fontWeight: FontWeight.bold),
-        //       ),
-        //       ElevatedButton(
-        //         onPressed: () {
-        //           if (selectedDeliveryId == null || _houseNo == "No HouseNo") {
-        //             ScaffoldMessenger.of(context).showSnackBar(
-        //               const SnackBar(
-        //                   content: Text("Please select a delivery address.")),
-        //             );
-        //             return;
-        //           }
-
-        //           Navigator.push(
-        //             context,
-        //             MaterialPageRoute(
-        //               builder: (context) => ExpansionTileControllers(
-        //                   totalAmount: totalAmount,
-        //                   type: 'buyNow',
-        //                   productId: widget.product.id,
-        //                   selectedDeliveryId: selectedDeliveryId,
-        //                   quantity: quantity.toString(),
-        //                   offerId: widget.offerId),
-        //             ),
-        //           );
-        //         },
-        //         style: ElevatedButton.styleFrom(
-        //           backgroundColor: Colors.green,
-        //           padding: EdgeInsets.all(10),
-        //           textStyle: TextStyle(
-        //             fontSize: 12,
-        //             fontWeight: FontWeight.bold,
-        //           ),
-        //           foregroundColor: Colors.white,
-        //           shape: RoundedRectangleBorder(
-        //             borderRadius: BorderRadius.circular(10),
-        //           ),
-        //         ),
-        //         child: Text("CONFIRM ORDER"),
-        //       ),
-        //     ],
-        //   ),
-        // ),

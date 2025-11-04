@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/product_service.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/offer/offer.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
@@ -178,8 +179,7 @@ class _OfferPageState extends State<OfferPage> {
     });
 
     try {
-      // Replace with your offers API if available
-      List<Product> fetchedProducts = await ApiService.fetchAllProducts();
+      List<Product> fetchedProducts = await ProductService.fetchAllProducts();
 
       setState(() {
         products = fetchedProducts;

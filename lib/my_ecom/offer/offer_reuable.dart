@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
 
 
 class MyOfferWidget extends StatelessWidget {

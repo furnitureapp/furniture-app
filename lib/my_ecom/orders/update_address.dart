@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/delivery_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/add_delivery_details.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/edituserdetails.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
@@ -38,7 +39,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
 
   Future<void> _fetchDeliveryAddresses() async {
     try {
-      List<dynamic> response = await ApiService.mygetDeliveryDetails();
+      List<dynamic> response = await DeliveryService.mygetDeliveryDetails();
 
       if (!mounted) return;
 
@@ -75,8 +76,9 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       final savedAddressId = prefs.getString('selectedAddressId');
-      bool addressExistsInDb =
-          _deliveryAddresses.any((address) => address['id'] == savedAddressId);
+      bool addressExistsInDb = _deliveryAddresses.any(
+        (address) => address['id'] == savedAddressId,
+      );
 
       if (!addressExistsInDb) {
         print("Saved address not found, clearing preferences.");
@@ -141,8 +143,10 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
     });
   }
 
-  Future<void> _onAddressSelected(String addressId,
-      {bool saveToPrefs = true}) async {
+  Future<void> _onAddressSelected(
+    String addressId, {
+    bool saveToPrefs = true,
+  }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     Map<String, dynamic>? selectedAddress = _deliveryAddresses.firstWhere(
       (address) => address['id'] == addressId,
@@ -156,14 +160,17 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
         await prefs.setString('selectedPhoneNo', selectedAddress['phoneNo']);
         await prefs.setString('selectedHouseNo', selectedAddress['houseNo']);
         await prefs.setString(
-            'selectedStreetName', selectedAddress['streetName']);
+          'selectedStreetName',
+          selectedAddress['streetName'],
+        );
         await prefs.setString('selectedCity', selectedAddress['city']);
         await prefs.setString('selectedState', selectedAddress['state']);
         await prefs.setString('selectedPinCode', selectedAddress['pinCode']);
       }
 
       print(
-          "Saved Address: ID: $addressId, Name: ${selectedAddress['username']}");
+        "Saved Address: ID: $addressId, Name: ${selectedAddress['username']}",
+      );
 
       if (!mounted) return;
       setState(() {
@@ -191,46 +198,47 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
           city: address['city'],
           state: address['state'],
           pinCode: address['pinCode'],
-          onUpdate: ({
-            required String updatedUsername,
-            required String updatedPhoneNo,
-            required String houseNo,
-            required String streetName,
-            required String city,
-            required String state,
-            required String pinCode,
-          }) async {
-            await ApiService.myupdateDelivery(
-              deliveryId: address['id'],
-              phoneNo: updatedPhoneNo,
-              username: updatedUsername,
-              houseNo: houseNo,
-              streetName: streetName,
-              city: city,
-              state: state,
-              pinCode: pinCode,
-            );
-            setState(() {
-              address['username'] = updatedUsername;
-              address['phoneNo'] = updatedPhoneNo;
-              address['houseNo'] = houseNo;
-              address['streetName'] = streetName;
-              address['city'] = city;
-              address['state'] = state;
-              address['pinCode'] = pinCode;
-            });
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            await prefs.setString('selectedUsername', updatedUsername);
-            await prefs.setString('selectedPhoneNo', updatedPhoneNo);
-            await prefs.setString('selectedHouseNo', houseNo);
-            await prefs.setString('selectedStreetName', streetName);
-            await prefs.setString('selectedCity', city);
-            await prefs.setString('selectedState', state);
-            await prefs.setString('selectedPinCode', pinCode);
-            if (context.mounted) {
-              Navigator.pop(context, true);
-            }
-          },
+          onUpdate:
+              ({
+                required String updatedUsername,
+                required String updatedPhoneNo,
+                required String houseNo,
+                required String streetName,
+                required String city,
+                required String state,
+                required String pinCode,
+              }) async {
+                await DeliveryService.myupdateDelivery(
+                  deliveryId: address['id'],
+                  phoneNo: updatedPhoneNo,
+                  username: updatedUsername,
+                  houseNo: houseNo,
+                  streetName: streetName,
+                  city: city,
+                  state: state,
+                  pinCode: pinCode,
+                );
+                setState(() {
+                  address['username'] = updatedUsername;
+                  address['phoneNo'] = updatedPhoneNo;
+                  address['houseNo'] = houseNo;
+                  address['streetName'] = streetName;
+                  address['city'] = city;
+                  address['state'] = state;
+                  address['pinCode'] = pinCode;
+                });
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                await prefs.setString('selectedUsername', updatedUsername);
+                await prefs.setString('selectedPhoneNo', updatedPhoneNo);
+                await prefs.setString('selectedHouseNo', houseNo);
+                await prefs.setString('selectedStreetName', streetName);
+                await prefs.setString('selectedCity', city);
+                await prefs.setString('selectedState', state);
+                await prefs.setString('selectedPinCode', pinCode);
+                if (context.mounted) {
+                  Navigator.pop(context, true);
+                }
+              },
         );
       },
     );
@@ -278,13 +286,16 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: 
-      isTablet ? null :
-       SafeArea(
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-          color: Colors.white,
-          child:  Row(
+      bottomNavigationBar: isTablet
+          ? null
+          : SafeArea(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 10,
+                ),
+                color: Colors.white,
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     if (_deliveryAddresses.isNotEmpty &&
@@ -306,16 +317,25 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                 setState(() {});
                               }
                             },
-                            icon: const Icon(Icons.add,
-                                size: 16, color: Colors.white),
+                            icon: const Icon(
+                              Icons.add,
+                              size: 16,
+                              color: Colors.white,
+                            ),
                             label: const Text(
                               "Add Address",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 12),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 0, 148, 211),
+                              backgroundColor: const Color.fromARGB(
+                                255,
+                                0,
+                                148,
+                                211,
+                              ),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -358,12 +378,10 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                     ),
                   ],
                 ),
-        ),
-      ),
+              ),
+            ),
       body: _isLoading
-          ? const Center(
-              child: AnimationPage1(),
-            )
+          ? const Center(child: AnimationPage1())
           : RefreshIndicator(
               onRefresh: () async {
                 setState(() {
@@ -398,7 +416,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                               gradient: const LinearGradient(
                                 colors: [
                                   Color.fromARGB(255, 249, 254, 222),
-                                  Color.fromARGB(255, 253, 234, 175)
+                                  Color.fromARGB(255, 253, 234, 175),
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
@@ -441,15 +459,20 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor:
-                                        const Color.fromARGB(255, 254, 209, 93),
+                                    backgroundColor: const Color.fromARGB(
+                                      255,
+                                      254,
+                                      209,
+                                      93,
+                                    ),
                                     padding: EdgeInsets.symmetric(
                                       horizontal: 40,
                                       vertical: 14,
                                     ),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(
-                                          isTablet ? 12 : 0),
+                                        isTablet ? 12 : 0,
+                                      ),
                                     ),
                                   ),
                                   child: Text(
@@ -459,7 +482,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                       fontSize: isTablet ? 18 : 16,
                                     ),
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ),
@@ -491,136 +514,159 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                 final fullAddress =
                                     '${address['houseNo']}, ${address['streetName']}, ${address['city']}, ${address['state']} - ${address['pinCode']}';
 
-                                return Column(children: [
-                                  SizedBox(
-                                    width: isTablet ? 1100 : 500,
-                                    child: Card(
-                                      color: Colors.white,
-                                      elevation: 4,
-                                      margin: EdgeInsets.symmetric(
+                                return Column(
+                                  children: [
+                                    SizedBox(
+                                      width: isTablet ? 1100 : 500,
+                                      child: Card(
+                                        color: Colors.white,
+                                        elevation: 4,
+                                        margin: EdgeInsets.symmetric(
                                           vertical: isTablet ? 12 : 8,
-                                          horizontal: isTablet ? 8 : 4),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
+                                          horizontal: isTablet ? 8 : 4,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
                                             vertical: isTablet ? 12 : 8,
-                                            horizontal: isTablet ? 8 : 4),
-                                        child: Row(
-                                          children: [
-                                            Radio<String>(
-                                              value: address['id'],
-                                              groupValue: _selectedAddressId,
-                                              onChanged: (String? value) {
-                                                if (value != null) {
-                                                  _onAddressSelected(value);
-                                                }
-                                              },
-                                              activeColor: const Color.fromARGB(
-                                                  255, 4, 163, 225),
-                                              hoverColor: const Color.fromARGB(
-                                                  255, 6, 60, 104),
-                                            ),
-                                            isTablet
-                                                ? Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            const Icon(
+                                            horizontal: isTablet ? 8 : 4,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Radio<String>(
+                                                value: address['id'],
+                                                groupValue: _selectedAddressId,
+                                                onChanged: (String? value) {
+                                                  if (value != null) {
+                                                    _onAddressSelected(value);
+                                                  }
+                                                },
+                                                activeColor:
+                                                    const Color.fromARGB(
+                                                      255,
+                                                      4,
+                                                      163,
+                                                      225,
+                                                    ),
+                                                hoverColor:
+                                                    const Color.fromARGB(
+                                                      255,
+                                                      6,
+                                                      60,
+                                                      104,
+                                                    ),
+                                              ),
+                                              isTablet
+                                                  ? Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              const Icon(
                                                                 Icons.person,
                                                                 color:
                                                                     Colors.blue,
-                                                                size: 18),
-                                                            const SizedBox(
-                                                                width: 6),
-                                                            Text(
-                                                              address[
-                                                                  'username'],
-                                                              style: const TextStyle(
+                                                                size: 18,
+                                                              ),
+                                                              const SizedBox(
+                                                                width: 6,
+                                                              ),
+                                                              Text(
+                                                                address['username'],
+                                                                style: const TextStyle(
                                                                   fontSize: 15,
                                                                   fontWeight:
                                                                       FontWeight
-                                                                          .bold),
-                                                            ),
-                                                            const SizedBox(
-                                                                width: 10),
-                                                            const Icon(
+                                                                          .bold,
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                width: 10,
+                                                              ),
+                                                              const Icon(
                                                                 Icons.phone,
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        33,
-                                                                        150,
-                                                                        243,
-                                                                        1),
-                                                                size: 18),
-                                                            const SizedBox(
-                                                                width: 6),
-                                                            Text(
-                                                              address[
-                                                                  'phoneNo'],
-                                                              style:
-                                                                  const TextStyle(
+                                                                color:
+                                                                    Color.fromRGBO(
+                                                                      33,
+                                                                      150,
+                                                                      243,
+                                                                      1,
+                                                                    ),
+                                                                size: 18,
+                                                              ),
+                                                              const SizedBox(
+                                                                width: 6,
+                                                              ),
+                                                              Text(
+                                                                address['phoneNo'],
+                                                                style:
+                                                                    const TextStyle(
                                                                       fontSize:
-                                                                          15),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        const SizedBox(
-                                                            height: 8),
-                                                        Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            const Icon(
+                                                                          15,
+                                                                    ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 8,
+                                                          ),
+                                                          Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              const Icon(
                                                                 Icons
                                                                     .location_on,
                                                                 color:
                                                                     Colors.blue,
-                                                                size: 18),
-                                                            const SizedBox(
-                                                                width: 6),
-                                                            Expanded(
-                                                              child: Text(
-                                                                fullAddress,
-                                                                style: const TextStyle(
+                                                                size: 18,
+                                                              ),
+                                                              const SizedBox(
+                                                                width: 6,
+                                                              ),
+                                                              Expanded(
+                                                                child: Text(
+                                                                  fullAddress,
+                                                                  style: const TextStyle(
                                                                     fontSize:
                                                                         15,
                                                                     color: Colors
-                                                                        .black87),
-                                                                maxLines: 5,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
+                                                                        .black87,
+                                                                  ),
+                                                                  maxLines: 5,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                ),
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )
-                                                : Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Row(
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  : Expanded(
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Row(
                                                             mainAxisAlignment:
                                                                 MainAxisAlignment
                                                                     .spaceBetween,
                                                             children: [
                                                               Expanded(
                                                                 child: Text(
-                                                                  address[
-                                                                      'username'],
-                                                                  style:
-                                                                      const TextStyle(
+                                                                  address['username'],
+                                                                  style: const TextStyle(
                                                                     fontSize:
                                                                         14,
                                                                     fontWeight:
@@ -636,116 +682,134 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                                 ),
                                                               ),
                                                               IconButton(
-                                                                icon: const Icon(
-                                                                    Icons.edit),
+                                                                icon:
+                                                                    const Icon(
+                                                                      Icons
+                                                                          .edit,
+                                                                    ),
                                                                 iconSize: 20,
                                                                 onPressed: () =>
                                                                     _editAddress(
-                                                                        address),
+                                                                      address,
+                                                                    ),
                                                                 color:
                                                                     Colors.blue,
-                                                              )
-                                                            ]),
-                                                        const SizedBox(
-                                                            height: 4),
-                                                        Text(
-                                                          address['phoneNo'],
-                                                          style:
-                                                              const TextStyle(
-                                                            fontSize: 14,
-                                                            color:
-                                                                Colors.black87,
+                                                              ),
+                                                            ],
                                                           ),
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                        const SizedBox(
-                                                            height: 4),
-                                                        Text(
-                                                          fullAddress,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontSize: 14,
-                                                            color:
-                                                                Colors.black87,
+                                                          const SizedBox(
+                                                            height: 4,
                                                           ),
-                                                          maxLines: 5,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ],
+                                                          Text(
+                                                            address['phoneNo'],
+                                                            style:
+                                                                const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                ),
+                                                            maxLines: 1,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                          const SizedBox(
+                                                            height: 4,
+                                                          ),
+                                                          Text(
+                                                            fullAddress,
+                                                            style:
+                                                                const TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .black87,
+                                                                ),
+                                                            maxLines: 5,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
+                                              if (isTablet)
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    gradient:
+                                                        const LinearGradient(
+                                                          colors: [
+                                                            Color.fromARGB(
+                                                              255,
+                                                              97,
+                                                              217,
+                                                              244,
+                                                            ),
+                                                            Color(0xFF0083B0),
+                                                          ],
+                                                          begin:
+                                                              Alignment.topLeft,
+                                                          end: Alignment
+                                                              .bottomRight,
+                                                        ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          isTablet ? 12 : 10,
+                                                        ),
                                                   ),
-                                            if (isTablet)
-                                              Container(
-                                                decoration: BoxDecoration(
-                                                  gradient:
-                                                      const LinearGradient(
-                                                    colors: [
-                                                      Color.fromARGB(
-                                                          255, 97, 217, 244),
-                                                      Color(0xFF0083B0)
-                                                    ],
-                                                    begin: Alignment.topLeft,
-                                                    end: Alignment.bottomRight,
-                                                  ),
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          isTablet ? 12 : 10),
-                                                ),
-                                                child: ElevatedButton.icon(
-                                                  onPressed: () =>
-                                                      _editAddress(address),
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.transparent,
-                                                    shadowColor:
-                                                        Colors.transparent,
-                                                    minimumSize: Size(
+                                                  child: ElevatedButton.icon(
+                                                    onPressed: () =>
+                                                        _editAddress(address),
+                                                    style: ElevatedButton.styleFrom(
+                                                      backgroundColor:
+                                                          Colors.transparent,
+                                                      shadowColor:
+                                                          Colors.transparent,
+                                                      minimumSize: Size(
                                                         isTablet ? 200 : 100,
-                                                        isTablet ? 48 : 24),
-                                                    padding: isTablet
-                                                        ? const EdgeInsets
-                                                            .symmetric(
-                                                            vertical: 12,
-                                                            horizontal: 16)
-                                                        : const EdgeInsets.all(
-                                                            4),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              isTablet
-                                                                  ? 12
-                                                                  : 6),
+                                                        isTablet ? 48 : 24,
+                                                      ),
+                                                      padding: isTablet
+                                                          ? const EdgeInsets.symmetric(
+                                                              vertical: 12,
+                                                              horizontal: 16,
+                                                            )
+                                                          : const EdgeInsets.all(
+                                                              4,
+                                                            ),
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                              isTablet ? 12 : 6,
+                                                            ),
+                                                      ),
                                                     ),
-                                                  ),
-                                                  icon: Icon(
+                                                    icon: Icon(
                                                       Icons.edit_location_alt,
                                                       color: Colors.white,
-                                                      size: isTablet ? 20 : 16),
-                                                  label: Text(
-                                                    isTablet
-                                                        ? "Edit Delivery Details"
-                                                        : "Edit",
-                                                    style: TextStyle(
-                                                      fontSize:
-                                                          isTablet ? 16 : 14,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold,
+                                                      size: isTablet ? 20 : 16,
+                                                    ),
+                                                    label: Text(
+                                                      isTablet
+                                                          ? "Edit Delivery Details"
+                                                          : "Edit",
+                                                      style: TextStyle(
+                                                        fontSize: isTablet
+                                                            ? 16
+                                                            : 14,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ]);
+                                  ],
+                                );
                               },
                             ),
                             const SizedBox(height: 5),
@@ -753,7 +817,11 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                               isTablet
                                   ? Padding(
                                       padding: const EdgeInsets.fromLTRB(
-                                          20, 5, 20, 20),
+                                        20,
+                                        5,
+                                        20,
+                                        20,
+                                      ),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -764,7 +832,11 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                             width: 600,
                                             child: Card(
                                               color: const Color.fromARGB(
-                                                  255, 233, 241, 248),
+                                                255,
+                                                233,
+                                                241,
+                                                248,
+                                              ),
                                               elevation: 10,
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
@@ -772,8 +844,9 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                               ),
                                               margin: const EdgeInsets.all(8),
                                               child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(10),
+                                                padding: const EdgeInsets.all(
+                                                  10,
+                                                ),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -781,11 +854,13 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                     Row(
                                                       children: [
                                                         const Icon(
-                                                            Icons.location_on,
-                                                            color: Colors
-                                                                .blueAccent),
+                                                          Icons.location_on,
+                                                          color:
+                                                              Colors.blueAccent,
+                                                        ),
                                                         const SizedBox(
-                                                            width: 8),
+                                                          width: 8,
+                                                        ),
                                                         const Text(
                                                           "Selected Address",
                                                           style: TextStyle(
@@ -799,8 +874,9 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                       ],
                                                     ),
                                                     const Divider(
-                                                        thickness: 1,
-                                                        color: Colors.grey),
+                                                      thickness: 1,
+                                                      color: Colors.grey,
+                                                    ),
                                                     const SizedBox(height: 10),
                                                     Text(
                                                       "Name     : ${_selectedUsername ?? ''}",
@@ -815,61 +891,61 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                     Text(
                                                       "Phone      : ${_selectedPhoneNo ?? ''}",
                                                       style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color:
-                                                              Colors.grey[800]),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey[800],
+                                                      ),
                                                     ),
                                                     const SizedBox(height: 6),
                                                     Text(
                                                       "House No : ${_selectedHouseNo ?? ''}",
                                                       style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color:
-                                                              Colors.grey[800]),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey[800],
+                                                      ),
                                                     ),
                                                     const SizedBox(height: 6),
                                                     Text(
                                                       "Street     : ${_selectedStreetName ?? ''}",
                                                       style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color:
-                                                              Colors.grey[800]),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey[800],
+                                                      ),
                                                     ),
                                                     const SizedBox(height: 6),
                                                     Text(
                                                       "City         : ${_selectedCity ?? ''}",
                                                       style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color:
-                                                              Colors.grey[800]),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey[800],
+                                                      ),
                                                     ),
                                                     const SizedBox(height: 6),
                                                     Text(
                                                       "State      : ${_selectedState ?? ''}",
                                                       style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color:
-                                                              Colors.grey[800]),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey[800],
+                                                      ),
                                                     ),
                                                     const SizedBox(height: 6),
                                                     Text(
                                                       "PIN Code : ${_selectedPinCode ?? ''}",
                                                       style: TextStyle(
-                                                          fontSize: 16,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color:
-                                                              Colors.grey[800]),
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.grey[800],
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -888,12 +964,12 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                     onPressed: () async {
                                                       final result =
                                                           await Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              const AddDeliveryDetailsScreen(),
-                                                        ),
-                                                      );
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  const AddDeliveryDetailsScreen(),
+                                                            ),
+                                                          );
                                                       if (result == true) {
                                                         await _fetchDeliveryAddresses();
                                                         setState(() {});
@@ -907,21 +983,26 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                     label: const Text(
                                                       "Add Address",
                                                       style: TextStyle(
-                                                          color: Colors.white),
+                                                        color: Colors.white,
+                                                      ),
                                                     ),
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 18),
+                                                    style: ElevatedButton.styleFrom(
+                                                      padding:
+                                                          const EdgeInsets.symmetric(
+                                                            vertical: 18,
+                                                          ),
                                                       backgroundColor:
                                                           const Color.fromARGB(
-                                                              255, 0, 148, 211),
-                                                      shape:
-                                                          RoundedRectangleBorder(
+                                                            255,
+                                                            0,
+                                                            148,
+                                                            211,
+                                                          ),
+                                                      shape: RoundedRectangleBorder(
                                                         borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
+                                                            BorderRadius.circular(
+                                                              12,
+                                                            ),
                                                       ),
                                                     ),
                                                   ),
@@ -941,36 +1022,39 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                         MaterialPageRoute(
                                                           builder: (context) =>
                                                               OrderConfirmationPage(
-                                                            product:
-                                                                widget.product!,
-                                                            refresh: true,
-                                                          ),
+                                                                product: widget
+                                                                    .product!,
+                                                                refresh: true,
+                                                              ),
                                                         ),
                                                       );
                                                     } else {
                                                       Navigator.pop(
-                                                          context, true);
+                                                        context,
+                                                        true,
+                                                      );
                                                     }
                                                   },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 18),
+                                                  style: ElevatedButton.styleFrom(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          vertical: 18,
+                                                        ),
                                                     backgroundColor:
                                                         Colors.green,
-                                                    shape:
-                                                        RoundedRectangleBorder(
+                                                    shape: RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              12),
+                                                            12,
+                                                          ),
                                                     ),
                                                   ),
                                                   child: const Text(
                                                     "Continue",
                                                     style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.white),
+                                                      fontSize: 16,
+                                                      color: Colors.white,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -990,17 +1074,23 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                             width: double.infinity,
                                             child: Card(
                                               color: const Color.fromARGB(
-                                                  255, 233, 241, 248),
+                                                255,
+                                                233,
+                                                241,
+                                                248,
+                                              ),
                                               elevation: 10,
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(12),
                                               ),
                                               margin: const EdgeInsets.only(
-                                                  bottom: 12),
+                                                bottom: 12,
+                                              ),
                                               child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(12),
+                                                padding: const EdgeInsets.all(
+                                                  12,
+                                                ),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
@@ -1008,12 +1098,14 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                     Row(
                                                       children: [
                                                         const Icon(
-                                                            Icons.location_on,
-                                                            color: Colors
-                                                                .blueAccent,
-                                                            size: 20),
+                                                          Icons.location_on,
+                                                          color:
+                                                              Colors.blueAccent,
+                                                          size: 20,
+                                                        ),
                                                         const SizedBox(
-                                                            width: 6),
+                                                          width: 6,
+                                                        ),
                                                         const Text(
                                                           "Selected Address",
                                                           style: TextStyle(
@@ -1027,8 +1119,9 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                       ],
                                                     ),
                                                     const Divider(
-                                                        thickness: 1,
-                                                        color: Colors.grey),
+                                                      thickness: 1,
+                                                      color: Colors.grey,
+                                                    ),
                                                     const SizedBox(height: 8),
                                                     Text(
                                                       "Name: ${_selectedUsername ?? ''}",

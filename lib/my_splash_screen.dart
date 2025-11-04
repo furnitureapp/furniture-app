@@ -31,7 +31,7 @@ class _SplashScreensState extends State<SplashScreens> {
     final isTablet = screenWidth > 600;
 
     return Scaffold(
-      backgroundColor: Colors.white, // ✅ White background
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

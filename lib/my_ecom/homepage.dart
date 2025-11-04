@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/marque_policy_terms.dart';
+import 'package:furniture_ecom_app/core/services/product_service.dart';
+import 'package:furniture_ecom_app/core/services/settings_service.dart';
 import 'package:furniture_ecom_app/my_ecom/banner_widget.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/categories_widget.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/drawer.dart';
@@ -35,10 +39,10 @@ class _MyhomeState extends State<Myhome> {
   @override
   void initState() {
     super.initState();
-    _shopSettingsFuture = ApiService.fetchShopSettings();
-    _marqueeFuture = ApiService.fetchMarquee();
+    _shopSettingsFuture = SettingsService.fetchShopSettings();
+    _marqueeFuture = MarqueePolicyTermsService.fetchMarquee();
 
-    _productsFuture = ApiService.fetchAllProducts();
+    _productsFuture = ProductService.fetchAllProducts();
 
     _checkLoginStatus();
 
@@ -86,9 +90,9 @@ class _MyhomeState extends State<Myhome> {
         child: FutureBuilder<ShopSettings?>(
           future: _shopSettingsFuture,
           builder: (context, snapshot) {
-            String title = "Fresh Grocery";
+            String title = "KAI";
             if (snapshot.connectionState == ConnectionState.waiting) {
-              title = "Fresh Grocery";
+              title = "KAI";
             } else if (snapshot.hasData && snapshot.data != null) {
               title = snapshot.data!.name; 
             }
@@ -120,13 +124,13 @@ class _MyhomeState extends State<Myhome> {
                     } else if (snapshot.hasData && snapshot.data != null) {
                       return Container(
                         height: 35,
-                        color: const Color.fromARGB(255, 231, 244, 233),
+                        color: const Color.fromARGB(255, 233, 235, 233),
                         child: Marquee(
                           text: snapshot.data!.content,
                           style: GoogleFonts.bebasNeue(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: const Color.fromARGB(255, 26, 77, 34),
+                            color: mythemecolor,
                             letterSpacing: 1.0,
                           ),
                           scrollAxis: Axis.horizontal,
@@ -152,7 +156,7 @@ class _MyhomeState extends State<Myhome> {
                     height: 1.5,
                     decorationThickness: 2.5,
                     decorationStyle: TextDecorationStyle.solid,
-                    color: Color.fromARGB(255, 13, 75, 15),
+                    color: mythemecolor,
                   ),
                 ),
               ),
@@ -165,7 +169,8 @@ class _MyhomeState extends State<Myhome> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 20,
-                    color: Color.fromARGB(255, 13, 75, 15),
+                    color: mythemecolor
+                    
                   ),
                 ),
               ),
@@ -176,7 +181,7 @@ class _MyhomeState extends State<Myhome> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                         child: CircularProgressIndicator(
-                      color: Colors.green,
+                      color: mythemecolor,
                     ));
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
@@ -248,252 +253,3 @@ class _MyhomeState extends State<Myhome> {
 
 
 
-
-
-
-
-
-
-
-
-  // Future<void> _checkLoginStatus() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final token = prefs.getString('auth_token');
-  //   setState(() {
-  //     _isLoggedIn = token != null && token.isNotEmpty;
-  //   });
-  //    if (_isLoggedIn) {
-  //   Provider.of<WishlistManager>(context, listen: false).initialize();
-  // }
-  // }             
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _productsFuture = ApiService.fetchAllProducts();
-  //   _checkLoginStatus();
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     Provider.of<CartProvider>(context, listen: false).fetchCartCount();
-  //   });
-  // }
-  // isInWishlist: isInWishlist,
-                        // onToggleWishlist: () {
-                        //   wishlistManager.toggleWishlist(product.id, context);
-                        // }
-
-
-// itemCount: products.length,
-      // itemBuilder: (context, index) {
-      //   final product = products[index];
-
-      //   return ProductWidget(
-      //     product: product,
-      //     onTap: () => Navigator.push(
-      //       context,
-      //       MaterialPageRoute(
-      //         builder: (context) => ProductDetailPagep(product: product),
-      //       ),
-      //     ),
-      //     isLoggedIn: _isLoggedIn,
-      //   );
-      // },
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import 'dart:async';
-// import 'package:flutter/material.dart';
-// import 'package:model_app/authentication/api_service.dart';
-// import 'package:model_app/banner_widget.dart';
-// import 'package:model_app/cart/cart_provider.dart';
-// import 'package:model_app/categories_widget.dart';
-// import 'package:model_app/navbar/appbar.dart';
-// import 'package:model_app/navbar/search_screen.dart';
-// import 'package:model_app/offer/offer.dart';
-// import 'package:model_app/product/product_detail.dart';
-// import 'package:model_app/product/productwidget.dart';
-// import 'package:model_app/wishlist/wishlist_manager.dart';
-// import 'package:provider/provider.dart';
-
-// class Myhome extends StatefulWidget {
-//   const Myhome({super.key});
-
-//   @override
-//   State<Myhome> createState() => _MyhomeState();
-// }
-
-// class _MyhomeState extends State<Myhome> {
-//   late Future<List<Categorys>> _categoriesFuture;
-//   late Future<List<String>> _bannersFuture;
-//   late Future<List<Product>> _productsFuture;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     _categoriesFuture = ApiService.fetchCategories();
-//     _bannersFuture = ApiService().fetchBannerImages();
-//     _productsFuture = ApiService.fetchAllProducts();
-
-//     WidgetsBinding.instance.addPostFrameCallback((_) {
-//       Provider.of<CartProvider>(context, listen: false).fetchCartCount();
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final wishlistManager = Provider.of<WishlistManager>(context);
-//     final screenWidth = MediaQuery.of(context).size.width;
-//     final bool isTablet = screenWidth >= 600;
-
-//     return Scaffold(
-//       backgroundColor: const Color.fromARGB(255, 245, 240, 242),
-//       appBar: const PreferredSize(
-//         preferredSize: Size.fromHeight(60),
-//         child: MyAppbar(),
-//       ),
-//       body: SingleChildScrollView(
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             const SizedBox(height: 5),
-//             if (!isTablet) const SearchScreen(),
-//             const SizedBox(height: 5),
-
-//             // Lazy Load Categories
-//             FutureBuilder<List<Categorys>>(
-//               future: _categoriesFuture,
-//               builder: (context, snapshot) {
-//                 if (snapshot.connectionState == ConnectionState.waiting) {
-//                   return _buildLoadingPlaceholder(height: 100);
-//                 } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-//                   return const Center(child: Text("No categories found"));
-//                 }
-//                 return const MyCategoriesWidget();
-//               },
-//             ),
-
-//             // Lazy Load Banners
-//             FutureBuilder<List<String>>(
-//               future: _bannersFuture,
-//               builder: (context, snapshot) {
-//                 if (snapshot.connectionState == ConnectionState.waiting) {
-//                   return _buildLoadingPlaceholder(height: 150);
-//                 } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-//                   return const Center(child: Text("No banners found"));
-//                 }
-//                 return const BannerWidget();
-//               },
-//             ),
-
-//             const SizedBox(height: 10),
-//             const Center(
-//               child: Text(
-//                 "TOP DEALS FOR YOU!",
-//                 style: TextStyle(
-//                   fontWeight: FontWeight.bold,
-//                   fontSize: 20,
-//                   color: Color.fromARGB(255, 13, 75, 15),
-//                 ),
-//               ),
-//             ),
-//             const SizedBox(height: 10),
-
-//             const OfferGridWidget(),
-//             const SizedBox(height: 10),
-
-//             const Center(
-//               child: Text(
-//                 "Products You May Like!",
-//                 style: TextStyle(
-//                   fontWeight: FontWeight.bold,
-//                   fontSize: 20,
-//                   color: Color.fromARGB(255, 13, 75, 15),
-//                 ),
-//               ),
-//             ),
-//             const SizedBox(height: 10),
-
-//             // Lazy Load Products
-//             FutureBuilder<List<Product>>(
-//               future: _productsFuture,
-//               builder: (context, snapshot) {
-//                 if (snapshot.connectionState == ConnectionState.waiting) {
-//                   return _buildLoadingPlaceholder(height: 300);
-//                 } else if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-//                   return const Center(child: Text('No products found'));
-//                 }
-
-//                 final products = snapshot.data!;
-//                 return GridView.builder(
-//                   padding: const EdgeInsets.all(10),
-//                   physics: const NeverScrollableScrollPhysics(),
-//                   shrinkWrap: true,
-//                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//                     crossAxisCount: isTablet ? 4 : 2,
-//                     crossAxisSpacing: 12,
-//                     mainAxisSpacing: 12,
-//                     childAspectRatio: isTablet ? 0.7 : 0.75,
-//                   ),
-//                   itemCount: products.length,
-//                   itemBuilder: (context, index) {
-//                     final product = products[index];
-//                     final isInWishlist = wishlistManager.isInWishlist(product.id);
-
-//                     return ProductWidget(
-//                       product: product,
-//                       onTap: () => Navigator.push(
-//                         context,
-//                         MaterialPageRoute(
-//                           builder: (context) => ProductDetailPagep(product: product),
-//                         ),
-//                       ),
-//                       isInWishlist: isInWishlist,
-//                       onToggleWishlist: () {
-//                         wishlistManager.toggleWishlist(product.id, context);
-//                       },
-//                     );
-//                   },
-//                 );
-//               },
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-
-//   // Placeholder for loading effect
-//   Widget _buildLoadingPlaceholder({double height = 100}) {
-//     return Container(
-//       height: height,
-//       color: Colors.grey[300], // Light grey for skeleton effect
-//       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-//     );
-//   }
-// }

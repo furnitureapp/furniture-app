@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/cart_service.dart';
+import 'package:furniture_ecom_app/core/services/offers_service.dart';
+import 'package:furniture_ecom_app/core/services/product_service.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/offer/offer_detail.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_confirmationpage.dart';
@@ -46,7 +50,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
 
   Future<Product> _fetchProduct(String productId) async {
     try {
-      final productData = await ApiService.getProductById(productId);
+      final productData = await ProductService.getProductById(productId);
       return Product.fromJson(productData);
     } catch (e) {
       throw Exception('Error fetching product: $e');
@@ -245,7 +249,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
     if (isAddedToCart) return true; // Already added, treat as success
 
     try {
-      final response = await ApiService.addToCart(product, context);
+      final response = await CartService.addToCart(product, context);
 
       if (response.containsKey('error') && response['error'] != null) {
         if (!mounted) return false;
@@ -377,7 +381,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
               setState(() {
                 _loadedProduct = widget.product;
                 _productFuture = Future.value(widget.product);
-                ApiService.getRelatedProducts(product.id);
+                ProductService.getRelatedProducts(product.id);
               });
             },
             color: const Color.fromARGB(255, 13, 75, 15),
@@ -460,7 +464,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
         setState(() {
           _loadedProduct = widget.product;
           _productFuture = Future.value(widget.product);
-          ApiService.getRelatedProducts(product.id);
+          ProductService.getRelatedProducts(product.id);
         });
       },
       color: const Color.fromARGB(255, 13, 75, 15),
@@ -804,12 +808,12 @@ Widget _buildRelatedOfferProducts(BuildContext context) {
   final bool isTablet = screenWidth > 600;
 
   return FutureBuilder<List<Offer>>(
-    future: ApiService.fetchOfferProductsAsOffers(),
+    future: OfferService.fetchOfferProductsAsOffers(),
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return const Center(
             child: CircularProgressIndicator(
-          color: Colors.green,
+          color: mythemecolor,
         ));
       } else if (snapshot.hasError) {
         return Center(
@@ -957,11 +961,11 @@ Widget _buildNoResultsUI(BuildContext context) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       FutureBuilder<List<Product>>(
-        future: ApiService.fetchAllProducts(),
+        future: ProductService.fetchAllProducts(),
         builder: (context, relatedSnapshot) {
           if (relatedSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(color: Colors.green),
+              child: CircularProgressIndicator(color: mythemecolor),
             );
           } else if (relatedSnapshot.hasError) {
             return Center(
@@ -1026,11 +1030,11 @@ Widget _buildRelatedProducts(Product product, BuildContext context) {
       ),
       const SizedBox(height: 16),
       FutureBuilder<List<Product>>(
-        future: ApiService.getRelatedProducts(product.id),
+        future: ProductService.getRelatedProducts(product.id),
         builder: (context, relatedSnapshot) {
           if (relatedSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(color: Colors.green),
+              child: CircularProgressIndicator(color: mythemecolor),
             );
           } else if (relatedSnapshot.hasError) {
             return _buildRelatedOfferProducts(context);
@@ -1042,7 +1046,7 @@ Widget _buildRelatedProducts(Product product, BuildContext context) {
           final relatedProducts = relatedSnapshot.data!;
 
           return SizedBox(
-            height: isTablet ? 420 : 220, // enough height for full card
+            height: isTablet ? 420 : 300, // enough height for full card
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 8),

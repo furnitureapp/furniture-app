@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/services/marque_policy_terms.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TermsPage extends StatefulWidget {
@@ -24,7 +24,7 @@ class _TermsPageState extends State<TermsPage> {
 
   Future<void> fetchPolicy() async {
     try {
-      final content = await ApiService.fetchTermsPolicy();
+      final content = await MarqueePolicyTermsService.fetchTermsPolicy();
       setState(() {
         policyContent = content;
         isLoading = false;

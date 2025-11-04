@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/services/auth_service.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
@@ -136,14 +136,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     try {
-      final response = await ApiService.register(
-        email,
-        username,
-        password,
-        confirmPassword,
-        phoneNo,
-        address,
-      );
+     final response = await AuthService.register(
+  email: email,
+  username: username,
+  password: password,
+  confirmPassword: confirmPassword,
+  phoneNo: phoneNo,
+  address: address,
+);
+
       log('Response: $response');
 
       if (response['success'] == true) {
@@ -393,7 +394,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
           const SizedBox(height: 20),
           _isLoading
-              ? const CircularProgressIndicator(color: tdgreen)
+              ? const CircularProgressIndicator(color: mythemecolor)
               : ElevatedButton(
                   onPressed: _registerUser,
                   style: ElevatedButton.styleFrom(

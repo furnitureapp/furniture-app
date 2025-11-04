@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/cart_service.dart';
+import 'package:furniture_ecom_app/core/services/delivery_service.dart';
+import 'package:furniture_ecom_app/core/services/settings_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation2.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
@@ -42,7 +45,7 @@ class _OrderSummaryState extends State<OrderSummary> {
 
   Future<void> _fetchSettings() async {
     try {
-      final settings = await ApiService.getSettings();
+      final settings = await SettingsService.getSettings();
       setState(() {
         _minOrderAmount = settings['minOrderAmount'];
       });
@@ -54,7 +57,7 @@ class _OrderSummaryState extends State<OrderSummary> {
   Future<void> _fetchCartItems() async {
     setState(() => _isLoading = true);
     try {
-      final cartData = await ApiService.getCartItems();
+      final cartData = await CartService.getCartItems();
       await Provider.of<CartProvider>(context, listen: false).fetchCartCount();
 
       setState(() {
@@ -94,7 +97,7 @@ class _OrderSummaryState extends State<OrderSummary> {
     final storedAddressId = prefs.getString('selectedAddressId');
 
     try {
-      final addressList = await ApiService.mygetDeliveryDetails();
+      final addressList = await DeliveryService.mygetDeliveryDetails();
 
       if (addressList.isEmpty) {
         await _clearAddressFromPreferences();

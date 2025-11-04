@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/notif_maitence.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:intl/intl.dart';
@@ -30,7 +31,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     await _checkLoginStatus();
     if (_isLoggedIn) {
       setState(() {
-        _notificationHistory = ApiService.getNotifications();
+        _notificationHistory = NotifMaintenanceService.getNotifications();
       });
     }
     _loadReadStatus();
@@ -238,7 +239,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         ? RefreshIndicator(
             onRefresh: () async {
               setState(() {
-                _notificationHistory = ApiService.getNotifications();
+                _notificationHistory = NotifMaintenanceService.getNotifications();
               });
             },
             color: const Color.fromARGB(255, 13, 75, 15),
@@ -337,7 +338,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         : RefreshIndicator(
             onRefresh: () async {
               setState(() {
-                _notificationHistory = ApiService.getNotifications();
+                _notificationHistory = NotifMaintenanceService.getNotifications();
               });
             },
             color: const Color.fromARGB(255, 13, 75, 15),
@@ -544,115 +545,3 @@ class _NotificationScreenState extends State<NotificationScreen> {
 }
 
 
-
-    // Center(
-    //   child: ConstrainedBox(
-    //     constraints: BoxConstraints(
-    //       minHeight: MediaQuery.of(context).size.height - kToolbarHeight,
-    //     ),
-    //     child: Column(
-    //       crossAxisAlignment: CrossAxisAlignment.start,
-    //       children: [
-    //         const SizedBox(height: 120),
-    //         Padding(
-    //           padding: EdgeInsets.symmetric(
-    //             horizontal: isTablet ? 40 : 20,
-    //             vertical: isTablet ? 20 : 0,
-    //           ),
-    //           child: Card(
-    //             elevation: 10,
-    //             shape: RoundedRectangleBorder(
-    //               borderRadius: BorderRadius.circular(20),
-    //             ),
-    //             child: Container(
-    //               padding: EdgeInsets.all(isTablet ? 30 : 20),
-    //               decoration: BoxDecoration(
-    //                 borderRadius: BorderRadius.circular(20),
-    //                 color: isTablet ? null : Colors.green.shade100,
-    //                 gradient: isTablet
-    //                     ? LinearGradient(
-    //                         colors: [
-    //                           Colors.green.shade300,
-    //                           Colors.green.shade700,
-    //                         ],
-    //                         begin: Alignment.topLeft,
-    //                         end: Alignment.bottomRight,
-    //                       )
-    //                     : null,
-    //               ),
-    //               child: Column(
-    //                 mainAxisSize: MainAxisSize.min,
-    //                 mainAxisAlignment: MainAxisAlignment.start,
-    //                 children: [
-    //                   Image.asset(
-    //                     'assets/images/notif.png',
-    //                     width: 170,
-    //                     height: 170,
-    //                     fit: BoxFit.cover,
-    //                   ),
-    //                   const SizedBox(height: 20),
-    //                   Text(
-    //                     "You are not logged in!",
-    //                     textAlign: TextAlign.center,
-    //                     style: TextStyle(
-    //                       fontSize: isTablet ? 24 : 16,
-    //                       fontWeight: FontWeight.bold,
-    //                       color: isTablet ? Colors.white : Colors.black,
-    //                     ),
-    //                   ),
-    //                   const SizedBox(height: 20),
-    //                   Text(
-    //                     "Your notifications will appear here!",
-    //                     textAlign: TextAlign.center,
-    //                     style: TextStyle(
-    //                       fontSize: isTablet ? 18 : 14,
-    //                       color: isTablet
-    //                           ? Colors.white70
-    //                           : Colors.grey.shade700,
-    //                     ),
-    //                   ),
-    //                   const SizedBox(height: 25),
-    //                   ElevatedButton(
-    //                     onPressed: () async {
-    //                       SharedPreferences prefs =
-    //                           await SharedPreferences.getInstance();
-    //                       await prefs.setString(
-    //                           'redirectRoute', '/notification');
-        
-    //                       Navigator.push(
-    //                         context,
-    //                         MaterialPageRoute(
-    //                           builder: (context) => const LoginScreen(),
-    //                         ),
-    //                       );
-    //                     },
-    //                     style: ElevatedButton.styleFrom(
-    //                       backgroundColor:
-    //                           isTablet ? Colors.white : Colors.green,
-    //                       padding: EdgeInsets.symmetric(
-    //                         horizontal: isTablet ? 40 : 30,
-    //                         vertical: isTablet ? 14 : 12,
-    //                       ),
-    //                       textStyle: TextStyle(
-    //                         fontSize: isTablet ? 18 : 14,
-    //                         fontWeight: FontWeight.bold,
-    //                       ),
-    //                       foregroundColor: isTablet
-    //                           ? Colors.green.shade700
-    //                           : Colors.white,
-    //                       shape: RoundedRectangleBorder(
-    //                         borderRadius: BorderRadius.circular(10),
-    //                       ),
-    //                     ),
-    //                     child: const Text("Go To Login"),
-    //                   ),
-    //                 ],
-    //               ),
-    //             ),
-    //           ),
-    //         ),
-    //         const SizedBox(height: 60),
-    //       ],
-    //     ),
-    //   ),
-    // );

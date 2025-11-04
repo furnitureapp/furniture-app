@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/cat_sub_banners.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/subc_screen.dart';
 
@@ -13,13 +15,13 @@ class CategoriesScreen extends StatefulWidget {
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
-  late Future<List<Category>> _categoriesFuture;
+  late Future<List<Categorys>> _categoriesFuture;
   final Set<String> _wishlist = {};
 
   @override
   void initState() {
     super.initState();
-    _categoriesFuture = ApiService.fetchCategories();
+    _categoriesFuture = CatSubBannersService.fetchCategories();
   }
 
   void _toggleWishlist(String productId) {
@@ -35,7 +37,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   
 Future<void> _refreshData() async {
   setState(() {
-    _categoriesFuture = ApiService.fetchCategories();
+    _categoriesFuture = CatSubBannersService.fetchCategories();
   });
   await _categoriesFuture;
 }
@@ -52,11 +54,11 @@ Future<void> _refreshData() async {
       ),
       body: RefreshIndicator(
         onRefresh: _refreshData,
-        color: const Color.fromARGB(255, 13, 75, 15),
+        color: mythemecolor,
         backgroundColor: const Color.fromARGB(255, 245, 240, 242),
         displacement: 40,
         strokeWidth: 2.5,
-        child: FutureBuilder<List<Category>>(
+        child: FutureBuilder<List<Categorys>>(
           future: _categoriesFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
@@ -117,7 +119,6 @@ Future<void> _refreshData() async {
                                 category.title,
                                 style: const TextStyle(
                                   fontSize: 12,
-                                  color: Color.fromARGB(255, 8, 63, 17),
                                   fontWeight: FontWeight.bold,
                                 ),
                                 textAlign: TextAlign.center,

@@ -1,6 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/services/user_service.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/edit_user_profile.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/provider/login_provider.dart';
@@ -17,9 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({
-    super.key,
-  });
+  const ProfileScreen({super.key});
 
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
@@ -65,8 +63,10 @@ class _ProfileScreenState extends State<ProfileScreen>
       }
       await _fetchUserProfile(token);
       if (!_isDisposed) {
-        await Provider.of<CartProvider>(context, listen: false)
-            .fetchCartCount();
+        await Provider.of<CartProvider>(
+          context,
+          listen: false,
+        ).fetchCartCount();
       }
     } else {
       if (!_isDisposed) {
@@ -82,7 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   Future<void> _fetchUserProfile(String token) async {
     try {
-      final userProfile = await ApiService.getUserProfile(token);
+      final userProfile = await UserService.getUserProfile();
 
       if (userProfile != null && userProfile['username'] != null) {
         if (!_isDisposed) {
@@ -107,7 +107,9 @@ class _ProfileScreenState extends State<ProfileScreen>
           //       content: Text('Error fetching profile: ${error.toString()}')),
           // );
           showTopSnackBar(
-              context, 'Error fetching profile: ${error.toString()}');
+            context,
+            'Error fetching profile: ${error.toString()}',
+          );
         }
       }
     }
@@ -125,98 +127,57 @@ class _ProfileScreenState extends State<ProfileScreen>
     }
   }
 
-  // Future<void> _logout() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-
-  //   String? email = prefs.getString('user_email');
-  //   String? fcmToken = prefs.getString('fcm_token');
-
-  //   if (fcmToken == null) {
-  //     fcmToken = await FirebaseMessaging.instance.getToken();
-  //     if (fcmToken != null) {
-  //       await prefs.setString('fcm_token', fcmToken);
-  //     }
-  //   }
-
-  //   if (email == null || fcmToken == null) {
-  //     showTopSnackBar(context, 'Missing user data. Please try again.');
-  //     return;
-  //   }
-
-  //   final result = await ApiService.logout();
-
-  //   if (result['success'] == true) {
-  //     await prefs.remove('auth_token');
-  //     await prefs.remove('fcm_token');
-  //     await prefs.remove('user_email');
-  //     await prefs.remove('wishlist');
-  //     Provider.of<LoginProvider>(context, listen: false).setLogin(false);
-  //     Provider.of<WishlistManager>(context, listen: false).clearWishlist();
-
-  //     if (!_isDisposed) {
-  //       await Provider.of<CartProvider>(context, listen: false)
-  //           .fetchCartCount();
-
-  //       Navigator.pushReplacement(
-  //         context,
-  //         MaterialPageRoute(builder: (context) => const BottomNavBar()),
-  //       );
-  //     }
-  //   } else {
-  //     if (!_isDisposed) {
-  //       showTopSnackBar(
-  //           context, result['message'] ?? 'Logout failed. Try again.');
-  //     }
-  //   }
-  // }
-
   Future<void> _logout() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-  String? email = prefs.getString('user_email');
-  String? fcmToken = prefs.getString('fcm_token');
+    String? email = prefs.getString('user_email');
+    String? fcmToken = prefs.getString('fcm_token');
 
-  if (fcmToken == null) {
-    fcmToken = await FirebaseMessaging.instance.getToken();
-    if (fcmToken != null) {
-      await prefs.setString('fcm_token', fcmToken);
+    if (fcmToken == null) {
+      fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        await prefs.setString('fcm_token', fcmToken);
+      }
+    }
+
+    if (email == null || fcmToken == null) {
+      showTopSnackBar(context, 'Missing user data. Please try again.');
+      return;
+    }
+
+    final result = await UserService.logout();
+
+    if (result['success'] == true) {
+      await prefs.remove('auth_token');
+      await prefs.remove('fcm_token');
+      await prefs.remove('user_email');
+      await prefs.remove('wishlist');
+
+      // ✅ Notify provider once
+      Provider.of<LoginProvider>(context, listen: false).setLogin(false);
+
+      Provider.of<WishlistManager>(context, listen: false).clearWishlist();
+
+      if (!_isDisposed) {
+        await Provider.of<CartProvider>(
+          context,
+          listen: false,
+        ).fetchCartCount();
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const BottomNavBar()),
+        );
+      }
+    } else {
+      if (!_isDisposed) {
+        showTopSnackBar(
+          context,
+          result['message'] ?? 'Logout failed. Try again.',
+        );
+      }
     }
   }
-
-  if (email == null || fcmToken == null) {
-    showTopSnackBar(context, 'Missing user data. Please try again.');
-    return;
-  }
-
-  final result = await ApiService.logout();
-
-  if (result['success'] == true) {
-    await prefs.remove('auth_token');
-    await prefs.remove('fcm_token');
-    await prefs.remove('user_email');
-    await prefs.remove('wishlist');
-
-    // ✅ Notify provider once
-    Provider.of<LoginProvider>(context, listen: false).setLogin(false);
-
-    Provider.of<WishlistManager>(context, listen: false).clearWishlist();
-
-    if (!_isDisposed) {
-      await Provider.of<CartProvider>(context, listen: false).fetchCartCount();
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const BottomNavBar()),
-      );
-    }
-  } else {
-    if (!_isDisposed) {
-      showTopSnackBar(
-          context, result['message'] ?? 'Logout failed. Try again.');
-    }
-  }
-}
-
 
   @override
   void dispose() {
@@ -241,8 +202,10 @@ class _ProfileScreenState extends State<ProfileScreen>
               String? token = prefs.getString('auth_token');
               if (token != null) {
                 await _fetchUserProfile(token);
-                await Provider.of<CartProvider>(context, listen: false)
-                    .fetchCartCount();
+                await Provider.of<CartProvider>(
+                  context,
+                  listen: false,
+                ).fetchCartCount();
               }
             },
             child: SingleChildScrollView(
@@ -269,28 +232,31 @@ class _ProfileScreenState extends State<ProfileScreen>
                                 width:
                                     MediaQuery.of(context).size.width / 2 - 24,
                                 child: _buildNavigationCard(
-                                    context,
-                                    "My Orders",
-                                    Icons.shopping_bag,
-                                    OrderListPage()),
+                                  context,
+                                  "My Orders",
+                                  Icons.shopping_bag,
+                                  OrderListPage(),
+                                ),
                               ),
                               SizedBox(
                                 width:
                                     MediaQuery.of(context).size.width / 2 - 24,
                                 child: _buildNavigationCard(
-                                    context,
-                                    "Notifications",
-                                    Icons.notifications,
-                                    NotificationScreen()),
+                                  context,
+                                  "Notifications",
+                                  Icons.notifications,
+                                  NotificationScreen(),
+                                ),
                               ),
                               SizedBox(
                                 width:
                                     MediaQuery.of(context).size.width / 2 - 24,
                                 child: _buildNavigationCard(
-                                    context,
-                                    "Liked Items",
-                                    Icons.favorite,
-                                    FavoritesPage()),
+                                  context,
+                                  "Liked Items",
+                                  Icons.favorite,
+                                  FavoritesPage(),
+                                ),
                               ),
                               SizedBox(
                                 width:
@@ -306,12 +272,24 @@ class _ProfileScreenState extends State<ProfileScreen>
                       children: [
                         const SizedBox(height: 30),
                         _buildInfoTile(),
-                        _buildNavigationCard(context, "My Orders",
-                            Icons.shopping_bag, OrderListPage()),
-                        _buildNavigationCard(context, "Notifications",
-                            Icons.notifications, NotificationScreen()),
-                        _buildNavigationCard(context, "Liked Items",
-                            Icons.favorite, FavoritesPage()),
+                        _buildNavigationCard(
+                          context,
+                          "My Orders",
+                          Icons.shopping_bag,
+                          OrderListPage(),
+                        ),
+                        _buildNavigationCard(
+                          context,
+                          "Notifications",
+                          Icons.notifications,
+                          NotificationScreen(),
+                        ),
+                        _buildNavigationCard(
+                          context,
+                          "Liked Items",
+                          Icons.favorite,
+                          FavoritesPage(),
+                        ),
                         // _buildLogoutCard(context),
                         SizedBox(
                           width: isTablet(context)
@@ -329,8 +307,10 @@ class _ProfileScreenState extends State<ProfileScreen>
             child: ListView.builder(
               itemCount: 5,
               itemBuilder: (_, __) => Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 child: Container(
                   height: 80,
                   decoration: BoxDecoration(
@@ -376,7 +356,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const BottomNavBar()),
+                            builder: (context) => const BottomNavBar(),
+                          ),
                           (route) => false,
                         );
                       },
@@ -388,23 +369,29 @@ class _ProfileScreenState extends State<ProfileScreen>
                       CircleAvatar(
                         radius: isTablet(context) ? 40 : 48,
                         backgroundColor: Color.fromARGB(255, 224, 228, 228),
-                        child: Icon(Icons.person,
-                            size: isTablet(context) ? 37 : 47,
-                            color: Color.fromARGB(255, 43, 74, 46)),
+                        child: Icon(
+                          Icons.person,
+                          size: isTablet(context) ? 37 : 47,
+                          color: Color.fromARGB(255, 43, 74, 46),
+                        ),
                       ),
                       GestureDetector(
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (_) => const EditUserDetailsPage()),
+                              builder: (_) => const EditUserDetailsPage(),
+                            ),
                           );
                         },
                         child: CircleAvatar(
                           radius: isTablet(context) ? 18 : 22,
                           backgroundColor: Color.fromARGB(255, 64, 152, 189),
-                          child: Icon(Icons.edit_note,
-                              size: 22, color: Colors.white),
+                          child: Icon(
+                            Icons.edit_note,
+                            size: 22,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
@@ -421,7 +408,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                             color: Colors.black38,
                             offset: Offset(0, 2),
                             blurRadius: 4,
-                          )
+                          ),
                         ],
                       ),
                       children: [
@@ -548,7 +535,11 @@ class _ProfileScreenState extends State<ProfileScreen>
   }
 
   Widget _buildNavigationCard(
-      BuildContext context, String title, IconData icon, Widget page) {
+    BuildContext context,
+    String title,
+    IconData icon,
+    Widget page,
+  ) {
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) => page));
@@ -574,8 +565,10 @@ class _ProfileScreenState extends State<ProfileScreen>
             Expanded(
               child: Text(
                 title,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
@@ -605,24 +598,29 @@ class _ProfileScreenState extends State<ProfileScreen>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.warning_amber_rounded,
-                    size: 50, color: Colors.red),
+                const Icon(
+                  Icons.warning_amber_rounded,
+                  size: 50,
+                  color: Colors.red,
+                ),
                 const SizedBox(height: 15),
                 const Text(
                   "Hey!",
                   style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
                 const SizedBox(height: 10),
                 const Text(
                   "Are you sure you want to logout?",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Row(
@@ -635,16 +633,20 @@ class _ProfileScreenState extends State<ProfileScreen>
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.grey[300],
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 12),
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
                       ),
                       child: const Text(
                         "No",
                         style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                     ElevatedButton(
@@ -653,19 +655,27 @@ class _ProfileScreenState extends State<ProfileScreen>
                         _logout();
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            const Color.fromARGB(255, 241, 113, 104),
+                        backgroundColor: const Color.fromARGB(
+                          255,
+                          241,
+                          113,
+                          104,
+                        ),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 12),
+                          horizontal: 20,
+                          vertical: 12,
+                        ),
                       ),
                       child: const Text(
                         "Yes",
                         style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ],

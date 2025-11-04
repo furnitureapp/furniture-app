@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/services/cart_service.dart';
 
 class CartProvider with ChangeNotifier {
     int _cartCount = 0;
@@ -27,7 +27,7 @@ class CartProvider with ChangeNotifier {
 
  Future<void> fetchCartCount() async {
   try {
-    final cartData = await ApiService.getCartItems();
+    final cartData = await CartService.getCartItems();
     debugPrint("Fetched cart items: $cartData");
 
     int count = cartData['cartItems']?.length ?? 0;

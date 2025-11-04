@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/cart_service.dart';
+import 'package:furniture_ecom_app/core/services/offers_service.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/offer/offer_reuable.dart';
@@ -279,7 +281,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         unit: offer.unit,
       );
 
-      final response = await ApiService.addToCart(product, context);
+      final response = await CartService.addToCart(product, context);
 
       if (response.containsKey('error') && response['error'] != null) {
         if (!mounted) return false;
@@ -390,7 +392,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             onRefresh: () async {
               setState(() {
                 _offersFuture = _fetchOffer();
-                ApiService.fetchOfferProductsAsOffers();
+                OfferService.fetchOfferProductsAsOffers();
               });
             },
             color: const Color.fromARGB(255, 13, 75, 15),
@@ -471,7 +473,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       onRefresh: () async {
         setState(() {
           _offersFuture = _fetchOffer();
-          ApiService.fetchOfferProductsAsOffers();
+          OfferService.fetchOfferProductsAsOffers();
         });
       },
       color: const Color.fromARGB(255, 13, 75, 15),
@@ -764,7 +766,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         ),
         const SizedBox(height: 16),
         FutureBuilder<List<Offer>>(
-          future: ApiService.fetchOfferProductsAsOffers(),
+          future: OfferService.fetchOfferProductsAsOffers(),
           builder: (context, relatedSnapshot) {
             if (relatedSnapshot.connectionState == ConnectionState.waiting) {
               return const Center(

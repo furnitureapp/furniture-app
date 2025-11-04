@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/cart_service.dart';
+import 'package:furniture_ecom_app/core/services/wishlist_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
@@ -20,7 +22,7 @@ class FavoritesPage extends StatefulWidget {
 }
 
 class _FavoritesPageState extends State<FavoritesPage> {
-  ApiService apiService = ApiService();
+  WishlistService wapiService = WishlistService();
   bool _isLoggedIn = false;
 
   @override
@@ -155,7 +157,7 @@ class MyMobileView extends StatelessWidget {
 
   Future<void> addToCartItem(Product product, BuildContext context) async {
     try {
-      final response = await ApiService.addToCart(product, context);
+      final response = await CartService.addToCart(product, context);
       await Provider.of<CartProvider>(context, listen: false).fetchCartCount();
       if (response.containsKey('error')) {
         // ScaffoldMessenger.of(context).showSnackBar(
@@ -198,7 +200,7 @@ class MyMobileView extends StatelessWidget {
             await wishlistManager.initialize();
           },
           child: FutureBuilder<List<Map<String, dynamic>>>(
-            future: ApiService.getWishlistItems(),
+            future: WishlistService.getWishlistItems(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: AnimationPage1());
@@ -559,7 +561,7 @@ class MyTabView extends StatelessWidget {
 
   Future<void> addToCartItem(Product product, BuildContext context) async {
     try {
-      final response = await ApiService.addToCart(product, context);
+      final response = await CartService.addToCart(product, context);
       await Provider.of<CartProvider>(context, listen: false).fetchCartCount();
       if (response.containsKey('error')) {
         // ScaffoldMessenger.of(context).showSnackBar(
@@ -600,7 +602,7 @@ class MyTabView extends StatelessWidget {
             await wishlistManager.initialize();
           },
           child: FutureBuilder<List<Map<String, dynamic>>>(
-            future: ApiService.getWishlistItems(),
+            future: WishlistService.getWishlistItems(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: AnimationPage1());

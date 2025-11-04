@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/services/user_service.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'api_service.dart';
 import 'user_profile.dart';
 
 class EditUserDetailsPage extends StatefulWidget {
@@ -59,7 +59,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
 
     setState(() => _isLoading = true);
 
-    final result = await ApiService.editUserDetailsByEmail(
+    final result = await UserService.editUserDetails(
       email: _userEmail!,
       username: _usernameController.text.trim(),
       address: _addressController.text.trim(),
@@ -157,7 +157,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
         ),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: Colors.green))
+          ? const Center(child: CircularProgressIndicator(color: mythemecolor))
           : Stack(
               children: [
                 Positioned.fill(

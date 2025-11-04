@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/product_service.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 import 'package:furniture_ecom_app/my_ecom/wishlist/wishlist_manager.dart';
@@ -20,7 +22,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
   @override
   void initState() {
     super.initState();
-    _productFuture = ApiService.fetchAllProducts();
+    _productFuture = ProductService.fetchAllProducts();
   }
 
   @override
@@ -36,7 +38,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
         future: _productFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: Color.fromARGB(255, 39, 68, 40),));
+            return const Center(child: CircularProgressIndicator(color:mythemecolor));
           } else if (snapshot.hasError) {
             return Center(
               child: Text(

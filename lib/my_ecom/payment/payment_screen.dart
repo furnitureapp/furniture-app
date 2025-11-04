@@ -3,7 +3,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/services/checkout_payment.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_success.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -79,7 +79,7 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
         throw Exception('Missing payment details from Razorpay.');
       }
 
-      final success = await ApiService.confirmPayment(
+      final success = await CheckoutPaymentService.confirmPayment(
         razorpayOrderId: response.orderId!,
         razorpayPaymentId: response.paymentId!,
         razorpaySignature: response.signature!,
@@ -154,7 +154,7 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
 
     debugPrint('Payment Request: ${jsonEncode(requestBody)}');
 
-    final response = await ApiService.checkout(requestBody);
+    final response = await CheckoutPaymentService.checkout(requestBody);
     debugPrint('Checkout Response: ${jsonEncode(response)}');
 
     if (response['paymentDetails']?['razorpayOrderId'] == null) {
@@ -409,171 +409,4 @@ Widget _buildPaymentContent() {
   );
 }
 }
-
-
-
-//before code 
-  // void _startPayment() async {
-  //   setState(() {
-  //     _isLoading = true;
-  //     _paymentInitiated = true;
-  //   });
-
-  //   try {
-  //     Map<String, dynamic> requestBody = {
-  //       'paymentMethod': 'online',
-  //       'type': widget.type,
-  //       'deliveryId': widget.deliveryId,
-  //     };
-
-  //     if (widget.type == 'buyNow' && widget.productId != null) {
-  //       requestBody['productId'] = widget.productId;
-  //       requestBody['deliveryId'] = widget.deliveryId;
-  //     }
-
-  //     final orderData = await ApiService.checkout(requestBody);
-
-  //     if (orderData['paymentDetails'] == null ||
-  //         orderData['paymentDetails']['razorpayOrderId'] == null) {
-  //       throw Exception('Failed to get Razorpay order ID.');
-  //     }
-
-  //     var options = {
-  //       'key': orderData['key_id'],
-  //       'amount': widget.totalAmount * 100,
-  //       'order_id': orderData['paymentDetails']['razorpayOrderId'],
-  //       'prefill': {
-  //         'contact': '1234567890',
-  //         'email': 'hk1396897@gmail.com',
-  //       },
-  //     };
-
-  //     _razorpay.open(options);
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Error initiating payment: $e')),
-  //     );
-  //   }
-  // }
-
-
-  //buynow working code//
-// Future<void> _startPayment() async {
-//   setState(() {
-//     _isLoading = true;
-//     _paymentInitiated = true;
-//   });
-
-//   try {
-//     // Validate required fields
-//     if (widget.deliveryId == null || widget.deliveryId!.isEmpty) {
-//       throw Exception('Please select a delivery address');
-//     }
-
-//     if (widget.type != 'buyNow') {
-//       throw Exception('Invalid order type');
-//     }
-
-//     // Build request body
-//     final requestBody = <String, dynamic>{
-//       'paymentMethod': 'online',
-//       'type': widget.type,
-//       'deliveryId': widget.deliveryId,
-//       'quantity': widget.quantity != null ? int.tryParse(widget.quantity!) ?? 1 : 1,
-//     };
-
-//     // Add product/offer reference
-//     if (widget.offerId != null) {
-//       requestBody['offerId'] = widget.offerId;
-//     } else if (widget.productId != null) {
-//       requestBody['productId'] = widget.productId;
-//     } else {
-//       throw Exception('Product information missing');
-//     }
-
-//     debugPrint('Payment Request: ${jsonEncode(requestBody)}');
-
-//     // Call checkout API
-//     final response = await ApiService.checkout(requestBody);
-//     debugPrint('Checkout Response: ${jsonEncode(response)}');
-
-//     // Validate response
-//     if (response['paymentDetails'] == null || 
-//         response['paymentDetails']['razorpayOrderId'] == null) {
-//       throw Exception('Failed to create payment order');
-//     }
-
-//     // Get amount - with multiple fallbacks
-//     final amount = _getPaymentAmount(response);
-//     final razorpayOrderId = response['paymentDetails']['razorpayOrderId'];
-//     final keyId = response['key_id'] ?? 'rzp_test_w5BdYCzO09lwRx'; // Fallback to test key
-
-//     // Prepare Razorpay options
-//     final options = {
-//       'key': keyId,
-//       'amount': (amount * 100).toStringAsFixed(0), // Convert to paise
-//       'order_id': razorpayOrderId,
-//       'name': 'Your App Name',
-//       'description': 'Order Payment',
-//       'prefill': {
-//         'contact': '9876543210', // Should use user's actual contact
-//         'email': 'user@example.com', // Should use user's email
-//       },
-//       'theme': {'color': '#0078FF'},
-//       'timeout': 300, // 5 minutes timeout
-//     };
-
-//     debugPrint('Razorpay Options: $options');
-//     _razorpay.open(options);
-
-//   } catch (e, stackTrace) {
-//     debugPrint('Payment Error: $e\n$stackTrace');
-//     setState(() {
-//       _isLoading = false;
-//       _paymentInitiated = false;
-//     });
-
-//     String errorMessage = 'Payment failed';
-//     if (e is NoSuchMethodError) {
-//       errorMessage = 'Payment processing error. Please try again.';
-//     } else if (e.toString().contains('razorpayOrderId')) {
-//       errorMessage = 'Payment gateway error. Please contact support.';
-//     }
-
-//     ScaffoldMessenger.of(context).showSnackBar(
-//       SnackBar(
-//         content: Text(errorMessage),
-//         duration: const Duration(seconds: 5),
-//         action: SnackBarAction(
-//           label: 'Retry',
-//           onPressed: _startPayment,
-//         ),
-//       ),
-//     );
-//   }
-// }
-
-// double _getPaymentAmount(Map<String, dynamic> response) {
-//   // Try getting amount from different possible locations
-//   try {
-//     if (response['quote'] != null && response['quote']['totalAmount'] != null) {
-//       return (response['quote']['totalAmount'] as num).toDouble();
-//     }
-//     if (response['totalAmount'] != null) {
-//       return (response['totalAmount'] as num).toDouble();
-//     }
-//     if (response['amount'] != null) {
-//       return (response['amount'] as num).toDouble();
-//     }
-//   } catch (e) {
-//     debugPrint('Error parsing amount: $e');
-//   }
-  
-//   // Fallback to widget amount if nothing else works
-//   return widget.totalAmount;
-// }
-
-
-
-
 

@@ -1,9 +1,11 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/cart_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation2.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_summary.dart';
@@ -49,7 +51,7 @@ class _CartScreenState extends State<CartScreen> {
     if (!mounted) return;
     setState(() => _isLoading = true);
     try {
-      final cartData = await ApiService.getCartItems();
+      final cartData = await CartService.getCartItems();
       log('Cart Data: $cartData');
       if (!mounted) return;
       setState(() {
@@ -78,7 +80,7 @@ class _CartScreenState extends State<CartScreen> {
     setState(() => _isLoading = true);
     try {
       log('Removing product with ID: $productId');
-      await ApiService.removeFromCart(productId);
+      await CartService.removeFromCart(productId);
       if (!mounted) return;
 
       Provider.of<CartProvider>(context, listen: false).fetchCartCount();
@@ -136,9 +138,9 @@ class _CartScreenState extends State<CartScreen> {
     });
 
     try {
-      await ApiService.updateCartQuantity(productId, newQuantity);
+      await CartService.updateCartQuantity(productId, newQuantity);
 
-      final cartData = await ApiService.getCartItems();
+      final cartData = await CartService.getCartItems();
       final updatedItems = cartData['cartItems'] as List<CartItem>;
       final quote = cartData['quote'] as Map<String, dynamic>;
 
@@ -642,7 +644,7 @@ class _CartScreenState extends State<CartScreen> {
                                                       width: 24,
                                                       child:
                                                           CircularProgressIndicator(
-                                                        color: Colors.green,
+                                                        color: mythemecolor,
                                                         strokeWidth: 2,
                                                       ),
                                                     )

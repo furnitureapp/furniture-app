@@ -1,7 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/services/auth_service.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/reset_password.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -43,7 +44,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
 
-    final result = await ApiService.forgotPassword(email);
+    final result = await AuthService.forgotPassword(email);
 
     setState(() => _isLoading = false);
 
@@ -179,7 +180,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                         if (!_hideButton)
                           _isLoading
                               ? const CircularProgressIndicator(
-                                  color: Colors.green)
+                                  color: mythemecolor)
                               : ElevatedButton(
                                   onPressed: _forgotPassword,
                                   style: ElevatedButton.styleFrom(

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/services/checkout_payment.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_success.dart';
 import 'package:furniture_ecom_app/my_ecom/payment/payment_screen.dart';
@@ -102,7 +102,7 @@ class _ExpansionTileControllersState extends State<ExpansionTileControllers> {
           ),
         );
       } else {
-        final result = await ApiService.checkout(requestBody);
+        final result = await CheckoutPaymentService.checkout(requestBody);
         final orderId = result['order']['orderId']; // ✅ fixed extraction
         Navigator.pushAndRemoveUntil(
           context,

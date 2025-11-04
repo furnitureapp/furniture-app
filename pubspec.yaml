@@ -62,6 +62,8 @@ dependencies:
   cached_network_image: ^3.4.1
   marquee: ^2.3.0
   flutter_local_notifications: ^18.0.1
+  http: ^1.5.0
+  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
@@ -87,6 +89,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - .env
     - assets/images/back.png
     - assets/json/liv.json
     - assets/json/fur.json
@@ -133,7 +136,6 @@ flutter:
     - assets/images/notii.jpg
     - assets/images/bb.jpg
     - assets/json/meow.json
-    - assets/images/mine.jpg
     - assets/images/fru.jpg
     - assets/images/seeall.png
     - assets/images/bbc.png
@@ -143,6 +145,18 @@ flutter:
     - assets/images/emt.png
     - assets/images/mylog.jpg
     - assets/images/nexus.jpeg
+    - assets/images/kai.png
+    - assets/images/kaii.jpg
+    - assets/images/kailogo.png
+    - assets/images/no_offer.jpg
+    - assets/images/offerback.png
+    - assets/json/splash.json
+    - assets/splash.lottie
+    - assets/f.lottie
+    - assets/animation/Furniture.gif
+    - assets/images/purple.png
+    - assets/json/sofa.json
+    - assets/images/theme.png
 
 
   #   - images/a_dot_ham.jpeg

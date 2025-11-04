@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/provider/login_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/user_profile.dart';
@@ -18,21 +19,21 @@ import 'package:furniture_ecom_app/my_ecom/notification.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_detail.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_list.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
-import 'package:furniture_ecom_app/my_ecom/splash_screen.dart';
 import 'package:furniture_ecom_app/my_ecom/wishlist/wishlist_manager.dart';
-// import 'package:furniture_ecom_app/my_splash_screen.dart';
+import 'package:furniture_ecom_app/my_splash_screen.dart';
 
 import 'package:provider/provider.dart';
 import 'my_ecom/offer/offer_page.dart';
 
 Future<void> main() async {
+  
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await dotenv.load(fileName: ".env");
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await NotificationHandler.initializeNotifications();
   await NotificationHandler.initializeFCM();
   await NotificationHandler.requestNotificationPermission();
-
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   runApp(
@@ -83,9 +84,7 @@ class _MyAppState extends State<MyApp> {
           DeviceOrientation.landscapeRight,
         ]);
       } else {
-        SystemChrome.setPreferredOrientations([
-          DeviceOrientation.portraitUp,
-        ]);
+        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
       }
     });
   }
@@ -95,7 +94,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+      home: const SplashScreens(),
       routes: {
         '/homeoffer': (context) => const OfferPage(),
         '/category': (context) => const CategoriesScreen(),
@@ -114,9 +113,7 @@ class _MyAppState extends State<MyApp> {
           if (args is Map<String, dynamic>) {
             final orderId = args['orderId'] as String?;
             if (orderId != null) {
-              return OrderDetailsScreen(
-                orderId: orderId,
-              );
+              return OrderDetailsScreen(orderId: orderId);
             }
           }
           return const Scaffold(body: Center(child: Text("Invalid Order ID")));
@@ -132,21 +129,18 @@ class _MyAppState extends State<MyApp> {
             final orderId = args['orderId'] as String;
             debugPrint(orderId);
             return MaterialPageRoute(
-              builder: (context) => OrderDetailsScreen(
-                orderId: orderId,
-              ),
+              builder: (context) => OrderDetailsScreen(orderId: orderId),
             );
           } else {
-            return MaterialPageRoute(
-              builder: (context) => const ErrorPage(),
-            );
+            return MaterialPageRoute(builder: (context) => const ErrorPage());
           }
         }
 
         if (settings.name == '/productdetailpagep') {
           final productId = settings.arguments as String;
           debugPrint(
-              "Navigating to ProductDetailPage with productId: $productId");
+            "Navigating to ProductDetailPage with productId: $productId",
+          );
           return MaterialPageRoute(
             builder: (context) => ProductDetailPagep(productId: productId),
           );

@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/cat_sub_banners.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product.dart';
 
@@ -27,7 +29,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
   @override
   void initState() {
     super.initState();
-    _subCategoriesFuture = ApiService().fetchSubCategories(widget.categoryId);
+    _subCategoriesFuture = CatSubBannersService.fetchSubCategories(widget.categoryId);
   }
 
   @override
@@ -44,7 +46,7 @@ class _SubCategoryScreenState extends State<SubCategoryScreen> {
         future: _subCategoriesFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator(color: Colors.green));
+            return const Center(child: CircularProgressIndicator(color: mythemecolor));
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

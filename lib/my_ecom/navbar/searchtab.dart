@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/services/search_service.dart';
 import 'dart:async';
 
-import 'package:furniture_ecom_app/my_ecom/authentication/api_service.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/result_screen.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 
@@ -74,7 +75,7 @@ class _SearchScreensTabletState extends State<SearchScreensTablet> {
 
   Future<void> _searchProducts(String query) async {
     try {
-      final results = await ApiService.searchWithRelated(query);
+      final results = await SearchService.searchWithRelated(query);
       setState(() => _suggestions = results);
       if (_focusNode.hasFocus && _suggestions.isNotEmpty) {
         _showOverlay();
