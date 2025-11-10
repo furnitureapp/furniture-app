@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/core/model/model_file.dart';
 import 'package:furniture_ecom_app/core/services/product_service.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/offer/offer.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
@@ -210,8 +211,8 @@ class _OfferPageState extends State<OfferPage> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 149, 220, 124),
-                Color.fromARGB(255, 41, 97, 67),
+                  mythemecolor1,
+               mythemecolor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,

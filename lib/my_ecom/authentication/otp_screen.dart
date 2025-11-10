@@ -124,7 +124,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     });
 
     try {
-      final result = await AuthService.verifyOtp(userEmail, _otp);
+      final result = await ApiService.verifyOtp(userEmail, _otp);
 
       if (result['message'] == 'OTP verified successfully') {
         _countdownTimer?.cancel();
@@ -194,7 +194,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
     });
 
     try {
-      final result = await AuthService.resendOtp(userEmail);
+      final result = await ApiService.resendOtp(userEmail);
       setState(() {
         _message = result['message'];
       });
@@ -260,8 +260,8 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 149, 220, 124),
-                Color.fromARGB(255, 41, 97, 67),
+                  mythemecolor1,
+               mythemecolor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -298,7 +298,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
           height: double.infinity,
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: AssetImage('assets/images/bbc.png'),
+              image: AssetImage('assets/images/theme.png'),
               fit: BoxFit.cover,
             ),
           ),
@@ -464,7 +464,7 @@ class _VerifyOtpScreenState extends State<VerifyOtpScreen> {
       //   child: Container(
       //     decoration: const BoxDecoration(
       //       image: DecorationImage(
-      //         image: AssetImage('assets/images/bbc.png'),
+      //         image: AssetImage('assets/images/theme.png'),
       //         fit: BoxFit.cover,
       //       ),
       //     ),

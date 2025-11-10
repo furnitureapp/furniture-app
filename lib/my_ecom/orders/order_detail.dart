@@ -4,6 +4,7 @@ import 'package:furniture_ecom_app/core/services/invoice_service.dart';
 import 'package:furniture_ecom_app/core/services/offers_service.dart';
 import 'package:furniture_ecom_app/core/services/orders_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 import 'package:intl/intl.dart';
@@ -187,7 +188,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: Colors.green,
+                            color: mythemecolor,
                           ),
                         ),
                       ),
@@ -357,7 +358,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.green,
+                      color: mythemecolor,
                     ),
                   ),
                 ],
@@ -434,13 +435,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                             142,
                                           )
                                         : (isActive
-                                              ? Colors.green
+                                              ? mythemecolor
                                               : Colors.grey.shade300),
                                     shape: BoxShape.circle,
                                     boxShadow: isActive
                                         ? [
                                             BoxShadow(
-                                              color: Colors.green.shade400,
+                                              color: mythemecolor,
                                               blurRadius: 8,
                                             ),
                                           ]
@@ -467,7 +468,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: isActive
-                                      ? [Colors.green.shade400, Colors.green]
+                                      ? [mythemecolor, mythemecolor]
                                       : [
                                           Colors.grey.shade300,
                                           Colors.grey.shade400,
@@ -590,13 +591,13 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                   color: (isCancelled || isFailed)
                                       ? const Color.fromARGB(255, 249, 149, 142)
                                       : (isActive
-                                            ? Colors.green
+                                            ? mythemecolor
                                             : Colors.grey.shade300),
                                   shape: BoxShape.circle,
                                   boxShadow: isActive
                                       ? [
                                           BoxShadow(
-                                            color: Colors.green.shade400,
+                                            color: mythemecolor,
                                             blurRadius: 8,
                                           ),
                                         ]
@@ -616,8 +617,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                     gradient: LinearGradient(
                                       colors: index < currentIndex
                                           ? [
-                                              Colors.green.shade400,
-                                              Colors.green,
+                                              mythemecolor,
+                                              mythemecolor,
                                             ]
                                           : [
                                               Colors.grey.shade300,
@@ -690,7 +691,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
             style: TextStyle(
               fontSize: isTotal ? 15 : 13,
               fontWeight: isTotal ? FontWeight.bold : FontWeight.w500,
-              color: isTotal ? Colors.green[800] : Colors.black,
+              color: isTotal ? mythemecolor : Colors.black,
             ),
           ),
         ],
@@ -707,10 +708,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color.fromARGB(255, 149, 220, 124),
-                Color.fromARGB(255, 41, 97, 67),
-              ],
+              colors: [mythemecolor1, mythemecolor],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -753,7 +751,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                 );
                 _animationController.forward();
               },
-              color: const Color.fromARGB(255, 13, 75, 15),
+              color: mythemecolor,
               backgroundColor: const Color.fromARGB(255, 245, 240, 242),
               displacement: 40,
               strokeWidth: 2.5,
@@ -771,7 +769,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                           style: const TextStyle(
                             fontSize: 13,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 7, 91, 26),
+                            color: mythemecolor,
                           ),
                         ),
                       ),
@@ -845,7 +843,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                               children: [
                                                 Icon(
                                                   Icons.person,
-                                                  color: Colors.green,
+                                                  color: mythemecolor,
                                                 ),
                                                 const SizedBox(width: 8),
                                                 Text(
@@ -863,7 +861,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                               children: [
                                                 Icon(
                                                   Icons.phone,
-                                                  color: Colors.green,
+                                                  color: mythemecolor,
                                                 ),
                                                 const SizedBox(width: 8),
                                                 Text(
@@ -884,7 +882,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                               children: [
                                                 Icon(
                                                   Icons.home,
-                                                  color: Colors.green,
+                                                  color: mythemecolor,
                                                 ),
                                                 const SizedBox(width: 8),
                                                 Expanded(
@@ -1194,7 +1192,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color: Color.fromARGB(255, 4, 78, 7),
+                                color: mythemecolor,
                               ),
                             ),
                           ],
@@ -1207,21 +1205,21 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 10, 59, 10),
+                            color: mythemecolor,
                           ),
                         ),
                         tilePadding: const EdgeInsets.symmetric(horizontal: 12),
                         backgroundColor: const Color.fromARGB(
                           255,
-                          245,
-                          247,
-                          245,
+                          221,
+                          215,
+                          222,
                         ),
                         collapsedBackgroundColor: const Color.fromARGB(
                           255,
-                          234,
-                          235,
-                          234,
+                          221,
+                          215,
+                          222,
                         ),
                         childrenPadding: const EdgeInsets.symmetric(
                           horizontal: 16,
@@ -1252,7 +1250,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                       const Text(
                         "Items Ordered:",
                         style: TextStyle(
-                          color: Color.fromARGB(255, 9, 94, 12),
+                          color: mythemecolor,
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                         ),
@@ -1453,7 +1451,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                     onPressed: () =>
                                         requestManageStoragePermission(),
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.green,
+                                      backgroundColor: mythemecolor,
                                       padding: EdgeInsets.all(10),
                                       textStyle: TextStyle(
                                         fontSize: 12,
@@ -1471,7 +1469,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                   onPressed: () =>
                                       _showBottomAlert(context, order.orderId),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.green,
+                                    backgroundColor: mythemecolor,
                                     padding: EdgeInsets.all(10),
                                     textStyle: TextStyle(
                                       fontSize: 12,

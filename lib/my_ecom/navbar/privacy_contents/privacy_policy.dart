@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:furniture_ecom_app/core/services/marque_policy_terms.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class PrivacyPolicyPage extends StatefulWidget {
@@ -46,8 +47,8 @@ class _PrivacyPolicyPageState extends State<PrivacyPolicyPage> {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 149, 220, 124),
-                Color.fromARGB(255, 41, 97, 67),
+                  mythemecolor1,
+               mythemecolor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,

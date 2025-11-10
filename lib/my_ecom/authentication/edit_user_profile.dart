@@ -134,8 +134,8 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 149, 220, 124),
-          Color.fromARGB(255, 41, 97, 67),
+                  mythemecolor1,
+               mythemecolor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -163,15 +163,15 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                 Positioned.fill(
                   child: Image.asset(
                     isTablet
-                        ? 'assets/images/bbc.png'
-                        : 'assets/images/bbc.png',
+                        ? 'assets/images/theme.png'
+                        : 'assets/images/theme.png',
                     fit: BoxFit.cover,
                   ),
                 ),
                 Positioned.fill(
                   child: RefreshIndicator(
                     onRefresh: _loadUserData,
-                    color: tdgreen,
+                    color: mythemecolor,
                     child: SingleChildScrollView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: EdgeInsets.only(
@@ -217,11 +217,11 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                                     decoration: InputDecoration(
                                       labelText: 'Enter your Username',
                                       labelStyle: TextStyle(
-                                        color: tdgreen,
+                                        color: mythemecolor,
                                         fontSize: isTablet ? 18 : 14,
                                       ),
                                       prefixIcon: const Icon(Icons.person,
-                                          color: Colors.green),
+                                          color: mythemecolor),
                                       enabledBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
                                             color: Colors.grey.shade400,
@@ -229,7 +229,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                                       ),
                                       focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                            color: Colors.green.shade800,
+                                            color: mythemecolor,
                                             width: 2.5),
                                       ),
                                     ),
@@ -242,11 +242,11 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                                     decoration: InputDecoration(
                                       labelText: 'Enter your Phone Number',
                                       labelStyle: TextStyle(
-                                        color: tdgreen,
+                                        color: mythemecolor,
                                         fontSize: isTablet ? 18 : 14,
                                       ),
                                       prefixIcon: const Icon(Icons.phone,
-                                          color: Colors.green),
+                                          color: mythemecolor),
                                       prefix: const Padding(
                                         padding: EdgeInsets.only(right: 8.0),
                                         child: Text("🇮🇳 |",
@@ -259,7 +259,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                                       ),
                                       focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                            color: Colors.green.shade800,
+                                            color: mythemecolor,
                                             width: 2.5),
                                       ),
                                     ),
@@ -272,11 +272,11 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                                     decoration: InputDecoration(
                                       labelText: 'Enter your City',
                                       labelStyle: TextStyle(
-                                        color: tdgreen,
+                                        color: mythemecolor,
                                         fontSize: isTablet ? 18 : 14,
                                       ),
                                       prefixIcon: const Icon(Icons.location_on,
-                                          color: Colors.green),
+                                          color: mythemecolor),
                                       enabledBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
                                             color: Colors.grey.shade400,
@@ -284,7 +284,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                                       ),
                                       focusedBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                            color: Colors.green.shade800,
+                                            color: mythemecolor,
                                             width: 2.5),
                                       ),
                                     ),
@@ -292,13 +292,13 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                                   const SizedBox(height: 30),
                                   _isLoading
                                       ? const CircularProgressIndicator(
-                                          color: tdgreen)
+                                          color: mythemecolor)
                                       : ElevatedButton(
                                           onPressed: _updateUserDetails,
                                           style: ElevatedButton.styleFrom(
                                             backgroundColor: isTablet
                                                 ? Colors.white
-                                                : Colors.green,
+                                                : mythemecolor,
                                             padding: EdgeInsets.symmetric(
                                               horizontal: isTablet ? 40 : 30,
                                               vertical: isTablet ? 14 : 12,
@@ -308,7 +308,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
                                               fontWeight: FontWeight.bold,
                                             ),
                                             foregroundColor: isTablet
-                                                ? Colors.green.shade700
+                                                ? mythemecolor
                                                 : Colors.white,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
@@ -361,7 +361,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
               fontWeight: FontWeight.bold),
           prefixIcon: Icon(icon, color: Colors.red),
           enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.green, width: 2),
+            borderSide: BorderSide(color: mythemecolor, width: 2),
           ),
           focusedBorder: const UnderlineInputBorder(
             borderSide:
@@ -395,8 +395,8 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
       //       Positioned.fill(
       //         child: Image.asset(
       //           isTablet
-      //               ? 'assets/images/bbc.png'
-      //               : 'assets/images/bbc.png',
+      //               ? 'assets/images/theme.png'
+      //               : 'assets/images/theme.png',
       //           fit: BoxFit.cover,
       //         ),
       //       ),
@@ -453,11 +453,11 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
       //   decoration: InputDecoration(
       //     labelText: 'Enter your Username',
       //     labelStyle: TextStyle(
-      //       color: tdgreen,
+      //       color: mythemecolor,
       //       fontSize: isTablet ? 18 : 14,
       //     ),
       //     prefixIcon: const Icon(Icons.person,
-      //         color: Colors.green),
+      //         color: mythemecolor),
       //     enabledBorder: UnderlineInputBorder(
       //       borderSide: BorderSide(
       //           color: Colors.grey.shade400,
@@ -465,7 +465,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
       //     ),
       //     focusedBorder: UnderlineInputBorder(
       //       borderSide: BorderSide(
-      //           color: Colors.green.shade800,
+      //           color: mythemecolor.shade800,
       //           width: 2.5),
       //     ),
       //   ),
@@ -478,11 +478,11 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
       //   decoration: InputDecoration(
       //     labelText: 'Enter your Phone Number',
       //     labelStyle: TextStyle(
-      //       color: tdgreen,
+      //       color: mythemecolor,
       //       fontSize: isTablet ? 18 : 14,
       //     ),
       //     prefixIcon: const Icon(Icons.phone,
-      //         color: Colors.green),
+      //         color: mythemecolor),
       //     prefix: const Padding(
       //       padding: EdgeInsets.only(right: 8.0),
       //       child: Text("🇮🇳 |",
@@ -495,7 +495,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
       //     ),
       //     focusedBorder: UnderlineInputBorder(
       //       borderSide: BorderSide(
-      //           color: Colors.green.shade800,
+      //           color: mythemecolor.shade800,
       //           width: 2.5),
       //     ),
       //   ),
@@ -508,11 +508,11 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
       //   decoration: InputDecoration(
       //     labelText: 'Enter your City',
       //     labelStyle: TextStyle(
-      //       color: tdgreen,
+      //       color: mythemecolor,
       //       fontSize: isTablet ? 18 : 14,
       //     ),
       //     prefixIcon: const Icon(Icons.location_on,
-      //         color: Colors.green),
+      //         color: mythemecolor),
       //     enabledBorder: UnderlineInputBorder(
       //       borderSide: BorderSide(
       //           color: Colors.grey.shade400,
@@ -520,7 +520,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
       //     ),
       //     focusedBorder: UnderlineInputBorder(
       //       borderSide: BorderSide(
-      //           color: Colors.green.shade800,
+      //           color: mythemecolor.shade800,
       //           width: 2.5),
       //     ),
       //   ),
@@ -719,7 +719,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
   //       gradient: LinearGradient(
   //         colors: [
   //           const Color.fromARGB(255, 26, 99, 91),
-  //           Colors.green,
+  //           mythemecolor,
   //           Color.fromARGB(255, 26, 99, 91),
   //         ],
   //         begin: Alignment.topLeft,
@@ -743,7 +743,7 @@ class _EditUserDetailsPageState extends State<EditUserDetailsPage> {
   //     body: _isLoading
   //         ? const Center(
   //             child: CircularProgressIndicator(
-  //             color: Colors.green,
+  //             color: mythemecolor,
   //           ))
   //         : RefreshIndicator(
   //             onRefresh: _loadUserData,

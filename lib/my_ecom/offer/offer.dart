@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/core/model/model_file.dart';
 import 'package:furniture_ecom_app/core/services/offers_service.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/offer/offer_detail.dart';
 
 class OfferGridWidget extends StatefulWidget {
@@ -68,15 +69,13 @@ class _OfferGridWidgetState extends State<OfferGridWidget> {
         return Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              // image: const NetworkImage(
-              //   'https://www.google.com/url?sa=i&url=https%3A%2F%2Fhtmlcolorcodes.com%2Fcolors%2Fdark-purple%2F&psig=AOvVaw2uPeRzx01OS8ZuCjvmwuTP&ust=1762086791480000&source=images&cd=vfe&opi=89978449&ved=0CBUQjRxqFwoTCPDngZX70JADFQAAAAAdAAAAABAE',
-              // ),
-              image: AssetImage('assets/images/offerback.png'),
+            
+              image: AssetImage('assets/images/b.jpg'),
               fit: BoxFit.cover,
-              colorFilter: ColorFilter.mode(
-                Colors.black.withOpacity(0.5),
-                BlendMode.darken,
-              ),
+              // colorFilter: ColorFilter.mode(
+              //   Colors.black.withOpacity(0.5),
+              //   BlendMode.darken,
+              // ),
             ),
           ),
           child: FutureBuilder<List<Offer>>(
@@ -190,7 +189,7 @@ class _OfferGridWidgetState extends State<OfferGridWidget> {
                               child: IconButton(
                                 onPressed: _scrollLeft,
                                 icon: const Icon(Icons.arrow_back_ios),
-                                color: const Color(0xFF085B0D),
+                                color: mythemecolor,
                                 iconSize: 20,
                               ),
                             ),
@@ -217,7 +216,7 @@ class _OfferGridWidgetState extends State<OfferGridWidget> {
                               child: IconButton(
                                 onPressed: _scrollRight,
                                 icon: const Icon(Icons.arrow_forward_ios),
-                                color: const Color(0xFF085B0D),
+                                color: mythemecolor,
                                 iconSize: 20,
                               ),
                             ),
@@ -323,7 +322,7 @@ class _OfferCard extends StatelessWidget {
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
-                        color: Color.fromARGB(255, 26, 100, 28),
+                        color: mythemecolor,
                       ),
                     ),
                     const SizedBox(width: 10),

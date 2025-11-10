@@ -82,8 +82,8 @@ class _ResultScreenState extends State<ResultScreen> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 149, 220, 124),
-          Color.fromARGB(255, 41, 97, 67),
+                  mythemecolor1,
+               mythemecolor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,

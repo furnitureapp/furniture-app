@@ -3,6 +3,7 @@ import 'package:furniture_ecom_app/core/model/model_file.dart';
 import 'package:furniture_ecom_app/core/services/cart_service.dart';
 import 'package:furniture_ecom_app/core/services/offers_service.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/offer/offer_reuable.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_confirmationpage.dart';
@@ -13,10 +14,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final Offer offer;
-  const ProductDetailPage({
-    super.key,
-    required this.offer,
-  });
+  const ProductDetailPage({super.key, required this.offer});
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -61,8 +59,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         return AnimatedPadding(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
           child: Container(
             width: isTablet ? screenWidth * 0.6 : double.infinity,
             padding: EdgeInsets.symmetric(
@@ -91,8 +90,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       end: Alignment.bottomRight,
                     ),
                   ),
-                  child: const Icon(Icons.lock_outline,
-                      size: 40, color: Colors.white),
+                  child: const Icon(
+                    Icons.lock_outline,
+                    size: 40,
+                    color: Colors.white,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Text(
@@ -128,7 +130,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       gradient: const LinearGradient(
                         colors: [
                           Color.fromARGB(255, 72, 181, 64),
-                          Color.fromARGB(255, 13, 112, 4)
+                          Color.fromARGB(255, 13, 112, 4),
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -192,23 +194,22 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     }
 
     final product = Product(
-        id: offer.productId,
-        title: offer.title,
-        price: offer.actualPrice,
-        offerPrice: offer.offerPrice,
-        description: offer.description,
-        images: offer.images,
-        stock: offer.stock,
-        gstPercentage: offer.gstPercentage,
-        unit: offer.unit);
+      id: offer.productId,
+      title: offer.title,
+      price: offer.actualPrice,
+      offerPrice: offer.offerPrice,
+      description: offer.description,
+      images: offer.images,
+      stock: offer.stock,
+      gstPercentage: offer.gstPercentage,
+      unit: offer.unit,
+    );
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => OrderConfirmationPage(
-          product: product,
-          offerId: offer.id,
-        ),
+        builder: (context) =>
+            OrderConfirmationPage(product: product, offerId: offer.id),
       ),
     );
   }
@@ -301,8 +302,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         });
         return false;
       } else {
-        await Provider.of<CartProvider>(context, listen: false)
-            .fetchCartCount();
+        await Provider.of<CartProvider>(
+          context,
+          listen: false,
+        ).fetchCartCount();
 
         // ScaffoldMessenger.of(context).showSnackBar(
         //   SnackBar(
@@ -310,7 +313,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         //   ),
         // );
         showTopSnackBar(
-            context, response['message'] ?? "Product Added to Cart!!");
+          context,
+          response['message'] ?? "Product Added to Cart!!",
+        );
         return true;
       }
     } catch (e) {
@@ -321,7 +326,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       //   ),
       // );
       showTopSnackBar(
-          context, "Failed to add product to cart. Please try again.");
+        context,
+        "Failed to add product to cart. Please try again.",
+      );
       setState(() {
         isAddedToCart = false;
       });
@@ -340,10 +347,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color.fromARGB(255, 149, 220, 124),
-                Color.fromARGB(255, 41, 97, 67),
-              ],
+              colors: [mythemecolor1, mythemecolor],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -370,7 +374,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(
-                child: Text('Failed to load product: ${snapshot.error}'));
+              child: Text('Failed to load product: ${snapshot.error}'),
+            );
           } else if (!snapshot.hasData) {
             return const Center(child: Text('No product data available.'));
           }
@@ -434,23 +439,28 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       effect: const WormEffect(
                         dotWidth: 8,
                         dotHeight: 7,
-                        activeDotColor: Colors.green,
+                        activeDotColor: mythemecolor,
                         dotColor: Colors.grey,
                       ),
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text(offer.title,
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(
+                    offer.title,
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   _buildPriceSection(offer),
                   const SizedBox(height: 16),
                   _buildOfferSection(offer),
                   const SizedBox(height: 20),
-                  const Text('Description:',
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                  const Text(
+                    'Description:',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 8),
                   Text(offer.description, style: const TextStyle(fontSize: 16)),
                   const SizedBox(height: 20),
@@ -460,10 +470,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             ),
           ),
         ),
-        SafeArea(
-          bottom: true,
-          child: _buildActionButtons(offer),
-        )
+        SafeArea(bottom: true, child: _buildActionButtons(offer)),
       ],
     );
   }
@@ -519,7 +526,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                   effect: const WormEffect(
                                     dotWidth: 8,
                                     dotHeight: 7,
-                                    activeDotColor: Colors.green,
+                                    activeDotColor:mythemecolor,
                                     dotColor: Colors.grey,
                                   ),
                                 ),
@@ -532,22 +539,30 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(offer.title,
-                                    style: const TextStyle(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.bold)),
+                                Text(
+                                  offer.title,
+                                  style: const TextStyle(
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 const SizedBox(height: 20),
                                 _buildPriceSection(offer),
                                 const SizedBox(height: 10),
                                 _buildOfferSection(offer),
                                 const SizedBox(height: 20),
-                                const Text('Description:',
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold)),
+                                const Text(
+                                  'Description:',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 const SizedBox(height: 10),
-                                Text(offer.description,
-                                    style: const TextStyle(fontSize: 20)),
+                                Text(
+                                  offer.description,
+                                  style: const TextStyle(fontSize: 20),
+                                ),
                                 const SizedBox(height: 20),
                                 _buildActionButtons(offer),
                               ],
@@ -589,20 +604,30 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          Text(offer.title,
-                              style: const TextStyle(
-                                  fontSize: 30, fontWeight: FontWeight.bold)),
+                          Text(
+                            offer.title,
+                            style: const TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 20),
                           _buildPriceSection(offer),
                           const SizedBox(height: 10),
                           _buildOfferSection(offer),
                           const SizedBox(height: 20),
-                          const Text('Description:',
-                              style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
+                          const Text(
+                            'Description:',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           const SizedBox(height: 10),
-                          Text(offer.description,
-                              style: const TextStyle(fontSize: 20)),
+                          Text(
+                            offer.description,
+                            style: const TextStyle(fontSize: 20),
+                          ),
                           const SizedBox(height: 20),
                           _buildActionButtons(offer),
                         ],
@@ -622,19 +647,25 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     final bool isTablet = screenWidth > 600;
     return Row(
       children: [
-        Text('Offer Price : ₹${offer.offerPrice. round()}',
-            style: TextStyle(
-                color: Color.fromARGB(255, 28, 79, 30),
-                fontWeight: FontWeight.bold,
-                fontSize: isTablet ? 22 : 14)),
+        Text(
+          'Offer Price : ₹${offer.offerPrice.round()}',
+          style: TextStyle(
+            color: const Color.fromARGB(255, 70, 56, 83),
+            fontWeight: FontWeight.bold,
+            fontSize: isTablet ? 22 : 14,
+          ),
+        ),
         const SizedBox(width: 20),
-        Text(' ₹${offer.actualPrice. round()}',
-            style: TextStyle(
-                color: Colors.red,
-                fontSize: isTablet ? 22 : 14,
-                fontWeight: FontWeight.bold,
-                decoration: TextDecoration.lineThrough,
-                decorationColor: Colors.black)),
+        Text(
+          ' ₹${offer.actualPrice.round()}',
+          style: TextStyle(
+            color: const Color.fromARGB(255, 94, 90, 90),
+            fontSize: isTablet ? 22 : 14,
+            fontWeight: FontWeight.bold,
+            decoration: TextDecoration.lineThrough,
+            decorationColor: Colors.black,
+          ),
+        ),
         const SizedBox(width: 20),
       ],
     );
@@ -647,16 +678,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         _discountTag(
-            'SAVE ! ${(((offer.actualPrice - offer.offerPrice) / offer.actualPrice) * 100).round()}%',
-            Colors.green),
-        Text('Per Unit: ${offer.unit}',
-            style: TextStyle(
-                fontSize: isTablet ? 18 : 12,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey)),
+          'SAVE ! ${(((offer.actualPrice - offer.offerPrice) / offer.actualPrice) * 100).round()}%',
+          mythemecolor,
+        ),
+        Text(
+          'Per Unit: ${offer.unit}',
+          style: TextStyle(
+            fontSize: isTablet ? 18 : 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey,
+          ),
+        ),
         _discountTag(
-            '₹${(offer.actualPrice - offer.offerPrice). round()} Saved',
-            Colors.red),
+          '₹${(offer.actualPrice - offer.offerPrice).round()} Saved',
+          mythemecolor1,
+        ),
       ],
     );
   }
@@ -664,11 +700,18 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget _discountTag(String text, Color color) {
     return Container(
       padding: const EdgeInsets.all(5),
-      decoration:
-          BoxDecoration(color: color, borderRadius: BorderRadius.circular(8)),
-      child: Text(text,
-          style: const TextStyle(
-              color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     );
   }
 
@@ -686,23 +729,23 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               onPressed: isAddedToCart
                   ? () => Navigator.pushNamed(context, '/cart')
                   : (offer.stock > 0
-                      ? () async {
-                          setState(() => _isAddingToCart = true);
+                        ? () async {
+                            setState(() => _isAddingToCart = true);
 
-                          final success = await _addToCart(context, offer);
+                            final success = await _addToCart(context, offer);
 
-                          setState(() {
-                            _isAddingToCart = false;
-                            if (success) {
-                              isAddedToCart = true;
-                            }
-                          });
-                        }
-                      : null),
+                            setState(() {
+                              _isAddingToCart = false;
+                              if (success) {
+                                isAddedToCart = true;
+                              }
+                            });
+                          }
+                        : null),
               style: ElevatedButton.styleFrom(
                 backgroundColor: isAddedToCart
-                    ? const Color.fromARGB(255, 225, 204, 15)
-                    : (offer.stock > 0 ? Colors.orange : Colors.grey),
+                    ? mythemecolor
+                    : (offer.stock > 0 ? const Color.fromARGB(255, 199, 180, 119): Colors.grey),
                 padding: const EdgeInsets.all(14),
               ),
               child: _isAddingToCart
@@ -729,10 +772,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           const SizedBox(width: 12),
           Expanded(
             child: ElevatedButton(
-              onPressed:
-                  offer.stock > 0 ? () => _handleBuyNow(context, offer) : null,
+              onPressed: offer.stock > 0
+                  ? () => _handleBuyNow(context, offer)
+                  : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: offer.stock > 0 ? Colors.green : Colors.grey,
+                backgroundColor: offer.stock > 0 ? mythemecolor : Colors.grey,
                 padding: const EdgeInsets.all(14),
               ),
               child: const Text(
@@ -770,7 +814,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           builder: (context, relatedSnapshot) {
             if (relatedSnapshot.connectionState == ConnectionState.waiting) {
               return const Center(
-                child: CircularProgressIndicator(color: Colors.green),
+                child: CircularProgressIndicator(color: mythemecolor),
               );
             } else if (relatedSnapshot.hasError) {
               return Center(
@@ -788,7 +832,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             final relatedOffers = relatedSnapshot.data!;
 
             return SizedBox(
-              height: isTablet ? 420 : 220, // allow space for full card
+              height: isTablet ? 420 : 250, 
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 8),

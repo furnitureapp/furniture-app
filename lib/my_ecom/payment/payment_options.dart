@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/core/services/checkout_payment.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_success.dart';
 import 'package:furniture_ecom_app/my_ecom/payment/payment_screen.dart';
@@ -145,6 +146,7 @@ class _ExpansionTileControllersState extends State<ExpansionTileControllers> {
                     style: TextStyle(
                       fontSize: isTablet ? 20 : 14,
                       fontWeight: FontWeight.bold,
+                      color: mythemecolor,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -166,7 +168,7 @@ class _ExpansionTileControllersState extends State<ExpansionTileControllers> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                const Color.fromARGB(255, 255, 255, 254),
+                                mythemecolor1,
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 8),
                             shape: const RoundedRectangleBorder(
@@ -178,7 +180,7 @@ class _ExpansionTileControllersState extends State<ExpansionTileControllers> {
                             style: TextStyle(
                               fontSize:  isTablet ? 20 : 12,
                               fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 2, 57, 4),
+                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -196,7 +198,7 @@ class _ExpansionTileControllersState extends State<ExpansionTileControllers> {
                           style: ElevatedButton.styleFrom(
                             backgroundColor: _isButtonDisabled
                                 ? Colors.grey // Change to grey when disabled
-                                : const Color.fromARGB(255, 232, 229, 7),
+                                : mythemecolor,
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 8),
                             shape: const RoundedRectangleBorder(
@@ -208,7 +210,7 @@ class _ExpansionTileControllersState extends State<ExpansionTileControllers> {
                             style:  TextStyle(
                               fontSize: isTablet ? 20 :  12,
                               fontWeight: FontWeight.bold,
-                              color: Color.fromARGB(255, 2, 57, 4),
+                              color: Colors.white,
                             ),
                           ),
                         ),
@@ -235,8 +237,8 @@ class _ExpansionTileControllersState extends State<ExpansionTileControllers> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 149, 220, 124),
-                Color.fromARGB(255, 41, 97, 67),
+                  mythemecolor1,
+               mythemecolor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -434,7 +436,8 @@ class _ExpansionTileControllersState extends State<ExpansionTileControllers> {
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
-                              const Color.fromARGB(255, 227, 231, 227),
+                              mythemecolor1
+,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 24, vertical: 12),
                           shape: RoundedRectangleBorder(
@@ -492,7 +495,8 @@ class _ExpansionTileControllersState extends State<ExpansionTileControllers> {
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
-                              const Color.fromARGB(255, 227, 231, 227),
+                              mythemecolor1
+,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 24, vertical: 12),
                           shape: RoundedRectangleBorder(

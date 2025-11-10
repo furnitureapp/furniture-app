@@ -148,7 +148,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
       title: const Text(
         'Edit Delivery Details',
         style: TextStyle(
-          color: tdgreen,
+          color: mythemecolor,
           fontWeight: FontWeight.bold,
           fontSize: 16,
         ),
@@ -234,7 +234,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
           onPressed: _submitForm,
           style: ElevatedButton.styleFrom(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 18),
-            backgroundColor: Colors.green,
+            backgroundColor: mythemecolor,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -262,15 +262,19 @@ class _EditUserDialogState extends State<EditUserDialog> {
         validator: (value) => validator(value ?? ""),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: const TextStyle(color: tdgreen, fontSize: 12),
-          prefixIcon: Icon(icon, color: tdgreen),
+          labelStyle: const TextStyle(color: mythemecolor,
+ fontSize: 12),
+          prefixIcon: Icon(icon, color: mythemecolor,
+),
           prefix: prefix,
           enabledBorder: const UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.green, width: 2),
+            borderSide: BorderSide(color: mythemecolor1
+, width: 2),
           ),
           focusedBorder: const UnderlineInputBorder(
             borderSide:
-                BorderSide(color: Color.fromARGB(255, 50, 107, 34), width: 3),
+                BorderSide(color: mythemecolor1
+, width: 3),
           ),
           errorStyle: const TextStyle(
             color: Colors.red,

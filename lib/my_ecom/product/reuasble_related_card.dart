@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 
 
 class MyrelatedproductWidget extends StatelessWidget {
@@ -42,9 +43,9 @@ class MyrelatedproductWidget extends StatelessWidget {
                         : 'https://via.placeholder.com/150',
                     fit: BoxFit.cover,
                     width: double.infinity,
-                    height: isTablet ? 270 : 120 * scale,
+                    height: isTablet ? 270 : 100 * scale,
                     errorBuilder: (context, error, stackTrace) => Container(
-                      height: isTablet ? 220 : 120 * scale,
+                      height: isTablet ? 220 : 140 * scale,
                       color: Colors.grey.shade300,
                       child: const Icon(Icons.broken_image,
                           size: 50, color: Colors.grey),
@@ -104,7 +105,8 @@ class MyrelatedproductWidget extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: isTablet ? 21 : 14 * scale,
                                 fontWeight: FontWeight.bold,
-                                color: const Color.fromARGB(255, 26, 82, 29),
+                                color: mythemecolor,
+
                               ),
                             ),
                           ],

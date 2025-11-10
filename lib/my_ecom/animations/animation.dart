@@ -16,7 +16,7 @@ class AnimationPage1 extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: isTablet ? 50 : 20),
             child: Lottie.asset(
-              'assets/json/animation.json',
+              'assets/json/sofa.json',
               width: isTablet ? 400 : screenWidth * 0.9, // Max 400px for tablets
               height: isTablet ? 400 : null, // Adjust height proportionally
               fit: BoxFit.contain, // Keeps proportions correct

@@ -5,8 +5,9 @@ import 'package:furniture_ecom_app/core/services/wishlist_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
-import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
+import 'package:furniture_ecom_app/my_ecom/navbar/new_appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_confirmationpage.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 import 'package:furniture_ecom_app/my_ecom/wishlist/wishlist_manager.dart';
@@ -50,17 +51,21 @@ class _FavoritesPageState extends State<FavoritesPage> {
     return Scaffold(
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: MyAppbar(title: 'My Favorites'),
+        child: NewAppbar(title: 'My Favorites'),
       ),
       body: SizedBox.expand(
         child: Stack(
           children: [
             Positioned.fill(
               child: Image.asset(
-                isTablet ? 'assets/images/bbc.png' : 'assets/images/bbc.png',
-                fit: BoxFit.cover,
+                isTablet
+                    ? 'assets/images/theme.png'
+                    : 'assets/images/theme.png',
+                    fit: BoxFit.cover,
               ),
+              
             ),
+
             _isLoggedIn
                 ? (isTablet ? const MyTabView() : const MyMobileView())
                 : Center(
@@ -75,7 +80,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                           padding: EdgeInsets.all(isTablet ? 30 : 20),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: Colors.green.shade100,
+                            color: mythemecolor1.withOpacity(0.5),
                           ),
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
@@ -123,7 +128,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                   );
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.green,
+                                  backgroundColor: mythemecolor,
                                   padding: EdgeInsets.symmetric(
                                     horizontal: isTablet ? 40 : 30,
                                     vertical: isTablet ? 14 : 12,
@@ -224,7 +229,7 @@ class MyMobileView extends StatelessWidget {
                         padding: EdgeInsets.all(20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Colors.green.shade100,
+                          color: mythemecolor1.withOpacity(0.5),
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -263,7 +268,7 @@ class MyMobileView extends StatelessWidget {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
+                                backgroundColor: mythemecolor,
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 30,
                                   vertical: 12,
@@ -357,7 +362,7 @@ class MyMobileView extends StatelessWidget {
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,
-                                      color: Color.fromARGB(255, 4, 73, 6),
+                                      color: mythemecolor,
                                     ),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 2,
@@ -423,12 +428,7 @@ class MyMobileView extends StatelessWidget {
                                       Container(
                                         decoration: BoxDecoration(
                                           border: Border.all(
-                                            color: const Color.fromARGB(
-                                              255,
-                                              8,
-                                              123,
-                                              11,
-                                            ),
+                                            color: mythemecolor,
                                             width: 1.5, // Border width
                                           ),
                                           borderRadius: BorderRadius.circular(
@@ -461,12 +461,7 @@ class MyMobileView extends StatelessWidget {
                                       Container(
                                         decoration: BoxDecoration(
                                           border: Border.all(
-                                            color: const Color.fromARGB(
-                                              255,
-                                              8,
-                                              123,
-                                              11,
-                                            ),
+                                            color: mythemecolor,
                                             width: 1.5, // Border width
                                           ),
                                           borderRadius: BorderRadius.circular(
@@ -478,12 +473,7 @@ class MyMobileView extends StatelessWidget {
                                           icon: Icon(
                                             Icons.shopping_cart_outlined,
                                             color: productObj.stock > 0
-                                                ? const Color.fromARGB(
-                                                    255,
-                                                    4,
-                                                    73,
-                                                    6,
-                                                  )
+                                                ? mythemecolor
                                                 : Colors.grey,
                                             size: 20,
                                           ),
@@ -512,12 +502,7 @@ class MyMobileView extends StatelessWidget {
                                               }
                                             : null,
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color.fromARGB(
-                                            255,
-                                            4,
-                                            73,
-                                            6,
-                                          ),
+                                          backgroundColor: mythemecolor,
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 8,
                                             vertical: 4,
@@ -594,7 +579,7 @@ class MyTabView extends StatelessWidget {
     return Consumer<WishlistManager>(
       builder: (context, wishlistManager, child) {
         return RefreshIndicator(
-          color: const Color.fromARGB(255, 13, 75, 15),
+          color: mythemecolor,
           backgroundColor: const Color.fromARGB(255, 245, 240, 242),
           displacement: 40,
           strokeWidth: 2.5,
@@ -624,7 +609,7 @@ class MyTabView extends StatelessWidget {
                         padding: EdgeInsets.all(30),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Colors.green.shade100,
+                          color: mythemecolor1.withOpacity(0.5),
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -662,7 +647,7 @@ class MyTabView extends StatelessWidget {
                                 );
                               },
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
+                                backgroundColor: mythemecolor,
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 40,
                                   vertical: 14,
@@ -819,12 +804,7 @@ class MyTabView extends StatelessWidget {
                                   Container(
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                        color: const Color.fromARGB(
-                                          255,
-                                          8,
-                                          123,
-                                          11,
-                                        ),
+                                        color:       mythemecolor,
                                         width: 3, // Border width
                                       ),
                                       borderRadius: BorderRadius.circular(9),
@@ -851,12 +831,7 @@ class MyTabView extends StatelessWidget {
                                   Container(
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                        color: const Color.fromARGB(
-                                          255,
-                                          8,
-                                          123,
-                                          11,
-                                        ),
+                                        color: mythemecolor,
                                         width: 3, // Border width
                                       ),
                                       borderRadius: BorderRadius.circular(9),
@@ -866,13 +841,7 @@ class MyTabView extends StatelessWidget {
                                       icon: Icon(
                                         Icons.shopping_cart_outlined,
                                         color: productObj.stock > 0
-                                            ? const Color.fromARGB(
-                                                255,
-                                                4,
-                                                73,
-                                                6,
-                                              )
-                                            : Colors.grey,
+                                            ? mythemecolor        : Colors.grey,
                                         size: 26,
                                       ),
                                       onPressed: productObj.stock > 0
@@ -900,12 +869,7 @@ class MyTabView extends StatelessWidget {
                                           }
                                         : null,
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color.fromARGB(
-                                        255,
-                                        4,
-                                        73,
-                                        6,
-                                      ),
+                                      backgroundColor: mythemecolor,
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 20,
                                         vertical: 10,

@@ -4,6 +4,7 @@ import 'package:furniture_ecom_app/core/model/model_file.dart';
 import 'package:furniture_ecom_app/core/services/notif_maitence.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:intl/intl.dart';
 
@@ -96,8 +97,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 149, 220, 124),
-          Color.fromARGB(255, 41, 97, 67),
+                  mythemecolor1,
+               mythemecolor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -124,7 +125,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           children: [
             Positioned.fill(
               child: Image.asset(
-                isTablet ? 'assets/images/bbc.png' : 'assets/images/bbc.png',
+                isTablet ? 'assets/images/theme.png' : 'assets/images/theme.png',
                 fit: BoxFit.cover,
                 width: double.infinity,
                 height: double.infinity,
@@ -168,7 +169,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             padding: EdgeInsets.all(isTablet ? 30 : 20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: Colors.green.shade100,
+              color: const Color.fromARGB(255, 228, 215, 226),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -208,7 +209,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     (route) => false,
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isTablet ? Colors.white : Colors.green,
+                    backgroundColor: isTablet ? Colors.white : mythemecolor,
                     padding: EdgeInsets.symmetric(
                       horizontal: isTablet ? 40 : 30,
                       vertical: isTablet ? 14 : 12,
@@ -218,7 +219,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                     foregroundColor:
-                        isTablet ? Colors.green.shade700 : Colors.white,
+                        isTablet ? mythemecolor : Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -435,7 +436,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
-                              const Color.fromARGB(255, 200, 234, 203),
+                               mythemecolor,
                           padding: const EdgeInsets.symmetric(
                               horizontal: 40, vertical: 14),
                           shape: RoundedRectangleBorder(
@@ -446,7 +447,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         child: Text(
                           "Return to Shop!",
                           style: TextStyle(
-                            color:  const Color.fromARGB(255, 59, 103, 71),
+                            color:  mythemecolor1,
                             fontSize: isTablet ? 18 : 16,
                           ),
                         ),
@@ -472,7 +473,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             padding: EdgeInsets.all(isTablet ? 30 : 20),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: Colors.green.shade100,
+              color: const Color.fromARGB(255, 228, 215, 226),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -518,7 +519,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isTablet ? Colors.white : Colors.green,
+                    backgroundColor: isTablet ? Colors.white : mythemecolor,
                     padding: EdgeInsets.symmetric(
                       horizontal: isTablet ? 40 : 30,
                       vertical: isTablet ? 14 : 12,
@@ -528,7 +529,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       fontWeight: FontWeight.bold,
                     ),
                     foregroundColor:
-                        isTablet ? Colors.green.shade700 : Colors.white,
+                        isTablet ? mythemecolor : Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),

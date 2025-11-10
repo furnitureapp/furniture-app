@@ -55,7 +55,62 @@ class _LoginScreenState extends State<LoginScreen> {
     return null;
   }
 
-  Future<void> _loginUser() async {
+  // Future<void> _loginUser() async {
+  //   if (!_formKey.currentState!.validate()) return;
+
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+
+  //   try {
+  //     final response = await AuthService.login(
+  //       _emailController.text.trim(),
+  //       _passwordController.text.trim(),
+  //     );
+
+  //     if (response['success'] == true &&
+  //         response['message'] == "Login successful") {
+  //       SharedPreferences prefs = await SharedPreferences.getInstance();
+  //       await prefs.setString('user_email', _emailController.text.trim());
+
+  //       final fcmToken = await FirebaseMessaging.instance.getToken();
+  //       if (fcmToken != null) {
+  //         await prefs.setString('fcm_token', fcmToken);
+  //       }
+
+  //       String redirectRoute = prefs.getString('redirectRoute') ?? '/';
+  //       String? productId = prefs.getString('productId');
+
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(
+  //           builder: (context) => VerifyOtpScreen(
+  //             email: _emailController.text.trim(),
+  //             redirectRoute: redirectRoute,
+  //             productId: productId,
+  //           ),
+  //         ),
+  //       );
+  //     } else {
+  //       final errorMessage = response['message'] ?? "Login Failed!";
+  //       // ScaffoldMessenger.of(context).showSnackBar(
+  //       //   SnackBar(content: Text(' $errorMessage')),
+  //       // );
+  //       showTopSnackBar(context, '❌ $errorMessage');
+  //     }
+  //   } catch (e) {
+  //     // ScaffoldMessenger.of(context).showSnackBar(
+  //     //   SnackBar(content: Text('❌ Error occurred during login!')),
+  //     // );
+  //     showTopSnackBar(context, '❌ Error occurred during login!');
+  //   } finally {
+  //     setState(() {
+  //       _isLoading = false;
+  //     });
+  //   }
+  // }
+
+   Future<void> _loginUser() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -63,42 +118,39 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     try {
-      final response = await AuthService.login(
+      final response = await ApiService.login(
         _emailController.text.trim(),
         _passwordController.text.trim(),
       );
 
-      if (response['success'] == true &&
-          response['message'] == "Login successful") {
-        SharedPreferences prefs = await SharedPreferences.getInstance();
-        await prefs.setString('user_email', _emailController.text.trim());
+if (response['success'] == true) {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  await prefs.setString('user_email', _emailController.text.trim());
 
-        final fcmToken = await FirebaseMessaging.instance.getToken();
-        if (fcmToken != null) {
-          await prefs.setString('fcm_token', fcmToken);
-        }
+  final fcmToken = await FirebaseMessaging.instance.getToken();
+  if (fcmToken != null) {
+    await prefs.setString('fcm_token', fcmToken);
+  }
 
-        String redirectRoute = prefs.getString('redirectRoute') ?? '/';
-        String? productId = prefs.getString('productId');
+  String redirectRoute = prefs.getString('redirectRoute') ?? '/';
+  String? productId = prefs.getString('productId');
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VerifyOtpScreen(
-              email: _emailController.text.trim(),
-              redirectRoute: redirectRoute,
-              productId: productId,
-            ),
-          ),
-        );
-      } else {
-        final errorMessage = response['message'] ?? "Login Failed!";
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(content: Text(' $errorMessage')),
-        // );
-        showTopSnackBar(context, '❌ $errorMessage');
-      }
-    } catch (e) {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => VerifyOtpScreen(
+        email: _emailController.text.trim(),
+        redirectRoute: redirectRoute,
+        productId: productId,
+      ),
+    ),
+  );
+} else {
+  final errorMessage = response['message'] ?? "Login Failed!";
+  showTopSnackBar(context, '❌ $errorMessage');
+}
+    }
+    catch (e) {
       // ScaffoldMessenger.of(context).showSnackBar(
       //   SnackBar(content: Text('❌ Error occurred during login!')),
       // );
@@ -110,9 +162,10 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
- 
+
   @override
   Widget build(BuildContext context) {
+    print("screen width: ${MediaQuery.of(context).size.width}");
     final screenWidth = MediaQuery.of(context).size.width;
     final bool isTablet = screenWidth >= 600;
 
@@ -124,8 +177,8 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 149, 220, 124),
-                Color.fromARGB(255, 41, 97, 67),
+                  mythemecolor1,
+               mythemecolor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -160,7 +213,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Stack(
         children: [
           Positioned.fill(
-            child: Image.asset('assets/images/bbc.png', fit: BoxFit.cover),
+            child: Image.asset('assets/images/theme.png', fit: BoxFit.cover),
           ),
           Center(
             child: SingleChildScrollView(

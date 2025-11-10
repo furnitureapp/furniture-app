@@ -3,7 +3,7 @@ import 'package:furniture_ecom_app/core/model/model_file.dart';
 import 'package:furniture_ecom_app/core/services/cat_sub_banners.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
+import 'package:furniture_ecom_app/my_ecom/navbar/new_appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/subc_screen.dart';
 
 
@@ -48,9 +48,9 @@ Future<void> _refreshData() async {
     final bool isTablet = screenWidth >= 600;
 
     return Scaffold(
-      appBar: const PreferredSize(
+      appBar:  PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: MyAppbar(title: 'Categories'),
+        child: NewAppbar(title: 'Categories'),
       ),
       body: RefreshIndicator(
         onRefresh: _refreshData,

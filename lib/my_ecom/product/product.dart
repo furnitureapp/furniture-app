@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/core/model/model_file.dart';
 import 'package:furniture_ecom_app/core/services/product_service.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 import 'package:furniture_ecom_app/my_ecom/product/resuable_product.dart';
@@ -80,7 +81,7 @@ class _ProductPageState extends State<ProductPage> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: const LinearGradient(
-                      colors: [Colors.orangeAccent, Colors.deepOrange],
+                      colors: [mythemecolor1, mythemecolor],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -121,8 +122,7 @@ class _ProductPageState extends State<ProductPage> {
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [
-                          Color.fromARGB(255, 72, 181, 64),
-                          Color.fromARGB(255, 13, 112, 4)
+                        mythemecolor1, mythemecolor
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,

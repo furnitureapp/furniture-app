@@ -64,6 +64,8 @@ dependencies:
   flutter_local_notifications: ^18.0.1
   http: ^1.5.0
   flutter_dotenv: ^6.0.0
+  video_player: ^2.10.0
+  audioplayers: ^6.5.1
 
 dev_dependencies:
   flutter_test:
@@ -101,7 +103,7 @@ flutter:
     - assets/images/l.png
     - assets/images/f.png
     - assets/images/man.png
-    - assets/images/presss.png
+    - assets/images/press.png
     - assets/images/cartt.png
     - assets/images/cart.jpg
     - assets/images/addcart.png
@@ -150,14 +152,14 @@ flutter:
     - assets/images/kailogo.png
     - assets/images/no_offer.jpg
     - assets/images/offerback.png
-    - assets/json/splash.json
-    - assets/splash.lottie
-    - assets/f.lottie
     - assets/animation/Furniture.gif
     - assets/images/purple.png
     - assets/json/sofa.json
     - assets/images/theme.png
-
+    - assets/images/kiruku.jpg
+    - assets/images/b.jpg
+    - assets/videos/splash_video.mp4
+    - assets/images/woodpecker_logo.png
 
   #   - images/a_dot_ham.jpeg
 

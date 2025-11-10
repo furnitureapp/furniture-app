@@ -17,7 +17,7 @@ class _OrderSuccessScreenState extends State<OrderSuccessScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 4), () {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const BottomNavBar()),

@@ -15,7 +15,6 @@ import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 // import 'package:path_provider/path_provider.dart';
 
-
 class OrderConfirmationPage extends StatefulWidget {
   final Product product;
   final bool refresh;
@@ -40,7 +39,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
   bool _isLoading = true;
   double _gstAmount = 0.0;
   double _baseAmount = 0.0;
-// bool showWhatsappButton = false;
+  // bool showWhatsappButton = false;
 
   String? selectedDeliveryId;
   String _userName = "";
@@ -116,29 +115,27 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
     });
   }
 
-//   void _updateQuantity(int newQuantity) {
-//   if (newQuantity < 1) return;
+  //   void _updateQuantity(int newQuantity) {
+  //   if (newQuantity < 1) return;
 
-//   if (newQuantity > widget.product.stock) {
-//     setState(() {
-//       showWhatsappButton = true;
-//     });
+  //   if (newQuantity > widget.product.stock) {
+  //     setState(() {
+  //       showWhatsappButton = true;
+  //     });
 
-//     showTopSnackBar(
-//       context,
-//       "Only ${widget.product.stock} items left in stock.",
-//     );
-//     return;
-//   }
+  //     showTopSnackBar(
+  //       context,
+  //       "Only ${widget.product.stock} items left in stock.",
+  //     );
+  //     return;
+  //   }
 
-//   setState(() {
-//     showWhatsappButton = false;
-//     quantity = newQuantity;
-//     calculateTotalAmount();
-//   });
-// }
-
-
+  //   setState(() {
+  //     showWhatsappButton = false;
+  //     quantity = newQuantity;
+  //     calculateTotalAmount();
+  //   });
+  // }
 
   void _updateQuantity(int newQuantity) {
     if (newQuantity < 1) return;
@@ -178,10 +175,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color.fromARGB(255, 149, 220, 124),
-                Color.fromARGB(255, 41, 97, 67),
-              ],
+              colors: [mythemecolor1, mythemecolor],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -201,7 +195,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
           ),
         ),
       ),
-   
+
       bottomNavigationBar: SafeArea(
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -245,9 +239,10 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                           Text(
                             "Total: ₹${totalAmount.round()}",
                             style: const TextStyle(
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold),
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           ElevatedButton(
                             onPressed: isBelowMin
@@ -267,21 +262,23 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             ExpansionTileControllers(
-                                          totalAmount: totalAmount,
-                                          type: 'buyNow',
-                                          productId: widget.product.id,
-                                          selectedDeliveryId:
-                                              selectedDeliveryId,
-                                          quantity: quantity.toString(),
-                                          offerId: widget.offerId,
-                                        ),
+                                              totalAmount: totalAmount,
+                                              type: 'buyNow',
+                                              productId: widget.product.id,
+                                              selectedDeliveryId:
+                                                  selectedDeliveryId,
+                                              quantity: quantity.toString(),
+                                              offerId: widget.offerId,
+                                            ),
                                       ),
                                     );
                                   },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
+                              backgroundColor: mythemecolor,
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 12),
+                                horizontal: 20,
+                                vertical: 12,
+                              ),
                               textStyle: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -302,9 +299,10 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                         Text(
                           "Total: ₹${totalAmount.round()}",
                           style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold),
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         ElevatedButton(
                           onPressed: isBelowMin
@@ -324,18 +322,19 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                     MaterialPageRoute(
                                       builder: (context) =>
                                           ExpansionTileControllers(
-                                        totalAmount: totalAmount,
-                                        type: 'buyNow',
-                                        productId: widget.product.id,
-                                        selectedDeliveryId: selectedDeliveryId,
-                                        quantity: quantity.toString(),
-                                        offerId: widget.offerId,
-                                      ),
+                                            totalAmount: totalAmount,
+                                            type: 'buyNow',
+                                            productId: widget.product.id,
+                                            selectedDeliveryId:
+                                                selectedDeliveryId,
+                                            quantity: quantity.toString(),
+                                            offerId: widget.offerId,
+                                          ),
                                     ),
                                   );
                                 },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
+                            backgroundColor: mythemecolor,
                             padding: const EdgeInsets.all(10),
                             textStyle: const TextStyle(
                               fontSize: 12,
@@ -348,7 +347,6 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                           ),
                           child: const Text("CONTINUE"),
                         ),
-                     
                       ],
                     ),
             ],
@@ -357,12 +355,12 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
       ),
 
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator(color: mythemecolor,))
+          ? const Center(child: CircularProgressIndicator(color: mythemecolor))
           : _isLoggedIn
-              ? isTablet
-                  ? _buildTabletView(context, product)
-                  : _buildMobileView(context, product)
-              : const Center(child: Text("User not Authenticated")),
+          ? isTablet
+                ? _buildTabletView(context, product)
+                : _buildMobileView(context, product)
+          : const Center(child: Text("User not Authenticated")),
     );
   }
 
@@ -387,9 +385,10 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                     const Text(
                       "Item to Purchase:",
                       style: TextStyle(
-                          color: Color.fromARGB(255, 9, 94, 12),
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold),
+                        color: mythemecolor,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Card(
@@ -428,12 +427,14 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                       right: 8,
                                       child: Container(
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 4),
+                                          horizontal: 8,
+                                          vertical: 4,
+                                        ),
                                         decoration: BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              255, 249, 48, 21),
-                                          borderRadius:
-                                              BorderRadius.circular(6),
+                                          color: mythemecolor,
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                         ),
                                         child: Text(
                                           '${(((product.price - product.offerPrice) / product.price) * 100).round()}% OFF',
@@ -480,7 +481,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
-                                      color: Color.fromARGB(255, 8, 69, 8),
+                                      color: mythemecolor,
                                     ),
                                   ),
                                   const SizedBox(height: 8),
@@ -498,19 +499,17 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
-                                      color: Color.fromARGB(255, 8, 69, 8),
+                                      color: mythemecolor,
                                     ),
                                   ),
                                   const SizedBox(height: 5),
                                   Row(
                                     children: [
-                                      SizedBox(
-                                        width: 10,
-                                      ),
+                                      SizedBox(width: 10),
                                       IconButton(
                                         icon: const Icon(
                                           Icons.remove_circle,
-                                          color: Colors.red,
+                                          color: mythemecolor1,
                                           size: 30,
                                         ),
                                         onPressed: () {
@@ -519,21 +518,21 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                           }
                                         },
                                       ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
+                                      SizedBox(width: 10),
                                       Text(
                                         '$quantity',
                                         style: const TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
+                                      SizedBox(width: 10),
                                       IconButton(
-                                        icon: const Icon(Icons.add_circle,
-                                            color: Colors.green, size: 30),
+                                        icon: const Icon(
+                                          Icons.add_circle,
+                                          color: mythemecolor,
+                                          size: 30,
+                                        ),
                                         onPressed: () {
                                           _updateQuantity(quantity + 1);
                                         },
@@ -551,14 +550,17 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                     const Text(
                       "Deliver To:",
                       style: TextStyle(
-                          color: Color.fromARGB(255, 9, 94, 12),
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold),
+                        color: mythemecolor,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     if (_houseNo == "No HouseNo" || selectedDeliveryId == null)
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 10.0),
+                          horizontal: 16.0,
+                          vertical: 10.0,
+                        ),
                         child: Card(
                           color: Colors.white,
                           elevation: 10,
@@ -572,8 +574,11 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.location_on,
-                                        size: 20, color: Colors.redAccent),
+                                    const Icon(
+                                      Icons.location_on,
+                                      size: 20,
+                                      color: mythemecolor,
+                                    ),
                                     const SizedBox(width: 10),
                                     const Text(
                                       "No Delivery Address Selected",
@@ -602,7 +607,8 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             UpdateAddressScreen(
-                                                product: product),
+                                              product: product,
+                                            ),
                                       ),
                                     );
                                     if (result == true) {
@@ -613,18 +619,22 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
+                                    backgroundColor: mythemecolor,
                                     minimumSize: const Size(200, 40),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  icon: const Icon(Icons.edit_location_alt,
-                                      color: Colors.white),
+                                  icon: const Icon(
+                                    Icons.edit_location_alt,
+                                    color: Colors.white,
+                                  ),
                                   label: const Text(
                                     "Add Delivery Details",
                                     style: TextStyle(
-                                        fontSize: 14, color: Colors.white),
+                                      fontSize: 14,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -655,8 +665,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
-                                          color:
-                                              Color.fromARGB(255, 26, 84, 28),
+                                          color: mythemecolor,
                                         ),
                                       ),
                                       ElevatedButton.icon(
@@ -666,7 +675,8 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   UpdateAddressScreen(
-                                                      product: product),
+                                                    product: product,
+                                                  ),
                                             ),
                                           );
                                           // if (result == true && mounted) {
@@ -687,18 +697,22 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                         label: const Text(
                                           "Change Address",
                                           style: TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.white),
+                                            fontSize: 12,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color.fromARGB(
-                                              255, 112, 189, 252),
+                                          backgroundColor: mythemecolor,
+
                                           minimumSize: const Size(50, 35),
                                           padding: const EdgeInsets.symmetric(
-                                              horizontal: 15, vertical: 10),
+                                            horizontal: 15,
+                                            vertical: 10,
+                                          ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -707,15 +721,19 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                   const SizedBox(height: 10),
                                   Row(
                                     children: [
-                                      const Icon(Icons.person,
-                                          color: Colors.green, size: 18),
+                                      const Icon(
+                                        Icons.person,
+                                        color: mythemecolor,
+                                        size: 18,
+                                      ),
                                       const SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
                                           "Name     :   $_userName",
                                           style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -723,15 +741,19 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                   const SizedBox(height: 15),
                                   Row(
                                     children: [
-                                      const Icon(Icons.phone,
-                                          color: Colors.green, size: 18),
+                                      const Icon(
+                                        Icons.phone,
+                                        color: mythemecolor,
+                                        size: 18,
+                                      ),
                                       const SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
                                           "Phone    :   $_userPhone",
                                           style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -741,15 +763,19 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Icon(Icons.location_on,
-                                          color: Colors.green, size: 18),
+                                      const Icon(
+                                        Icons.location_on,
+                                        color: mythemecolor,
+                                        size: 18,
+                                      ),
                                       const SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
                                           "Address :   $_houseNo, $_streetName,\n$_city, $_state - $_pinCode",
                                           style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                          ),
                                           maxLines: 5,
                                           overflow: TextOverflow.ellipsis,
                                         ),
@@ -797,9 +823,10 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                     const Text(
                       "Item to Purchase:",
                       style: TextStyle(
-                          color: Color.fromARGB(255, 9, 94, 12),
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold),
+                        color: mythemecolor,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Card(
@@ -863,7 +890,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                       style: const TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.w500,
-                                        color: Color.fromARGB(255, 8, 69, 8),
+                                        color: mythemecolor,
                                       ),
                                     ),
                                     const SizedBox(height: 8),
@@ -878,7 +905,8 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                                 product.offerPrice)
                                               Padding(
                                                 padding: const EdgeInsets.only(
-                                                    right: 8.0),
+                                                  right: 8.0,
+                                                ),
                                                 child: Text(
                                                   '₹${product.price.round()}',
                                                   style: const TextStyle(
@@ -895,7 +923,11 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                                 fontSize: 22,
                                                 fontWeight: FontWeight.bold,
                                                 color: Color.fromARGB(
-                                                    255, 8, 69, 8),
+                                                  255,
+                                                  8,
+                                                  69,
+                                                  8,
+                                                ),
                                               ),
                                             ),
                                           ],
@@ -903,10 +935,16 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                         if (product.price > product.offerPrice)
                                           Container(
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 4),
+                                              horizontal: 8,
+                                              vertical: 4,
+                                            ),
                                             decoration: BoxDecoration(
                                               color: const Color.fromARGB(
-                                                  255, 249, 48, 21),
+                                                255,
+                                                249,
+                                                48,
+                                                21,
+                                              ),
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                             ),
@@ -929,16 +967,21 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                           style: TextStyle(
                                             fontSize: 17,
                                             color: Color.fromARGB(
-                                                255, 224, 129, 5),
+                                              255,
+                                              224,
+                                              129,
+                                              5,
+                                            ),
                                             fontWeight: FontWeight.bold,
                                           ),
                                         ),
-                                        const SizedBox(
-                                          width: 10,
-                                        ),
+                                        const SizedBox(width: 10),
                                         IconButton(
-                                          icon: const Icon(Icons.remove_circle,
-                                              color: Colors.red, size: 35),
+                                          icon: const Icon(
+                                            Icons.remove_circle,
+                                            color: mythemecolor1,
+                                            size: 35,
+                                          ),
                                           padding: EdgeInsets.zero,
                                           constraints: const BoxConstraints(),
                                           onPressed: () {
@@ -946,34 +989,38 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                               _updateQuantity(quantity - 1);
                                           },
                                         ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
+                                        const SizedBox(width: 5),
                                         Container(
                                           margin: const EdgeInsets.symmetric(
-                                              horizontal: 4),
+                                            horizontal: 4,
+                                          ),
                                           padding: const EdgeInsets.symmetric(
-                                              horizontal: 8, vertical: 2),
+                                            horizontal: 8,
+                                            vertical: 2,
+                                          ),
                                           decoration: BoxDecoration(
                                             border: Border.all(
-                                                color: const Color.fromARGB(
-                                                    255, 31, 92, 23),
-                                                width: 2),
-                                            borderRadius:
-                                                BorderRadius.circular(4),
+                                              color: mythemecolor,
+                                              width: 2,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              4,
+                                            ),
                                           ),
                                           child: Text(
                                             '$quantity',
-                                            style:
-                                                const TextStyle(fontSize: 22),
+                                            style: const TextStyle(
+                                              fontSize: 22,
+                                            ),
                                           ),
                                         ),
-                                        const SizedBox(
-                                          width: 5,
-                                        ),
+                                        const SizedBox(width: 5),
                                         IconButton(
-                                          icon: const Icon(Icons.add_circle,
-                                              color: Colors.green, size: 35),
+                                          icon: const Icon(
+                                            Icons.add_circle,
+                                            color: mythemecolor,
+                                            size: 35,
+                                          ),
                                           padding: EdgeInsets.zero,
                                           constraints: const BoxConstraints(),
                                           onPressed: () {
@@ -994,14 +1041,17 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                     const Text(
                       "Deliver To:",
                       style: TextStyle(
-                          color: Color.fromARGB(255, 9, 94, 12),
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
+                        color: mythemecolor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     if (_houseNo == "No HouseNo" || selectedDeliveryId == null)
                       Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0, vertical: 10.0),
+                          horizontal: 16.0,
+                          vertical: 10.0,
+                        ),
                         child: Card(
                           elevation: 6,
                           shape: RoundedRectangleBorder(
@@ -1014,8 +1064,11 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.location_on,
-                                        size: 40, color: Colors.redAccent),
+                                    const Icon(
+                                      Icons.location_on,
+                                      size: 40,
+                                      color: mythemecolor,
+                                    ),
                                     const SizedBox(width: 10),
                                     const Text(
                                       "No Delivery Address Selected",
@@ -1044,7 +1097,8 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             UpdateAddressScreen(
-                                                product: product),
+                                              product: product,
+                                            ),
                                       ),
                                     );
                                     if (result == true) {
@@ -1059,12 +1113,17 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                   ),
-                                  icon: const Icon(Icons.edit_location_alt,
-                                      color: Colors.white, size: 24),
+                                  icon: const Icon(
+                                    Icons.edit_location_alt,
+                                    color: Colors.white,
+                                    size: 24,
+                                  ),
                                   label: const Text(
                                     "Add Delivery Details",
                                     style: TextStyle(
-                                        fontSize: 18, color: Colors.white),
+                                      fontSize: 18,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ],
@@ -1096,8 +1155,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                         style: TextStyle(
                                           fontSize: 22,
                                           fontWeight: FontWeight.bold,
-                                          color:
-                                              Color.fromARGB(255, 26, 84, 28),
+                                          color: mythemecolor,
                                         ),
                                       ),
                                       ElevatedButton.icon(
@@ -1107,7 +1165,8 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                             MaterialPageRoute(
                                               builder: (context) =>
                                                   UpdateAddressScreen(
-                                                      product: product),
+                                                    product: product,
+                                                  ),
                                             ),
                                           );
                                           if (result == true && mounted) {
@@ -1122,18 +1181,21 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                         label: const Text(
                                           "Change Address",
                                           style: TextStyle(
-                                              fontSize: 18,
-                                              color: Colors.white),
+                                            fontSize: 18,
+                                            color: Colors.white,
+                                          ),
                                         ),
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color.fromARGB(
-                                              255, 66, 129, 180),
+                                          backgroundColor: mythemecolor,
                                           minimumSize: const Size(50, 45),
                                           padding: const EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 12),
+                                            horizontal: 20,
+                                            vertical: 12,
+                                          ),
                                           shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -1142,8 +1204,11 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                   const SizedBox(height: 15),
                                   Row(
                                     children: [
-                                      const Icon(Icons.person,
-                                          color: Colors.green, size: 24),
+                                      const Icon(
+                                        Icons.person,
+                                        color: mythemecolor,
+                                        size: 24,
+                                      ),
                                       const SizedBox(width: 12),
                                       Expanded(
                                         child: Text(
@@ -1156,8 +1221,11 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                   const SizedBox(height: 10),
                                   Row(
                                     children: [
-                                      const Icon(Icons.phone,
-                                          color: Colors.green, size: 24),
+                                      const Icon(
+                                        Icons.phone,
+                                        color: mythemecolor,
+                                        size: 24,
+                                      ),
                                       const SizedBox(width: 12),
                                       Expanded(
                                         child: Text(
@@ -1172,8 +1240,11 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      const Icon(Icons.location_on,
-                                          color: Colors.green, size: 24),
+                                      const Icon(
+                                        Icons.location_on,
+                                        color: mythemecolor,
+                                        size: 24,
+                                      ),
                                       const SizedBox(width: 12),
                                       Expanded(
                                         child: Text(

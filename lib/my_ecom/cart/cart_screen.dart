@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/core/model/model_file.dart';
 import 'package:furniture_ecom_app/core/services/cart_service.dart';
-import 'package:furniture_ecom_app/my_ecom/animations/animation2.dart';
+import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
@@ -183,8 +183,8 @@ class _CartScreenState extends State<CartScreen> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color.fromARGB(255, 149, 220, 124),
-                  Color.fromARGB(255, 41, 97, 67),
+                  mythemecolor1,
+               mythemecolor,
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -205,7 +205,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ),
         ),
-        body: const Center(child: AnimationPage2()),
+        body:  Center(child: AnimationPage1()),
       );
     }
 
@@ -217,8 +217,8 @@ class _CartScreenState extends State<CartScreen> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color.fromARGB(255, 149, 220, 124),
-                  Color.fromARGB(255, 41, 97, 67),
+                  mythemecolor1,
+               mythemecolor,
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -243,7 +243,7 @@ class _CartScreenState extends State<CartScreen> {
           children: [
             Positioned.fill(
               child: Image.asset(
-                isTablet ? 'assets/images/bbc.png' : 'assets/images/bbc.png',
+                isTablet ? 'assets/images/theme.png' : 'assets/images/theme.png',
                 fit: BoxFit.fill,
               ),
             ),
@@ -259,7 +259,7 @@ class _CartScreenState extends State<CartScreen> {
                     padding: EdgeInsets.all(isTablet ? 30 : 20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color: Colors.green.shade100,
+                      color:   mythemecolor1.withOpacity(0.5),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -267,7 +267,7 @@ class _CartScreenState extends State<CartScreen> {
                       children: [
                         if (!isTablet) const SizedBox(height: 5),
                         Image.asset(
-                          'assets/images/emt.png',
+                          'assets/images/emcart.png',
                           height: isTablet ? 210 : 150,
                           width: isTablet ? 190 : 130,
                           fit: BoxFit.cover,
@@ -306,7 +306,7 @@ class _CartScreenState extends State<CartScreen> {
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
-                                isTablet ? Colors.white : Colors.green,
+                                isTablet ? Colors.white : mythemecolor,
                             padding: EdgeInsets.symmetric(
                               horizontal: isTablet ? 40 : 30,
                               vertical: isTablet ? 14 : 12,
@@ -316,7 +316,7 @@ class _CartScreenState extends State<CartScreen> {
                               fontWeight: FontWeight.bold,
                             ),
                             foregroundColor:
-                                isTablet ? Colors.green.shade700 : Colors.white,
+                                isTablet ? mythemecolor : Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -341,8 +341,8 @@ class _CartScreenState extends State<CartScreen> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 149, 220, 124),
-                Color.fromARGB(255, 41, 97, 67),
+                  mythemecolor1,
+               mythemecolor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -369,8 +369,8 @@ class _CartScreenState extends State<CartScreen> {
                 Positioned.fill(
                   child: Image.asset(
                     isTablet
-                        ? 'assets/images/bbc.png'
-                        : 'assets/images/bbc.png',
+                        ? 'assets/images/theme.png'
+                        : 'assets/images/theme.png',
                     fit: BoxFit.fill,
                   ),
                 ),
@@ -386,14 +386,14 @@ class _CartScreenState extends State<CartScreen> {
                         padding: EdgeInsets.all(isTablet ? 30 : 20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: Colors.green.shade100,
+                          color:   mythemecolor1.withOpacity(0.5),
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Image.asset(
-                              'assets/images/emt.png',
+                              'assets/images/emcart.png',
                               height: 210,
                               width: 190,
                               fit: BoxFit.cover,
@@ -428,7 +428,7 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
-                                    isTablet ? Colors.white : Colors.green,
+                                    isTablet ? Colors.white : mythemecolor,
                                 padding: EdgeInsets.symmetric(
                                   horizontal: isTablet ? 40 : 30,
                                   vertical: isTablet ? 14 : 12,
@@ -438,7 +438,7 @@ class _CartScreenState extends State<CartScreen> {
                                   fontWeight: FontWeight.bold,
                                 ),
                                 foregroundColor: isTablet
-                                    ? Colors.green.shade700
+                                    ? mythemecolor
                                     : Colors.white,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
@@ -478,7 +478,7 @@ class _CartScreenState extends State<CartScreen> {
                   final item = _cartItems[index];
                   return Card(
                     elevation: 6,
-                    color: const Color.fromARGB(255, 242, 254, 242),
+                    color: const Color.fromARGB(255, 228, 215, 226),
                     margin: const EdgeInsets.symmetric(vertical: 8.0),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -518,8 +518,7 @@ class _CartScreenState extends State<CartScreen> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 8, vertical: 4),
                                       decoration: BoxDecoration(
-                                        color: const Color.fromARGB(
-                                            255, 249, 48, 21),
+                                        color: mythemecolor,
                                         borderRadius: BorderRadius.circular(6),
                                       ),
                                       child: Text(
@@ -576,7 +575,7 @@ class _CartScreenState extends State<CartScreen> {
                                       style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
-                                        color: Color.fromARGB(255, 8, 69, 8),
+                                        color: mythemecolor,
                                       ),
                                     ),
                                     const SizedBox(height: 8),
@@ -588,7 +587,7 @@ class _CartScreenState extends State<CartScreen> {
                                   style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
-                                    color: Color.fromARGB(255, 8, 69, 8),
+                                    color: mythemecolor,
                                   ),
                                 ),
                                 const SizedBox(height: 8),
@@ -608,7 +607,7 @@ class _CartScreenState extends State<CartScreen> {
                                   style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
-                                    color: Color.fromARGB(255, 8, 69, 8),
+                                    color: mythemecolor,
                                   ),
                                 ),
                                 const SizedBox(height: 5),
@@ -626,7 +625,7 @@ class _CartScreenState extends State<CartScreen> {
                                               IconButton(
                                                 icon: const Icon(
                                                     Icons.remove_circle,
-                                                    color: Colors.red,
+                                                    color: mythemecolor1,
                                                     size: 30),
                                                 onPressed: item.isUpdating ||
                                                         item.quantity <= 1
@@ -660,7 +659,7 @@ class _CartScreenState extends State<CartScreen> {
                                               IconButton(
                                                 icon: const Icon(
                                                     Icons.add_circle,
-                                                    color: Colors.green,
+                                                    color: mythemecolor,
                                                     size: 30),
                                                 onPressed: item.isUpdating
                                                     ? null
@@ -728,7 +727,7 @@ class _CartScreenState extends State<CartScreen> {
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: Color.fromARGB(255, 10, 70, 11),
+                        color: mythemecolor,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -742,7 +741,7 @@ class _CartScreenState extends State<CartScreen> {
                                 ),
                               ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: mythemecolor,
                         padding: EdgeInsets.symmetric(
                           horizontal: 30,
                           vertical: 12,
@@ -839,7 +838,7 @@ class _CartScreenState extends State<CartScreen> {
                                     style: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
-                                      color: Colors.green,
+                                      color: mythemecolor,
                                     ),
                                   ),
                                   const SizedBox(height: 8),
@@ -869,7 +868,7 @@ class _CartScreenState extends State<CartScreen> {
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
-                                      color: Color.fromARGB(255, 8, 69, 8),
+                                      color: mythemecolor,
                                     ),
                                   ),
                                   const SizedBox(height: 6),
@@ -953,8 +952,7 @@ class _CartScreenState extends State<CartScreen> {
                                                         horizontal: 10,
                                                         vertical: 6),
                                                 decoration: BoxDecoration(
-                                                  color: const Color.fromARGB(
-                                                      255, 249, 48, 21),
+                                                  color: const Color.fromARGB(255, 187, 109, 99),
                                                   borderRadius:
                                                       BorderRadius.circular(6),
                                                 ),
@@ -1032,7 +1030,7 @@ class _CartScreenState extends State<CartScreen> {
                                 ),
                               ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: mythemecolor,
                         padding: EdgeInsets.symmetric(
                           horizontal: 30,
                           vertical: 12,
@@ -1077,12 +1075,12 @@ class _CartScreenState extends State<CartScreen> {
                   //       padding: EdgeInsets.all(isTablet ? 30 : 20),
                   //       decoration: BoxDecoration(
                   //         borderRadius: BorderRadius.circular(20),
-                  //         color: isTablet ? null : Colors.green.shade100,
+                  //         color: isTablet ? null :   mythemecolor1.withOpacity(0.5),
                   //         gradient: isTablet
                   //             ? LinearGradient(
                   //                 colors: [
-                  //                   Colors.green.shade300,
-                  //                   Colors.green.shade700
+                  //                   mythemecolor.shade300,
+                  //                   mythemecolor.shade700
                   //                 ],
                   //                 begin: Alignment.topLeft,
                   //                 end: Alignment.bottomRight,
@@ -1135,7 +1133,7 @@ class _CartScreenState extends State<CartScreen> {
                   //             },
                   //             style: ElevatedButton.styleFrom(
                   //               backgroundColor:
-                  //                   isTablet ? Colors.white : Colors.green,
+                  //                   isTablet ? Colors.white : mythemecolor,
                   //               padding: EdgeInsets.symmetric(
                   //                 horizontal: isTablet ? 40 : 30,
                   //                 vertical: isTablet ? 14 : 12,
@@ -1145,7 +1143,7 @@ class _CartScreenState extends State<CartScreen> {
                   //                 fontWeight: FontWeight.bold,
                   //               ),
                   //               foregroundColor: isTablet
-                  //                   ? Colors.green.shade700
+                  //                   ? mythemecolor.shade700
                   //                   : Colors.white,
                   //               shape: RoundedRectangleBorder(
                   //                 borderRadius: BorderRadius.circular(10),

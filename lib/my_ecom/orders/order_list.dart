@@ -3,7 +3,8 @@ import 'package:furniture_ecom_app/core/model/model_file.dart';
 import 'package:furniture_ecom_app/core/services/orders_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
-import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/my_ecom/navbar/new_appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_detail.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
@@ -60,7 +61,7 @@ class _OrderListPageState extends State<OrderListPage> {
       return const Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
-          child: MyAppbar(title: 'My Orders'),
+          child: NewAppbar(title: 'My Orders'),
         ),
         body: Center(child: AnimationPage1()),
       );
@@ -70,14 +71,16 @@ class _OrderListPageState extends State<OrderListPage> {
       return Scaffold(
         appBar: const PreferredSize(
           preferredSize: Size.fromHeight(60),
-          child: MyAppbar(title: 'My Orders'),
+          child: NewAppbar(title: 'My Orders'),
         ),
         body: SizedBox.expand(
           child: Stack(
             children: [
               Positioned.fill(
                 child: Image.asset(
-                  isTablet ? 'assets/images/bbc.png' : 'assets/images/bbc.png',
+                  isTablet
+                      ? 'assets/images/theme.png'
+                      : 'assets/images/theme.png',
                   fit: BoxFit.cover,
                 ),
               ),
@@ -93,7 +96,7 @@ class _OrderListPageState extends State<OrderListPage> {
                       padding: EdgeInsets.all(isTablet ? 30 : 20),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: Colors.green.shade100,
+                        color: mythemecolor1,
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -130,7 +133,9 @@ class _OrderListPageState extends State<OrderListPage> {
                               SharedPreferences prefs =
                                   await SharedPreferences.getInstance();
                               await prefs.setString(
-                                  'redirectRoute', '/myorders');
+                                'redirectRoute',
+                                '/myorders',
+                              );
 
                               Navigator.push(
                                 context,
@@ -140,7 +145,7 @@ class _OrderListPageState extends State<OrderListPage> {
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green,
+                              backgroundColor: mythemecolor,
                               padding: EdgeInsets.symmetric(
                                 horizontal: isTablet ? 40 : 30,
                                 vertical: isTablet ? 14 : 12,
@@ -170,10 +175,10 @@ class _OrderListPageState extends State<OrderListPage> {
     return Scaffold(
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: MyAppbar(title: 'My Orders'),
+        child: NewAppbar(title: 'My Orders'),
       ),
       body: RefreshIndicator(
-        color: const Color.fromARGB(255, 13, 75, 15),
+        color: mythemecolor,
         backgroundColor: const Color.fromARGB(255, 245, 240, 242),
         displacement: 40,
         strokeWidth: 2.5,
@@ -187,30 +192,88 @@ class _OrderListPageState extends State<OrderListPage> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: AnimationPage1());
             } else if (snapshot.hasError) {
-              return SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Error fetching orders. Please try again later.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.red, fontSize: 16),
-                          ),
-                          const SizedBox(height: 10),
-                          ElevatedButton(
-                            onPressed: _fetchOrders,
-                            child: const Text("Retry"),
-                          ),
-                        ],
+              return SizedBox.expand(
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Image.asset(
+                        isTablet
+                            ? 'assets/images/theme.png'
+                            : 'assets/images/theme.png',
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ),
+                    Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(isTablet ? 40 : 20),
+                        child: Card(
+                          elevation: 10,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.all(isTablet ? 30 : 20),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: mythemecolor1.withOpacity(0.5),
+                            ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Lottie.asset(
+                                  'assets/json/em.json',
+                                  width: 130,
+                                  height: 130,
+                                  fit: BoxFit.contain,
+                                ),
+                                if (!isTablet) const SizedBox(height: 5),
+                                Text(
+                                  "Issues in fetching orders!",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: isTablet ? 24 : 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                Text(
+                                  "Retry or place your Orders!",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: isTablet ? 18 : 14,
+                                    color: Colors.grey.shade700,
+                                  ),
+                                ),
+                                const SizedBox(height: 25),
+                                ElevatedButton(
+                                  onPressed: _fetchOrders,
+
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: mythemecolor,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: isTablet ? 40 : 30,
+                                      vertical: isTablet ? 14 : 12,
+                                    ),
+                                    textStyle: TextStyle(
+                                      fontSize: isTablet ? 18 : 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    foregroundColor: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                  ),
+                                  child: const Text("Retry!"),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               );
             } else if (snapshot.hasData && snapshot.data!.isEmpty) {
@@ -259,18 +322,14 @@ class _OrderListPageState extends State<OrderListPage> {
     return Card(
       color: Colors.white,
       margin: const EdgeInsets.all(8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       elevation: 4,
       child: GestureDetector(
         onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => OrderDetailsScreen(
-                orderId: order.orderId,
-              ),
+              builder: (context) => OrderDetailsScreen(orderId: order.orderId),
             ),
           );
         },
@@ -300,7 +359,7 @@ class _OrderListPageState extends State<OrderListPage> {
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
-                        color: Color.fromARGB(255, 54, 128, 32),
+                        color: mythemecolor,
                       ),
                     ),
                     const SizedBox(height: 5),
@@ -324,11 +383,7 @@ class _OrderListPageState extends State<OrderListPage> {
                   ],
                 ),
               ),
-              const Icon(
-                Icons.chevron_right,
-                size: 30,
-                color: Colors.green,
-              ),
+              const Icon(Icons.chevron_right, size: 30, color: mythemecolor),
             ],
           ),
         ),
@@ -340,18 +395,15 @@ class _OrderListPageState extends State<OrderListPage> {
     return Flexible(
       child: Card(
         margin: const EdgeInsets.all(8),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         elevation: 4,
         child: GestureDetector(
           onTap: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => OrderDetailsScreen(
-                  orderId: order.orderId,
-                ),
+                builder: (context) =>
+                    OrderDetailsScreen(orderId: order.orderId),
               ),
             );
           },
@@ -386,13 +438,12 @@ class _OrderListPageState extends State<OrderListPage> {
                       ? order.items[0].productTitle
                       : 'No items in order',
                   style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 43, 42, 42)),
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: Color.fromARGB(255, 43, 42, 42),
+                  ),
                 ),
-                const SizedBox(
-                  height: 5,
-                ),
+                const SizedBox(height: 5),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -407,9 +458,10 @@ class _OrderListPageState extends State<OrderListPage> {
                     Text(
                       '${order.status} ➡️',
                       style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Color.fromARGB(255, 9, 112, 13)),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Color.fromARGB(255, 9, 112, 13),
+                      ),
                     ),
                   ],
                 ),
@@ -438,7 +490,7 @@ class _OrderListPageState extends State<OrderListPage> {
         children: [
           Positioned.fill(
             child: Image.asset(
-              isTablet ? 'assets/images/bbc.png' : 'assets/images/bbc.png',
+              isTablet ? 'assets/images/theme.png' : 'assets/images/theme.png',
               fit: BoxFit.cover,
             ),
           ),
@@ -454,7 +506,7 @@ class _OrderListPageState extends State<OrderListPage> {
                   padding: EdgeInsets.all(isTablet ? 30 : 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: Colors.green.shade100,
+                    color: mythemecolor1,
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -491,17 +543,20 @@ class _OrderListPageState extends State<OrderListPage> {
                           Navigator.pushReplacementNamed(context, '/myhome');
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              isTablet ? Colors.white : Colors.green,
+                          backgroundColor: isTablet
+                              ? Colors.white
+                              : mythemecolor,
                           padding: EdgeInsets.symmetric(
                             horizontal: isTablet ? 40 : 30,
                             vertical: isTablet ? 14 : 12,
                           ),
                           textStyle: TextStyle(
-                              fontSize: isTablet ? 18 : 14,
-                              fontWeight: FontWeight.bold),
-                          foregroundColor:
-                              isTablet ? Colors.green.shade700 : Colors.white,
+                            fontSize: isTablet ? 18 : 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          foregroundColor: isTablet
+                              ? mythemecolor
+                              : Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -514,110 +569,6 @@ class _OrderListPageState extends State<OrderListPage> {
               ),
             ),
           ),
-          // Center(
-          //   child: ConstrainedBox(
-          //     constraints: BoxConstraints(
-          //       minHeight:
-          //           MediaQuery.of(context).size.height - kToolbarHeight,
-          //     ),
-          //     child: Column(
-          //       crossAxisAlignment: CrossAxisAlignment.center,
-          //       children: [
-          //         const SizedBox(height: 120),
-          //         Padding(
-          //           padding: EdgeInsets.symmetric(
-          //             horizontal: isTablet ? 40 : 20,
-          //             vertical: isTablet ? 20 : 0,
-          //           ),
-          //           child: Card(
-          //             elevation: 10,
-          //             shape: RoundedRectangleBorder(
-          //               borderRadius: BorderRadius.circular(20),
-          //             ),
-          //             child: Container(
-          //               padding: EdgeInsets.all(isTablet ? 30 : 20),
-          //               decoration: BoxDecoration(
-          //                 borderRadius: BorderRadius.circular(20),
-          //                 color: isTablet ? null : Colors.green.shade100,
-          //                 gradient: isTablet
-          //                     ? LinearGradient(
-          //                         colors: [
-          //                           Colors.green.shade300,
-          //                           Colors.green.shade700,
-          //                         ],
-          //                         begin: Alignment.topLeft,
-          //                         end: Alignment.bottomRight,
-          //                       )
-          //                     : null,
-          //               ),
-          //               child: Column(
-          //                 mainAxisSize: MainAxisSize.min,
-          //                 mainAxisAlignment: MainAxisAlignment.start,
-          //                 children: [
-          //                   Lottie.asset(
-          //                     'assets/json/em.json',
-          //                     width: 150,
-          //                     height: 150,
-          //                     fit: BoxFit.contain,
-          //                   ),
-          //                   const SizedBox(height: 20),
-          //                   Text(
-          //                     "No orders found!",
-          //                     textAlign: TextAlign.center,
-          //                     style: TextStyle(
-          //                       fontSize: isTablet ? 24 : 16,
-          //                       fontWeight: FontWeight.bold,
-          //                       color:
-          //                           isTablet ? Colors.white : Colors.black,
-          //                     ),
-          //                   ),
-          //                   const SizedBox(height: 20),
-          //                   Text(
-          //                     "Please do Shop & place your orders!",
-          //                     textAlign: TextAlign.center,
-          //                     style: TextStyle(
-          //                       fontSize: isTablet ? 18 : 14,
-          //                       color: isTablet
-          //                           ? Colors.white70
-          //                           : Colors.grey.shade700,
-          //                     ),
-          //                   ),
-          //                   const SizedBox(height: 25),
-          //                   ElevatedButton(
-          //                     onPressed: () {
-          //                       Navigator.pushReplacementNamed(
-          //                           context, '/myhome');
-          //                     },
-          //                     style: ElevatedButton.styleFrom(
-          //                       backgroundColor:
-          //                           isTablet ? Colors.white : Colors.green,
-          //                       padding: EdgeInsets.symmetric(
-          //                         horizontal: isTablet ? 40 : 30,
-          //                         vertical: isTablet ? 14 : 12,
-          //                       ),
-          //                       textStyle: TextStyle(
-          //                         fontSize: isTablet ? 18 : 14,
-          //                         fontWeight: FontWeight.bold,
-          //                       ),
-          //                       foregroundColor: isTablet
-          //                           ? Colors.green.shade700
-          //                           : Colors.white,
-          //                       shape: RoundedRectangleBorder(
-          //                         borderRadius: BorderRadius.circular(10),
-          //                       ),
-          //                     ),
-          //                     child: const Text("Go To Shop"),
-          //                   ),
-          //                 ],
-          //               ),
-          //             ),
-          //           ),
-          //         ),
-          //         const SizedBox(height: 60),
-          //       ],
-          //     ),
-          //   ),
-          // ),
         ],
       ),
     );

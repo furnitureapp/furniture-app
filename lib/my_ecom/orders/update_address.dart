@@ -4,6 +4,7 @@ import 'package:furniture_ecom_app/core/services/delivery_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/add_delivery_details.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/edituserdetails.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_confirmationpage.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_summary.dart';
@@ -264,8 +265,8 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 149, 220, 124),
-                Color.fromARGB(255, 41, 97, 67),
+                  mythemecolor1,
+               mythemecolor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -323,19 +324,14 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                               color: Colors.white,
                             ),
                             label: const Text(
-                              "Add Address",
+                              " ADD ADDRESS",
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,
                               ),
                             ),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color.fromARGB(
-                                255,
-                                0,
-                                148,
-                                211,
-                              ),
+                              backgroundColor: mythemecolor1,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -364,13 +360,13 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                             }
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green,
+                            backgroundColor: mythemecolor,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           child: const Text(
-                            "Continue",
+                            "CONTINUE",
                             style: TextStyle(fontSize: 14, color: Colors.white),
                           ),
                         ),
@@ -501,7 +497,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                               style: TextStyle(
                                 fontSize: isTablet ? 20 : 18,
                                 fontWeight: FontWeight.bold,
-                                color: const Color.fromARGB(255, 16, 67, 8),
+                                color: mythemecolor,
                               ),
                             ),
                             const SizedBox(height: 10),
@@ -546,19 +542,9 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                   }
                                                 },
                                                 activeColor:
-                                                    const Color.fromARGB(
-                                                      255,
-                                                      4,
-                                                      163,
-                                                      225,
-                                                    ),
+                                                   mythemecolor,
                                                 hoverColor:
-                                                    const Color.fromARGB(
-                                                      255,
-                                                      6,
-                                                      60,
-                                                      104,
-                                                    ),
+                                                  mythemecolor1
                                               ),
                                               isTablet
                                                   ? Expanded(
@@ -572,7 +558,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                               const Icon(
                                                                 Icons.person,
                                                                 color:
-                                                                    Colors.blue,
+                                                                    mythemecolor,
                                                                 size: 18,
                                                               ),
                                                               const SizedBox(
@@ -626,7 +612,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                                 Icons
                                                                     .location_on,
                                                                 color:
-                                                                    Colors.blue,
+                                                                    mythemecolor1,
                                                                 size: 18,
                                                               ),
                                                               const SizedBox(
@@ -693,7 +679,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                                       address,
                                                                     ),
                                                                 color:
-                                                                    Colors.blue,
+                                                                    mythemecolor,
                                                               ),
                                                             ],
                                                           ),
@@ -856,7 +842,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                         const Icon(
                                                           Icons.location_on,
                                                           color:
-                                                              Colors.blueAccent,
+                                                              mythemecolor,
                                                         ),
                                                         const SizedBox(
                                                           width: 8,
@@ -867,8 +853,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                             fontSize: 18,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            color: Colors
-                                                                .blueAccent,
+                                                            color:mythemecolor,
                                                           ),
                                                         ),
                                                       ],
@@ -981,7 +966,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                       color: Colors.white,
                                                     ),
                                                     label: const Text(
-                                                      "Add Address",
+                                                      "mythemecolorress",
                                                       style: TextStyle(
                                                         color: Colors.white,
                                                       ),
@@ -1050,7 +1035,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                     ),
                                                   ),
                                                   child: const Text(
-                                                    "Continue",
+                                                    "CONTINUE",
                                                     style: TextStyle(
                                                       fontSize: 16,
                                                       color: Colors.white,
@@ -1100,7 +1085,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                         const Icon(
                                                           Icons.location_on,
                                                           color:
-                                                              Colors.blueAccent,
+                                                              mythemecolor,
                                                           size: 20,
                                                         ),
                                                         const SizedBox(
@@ -1112,8 +1097,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                             fontSize: 16,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            color: Colors
-                                                                .blueAccent,
+                                                            color: mythemecolor,
                                                           ),
                                                         ),
                                                       ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/wishlist/wishlist_manager.dart';
 
 import 'package:provider/provider.dart';
@@ -57,7 +58,7 @@ class MyProductWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: const LinearGradient(
-                      colors: [Colors.orangeAccent, Colors.deepOrange],
+                      colors: [mythemecolor1, mythemecolor],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -98,8 +99,7 @@ class MyProductWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [
-                          Color.fromARGB(255, 72, 181, 64),
-                          Color.fromARGB(255, 13, 112, 4)
+                          mythemecolor1, mythemecolor
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -294,7 +294,8 @@ class MyProductWidget extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: isTablet ? 21 : 14 * scale,
                                 fontWeight: FontWeight.bold,
-                                color: const Color.fromARGB(255, 26, 82, 29),
+                                color: mythemecolor,
+
                               ),
                             ),
                           ],

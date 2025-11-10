@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:furniture_ecom_app/core/services/auth_service.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -70,7 +71,7 @@ class _ResetPasswordScreen extends State<ResetPasswordScreen> {
     });
 
     try {
-      final response = await AuthService.forgotPassword(widget.email);
+      final response = await ApiService.forgotPassword(widget.email);
 
       if (response['success'] == true) {
         // ScaffoldMessenger.of(context).showSnackBar(
@@ -123,7 +124,7 @@ class _ResetPasswordScreen extends State<ResetPasswordScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await AuthService.resetPassword(
+      final response = await ApiService.resetPassword(
         _otpController.text.trim(),
         _newpassController.text.trim(),
         _confirmpassController.text.trim(),
@@ -203,8 +204,8 @@ class _ResetPasswordScreen extends State<ResetPasswordScreen> {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 149, 220, 124),
-                Color.fromARGB(255, 41, 97, 67),
+                  mythemecolor1,
+               mythemecolor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -228,7 +229,7 @@ class _ResetPasswordScreen extends State<ResetPasswordScreen> {
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/bbc.png'),
+                image: AssetImage('assets/images/theme.png'),
                 fit: BoxFit.cover,
               ),
             ),

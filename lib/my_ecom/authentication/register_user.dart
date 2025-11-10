@@ -33,21 +33,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
         : null;
   }
 
-//  String? _validateAddress(String? address) {
-//   if (address == null || address.trim().isEmpty) {
-//     return "Address is required!";
-//   }
+  //  String? _validateAddress(String? address) {
+  //   if (address == null || address.trim().isEmpty) {
+  //     return "Address is required!";
+  //   }
 
-//   final addressRegex = RegExp(
-//     r'^\s*\d+\s*,\s*[\w\s]+\s*,\s*[\w\s]+\s*,\s*\d{6}\s*$'
-//   );
+  //   final addressRegex = RegExp(
+  //     r'^\s*\d+\s*,\s*[\w\s]+\s*,\s*[\w\s]+\s*,\s*\d{6}\s*$'
+  //   );
 
-//   if (!addressRegex.hasMatch(address.trim())) {
-//     return "Enter address in format:\nDoor No, Street Name, City, Pincode";
-//   }
+  //   if (!addressRegex.hasMatch(address.trim())) {
+  //     return "Enter address in format:\nDoor No, Street Name, City, Pincode";
+  //   }
 
-//   return null;
-// }
+  //   return null;
+  // }
 
   String? _validateCity(String? city) {
     if (city == null || city.trim().isEmpty) {
@@ -136,14 +136,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     });
 
     try {
-     final response = await AuthService.register(
-  email: email,
-  username: username,
-  password: password,
-  confirmPassword: confirmPassword,
-  phoneNo: phoneNo,
-  address: address,
-);
+      final response = await ApiService.register(
+        email,
+        username,
+        password,
+        confirmPassword,
+        phoneNo,
+        address,
+      );
 
       log('Response: $response');
 
@@ -233,8 +233,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: Colors.green.shade800, width: 2.5),
+                borderSide: BorderSide(
+                  color: Colors.green.shade800,
+                  width: 2.5,
+                ),
               ),
               helperText: "e.g., example@gmail.com",
               helperStyle: TextStyle(
@@ -259,8 +261,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: Colors.green.shade800, width: 2.5),
+                borderSide: BorderSide(
+                  color: Colors.green.shade800,
+                  width: 2.5,
+                ),
               ),
               helperText: "e.g., James robert, Hari Krishnan",
               helperStyle: TextStyle(
@@ -292,8 +296,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: Colors.green.shade800, width: 2.5),
+                borderSide: BorderSide(
+                  color: Colors.green.shade800,
+                  width: 2.5,
+                ),
               ),
               helperText:
                   "Min 5 characters, including a special \ncharacter (!@#\$%^&*)",
@@ -326,8 +332,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: Colors.green.shade800, width: 2.5),
+                borderSide: BorderSide(
+                  color: Colors.green.shade800,
+                  width: 2.5,
+                ),
               ),
               helperText: 'Must match your entered password',
               helperStyle: TextStyle(
@@ -356,8 +364,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: Colors.green.shade800, width: 2.5),
+                borderSide: BorderSide(
+                  color: Colors.green.shade800,
+                  width: 2.5,
+                ),
               ),
               helperText: "e.g., 9876543210",
               helperStyle: TextStyle(
@@ -382,8 +392,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 borderSide: BorderSide(color: Colors.grey.shade400, width: 2),
               ),
               focusedBorder: UnderlineInputBorder(
-                borderSide:
-                    BorderSide(color: Colors.green.shade800, width: 2.5),
+                borderSide: BorderSide(
+                  color: Colors.green.shade800,
+                  width: 2.5,
+                ),
               ),
               helperText: "e.g., Madurai, Chennai",
               helperStyle: TextStyle(
@@ -407,8 +419,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       fontSize: isTablet ? 18 : 16,
                       fontWeight: FontWeight.bold,
                     ),
-                    foregroundColor:
-                        isTablet ? Colors.green.shade700 : Colors.white,
+                    foregroundColor: isTablet
+                        ? Colors.green.shade700
+                        : Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -420,21 +433,24 @@ class _RegisterScreenState extends State<RegisterScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Center(
-                child: Text("Already have an account? ",
-                    style: TextStyle(
-                        fontSize: isTablet ? 19 : 13,
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 99, 103, 99))),
+                child: Text(
+                  "Already have an account? ",
+                  style: TextStyle(
+                    fontSize: isTablet ? 19 : 13,
+                    fontWeight: FontWeight.bold,
+                    color: const Color.fromARGB(255, 99, 103, 99),
+                  ),
+                ),
               ),
-              const SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
               Center(
                 child: InkWell(
                   onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const LoginScreen())),
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const LoginScreen(),
+                    ),
+                  ),
                   child: Text(
                     "Login",
                     style: TextStyle(
@@ -445,9 +461,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 5,
-              ),
+              const SizedBox(height: 5),
             ],
           ),
         ],
@@ -461,10 +475,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Color.fromARGB(255, 149, 220, 124),
-                Color.fromARGB(255, 41, 97, 67),
-              ],
+              colors: [mythemecolor1, mythemecolor],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -516,38 +527,40 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     //   ),
                     // ),
                     LayoutBuilder(
-                  builder: (context, constraints) {
-                    return SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      padding: const EdgeInsets.all(20),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
-                        ),
-                        child: Center(
-                          child: IntrinsicHeight(
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: ConstrainedBox(
-                                constraints: BoxConstraints(
-                                  maxWidth: isTablet ? 500 : double.infinity,
-                                ),
-                                child: Card(
-                                  color: Colors.white.withOpacity(0.85),
-                                  elevation: isTablet ? 10 : 5,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20),
-                                    child: registerForm,
+                      builder: (context, constraints) {
+                        return SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: const EdgeInsets.all(20),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: constraints.maxHeight,
+                            ),
+                            child: Center(
+                              child: IntrinsicHeight(
+                                child: Align(
+                                  alignment: Alignment.center,
+                                  child: ConstrainedBox(
+                                    constraints: BoxConstraints(
+                                      maxWidth: isTablet
+                                          ? 500
+                                          : double.infinity,
+                                    ),
+                                    child: Card(
+                                      color: Colors.white.withOpacity(0.85),
+                                      elevation: isTablet ? 10 : 5,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(20),
+                                        child: registerForm,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                        );
+                      },
+                    ),
               ),
             ),
           ],

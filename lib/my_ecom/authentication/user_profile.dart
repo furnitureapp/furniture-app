@@ -5,6 +5,7 @@ import 'package:furniture_ecom_app/my_ecom/authentication/edit_user_profile.dart
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/provider/login_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/favorites.dart';
@@ -193,7 +194,7 @@ class _ProfileScreenState extends State<ProfileScreen>
   Widget build(BuildContext context) {
     Widget content = _isLoggedIn
         ? RefreshIndicator(
-            color: const Color.fromARGB(255, 9, 83, 76),
+            color: mythemecolor,
             backgroundColor: Colors.grey[200],
             displacement: 60,
             strokeWidth: 3.0,
@@ -331,8 +332,8 @@ class _ProfileScreenState extends State<ProfileScreen>
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 41, 97, 67),
-                Color.fromARGB(255, 149, 220, 124),
+               mythemecolor1,
+               mythemecolor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -368,11 +369,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                     children: [
                       CircleAvatar(
                         radius: isTablet(context) ? 40 : 48,
-                        backgroundColor: Color.fromARGB(255, 224, 228, 228),
+                        backgroundColor: Color.fromARGB(255, 193, 177, 186),
                         child: Icon(
                           Icons.person,
                           size: isTablet(context) ? 37 : 47,
-                          color: Color.fromARGB(255, 43, 74, 46),
+                          color: mythemecolor
                         ),
                       ),
                       GestureDetector(

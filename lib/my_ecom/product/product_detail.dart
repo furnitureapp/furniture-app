@@ -109,7 +109,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: const LinearGradient(
-                      colors: [Colors.orangeAccent, Colors.deepOrange],
+                      colors: [mythemecolor1, mythemecolor],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -150,8 +150,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
                         colors: [
-                          Color.fromARGB(255, 72, 181, 64),
-                          Color.fromARGB(255, 13, 112, 4)
+                         mythemecolor1, mythemecolor
                         ],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
@@ -326,8 +325,8 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
           decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Color.fromARGB(255, 149, 220, 124),
-          Color.fromARGB(255, 41, 97, 67),
+                  mythemecolor1,
+               mythemecolor,
               ],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -423,7 +422,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                       effect: const WormEffect(
                         dotWidth: 8,
                         dotHeight: 7,
-                        activeDotColor: Colors.green,
+                        activeDotColor:mythemecolor,
                         dotColor: Colors.grey,
                       ),
                     ),
@@ -615,13 +614,13 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
       children: [
         Text('Offer Price : ₹${product.offerPrice. round()}',
             style: TextStyle(
-                color: Color.fromARGB(255, 28, 79, 30),
+                color: const Color.fromARGB(255, 70, 56, 83),
                 fontWeight: FontWeight.bold,
                 fontSize: isTablet ? 22 : 14)),
         const SizedBox(width: 20),
         Text(' ₹${product.price. round()}',
             style: TextStyle(
-                color: Colors.red,
+                color: const Color.fromARGB(255, 94, 90, 90),
                 fontSize: isTablet ? 22 : 14,
                 fontWeight: FontWeight.bold,
                 decoration: TextDecoration.lineThrough,
@@ -639,7 +638,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
       children: [
         _discountTag(
             'SAVE ! ${(((product.price - product.offerPrice) / product.price) * 100).round()}%',
-            Colors.green),
+            mythemecolor),
         Text('Per Unit: ${product.unit}',
             style: TextStyle(
                 fontSize: isTablet ? 18 : 12,
@@ -647,7 +646,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                 color: Colors.grey)),
         _discountTag(
             '₹${(product.price - product.offerPrice). round()} Saved',
-            Colors.red),
+            mythemecolor1),
       ],
     );
   }
@@ -680,9 +679,9 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                       : null),
               style: ElevatedButton.styleFrom(
                 backgroundColor: isAddedToCart
-                    ? const Color.fromARGB(255, 225, 204, 15)
-                    : (product.stock > 0 ? Colors.orange : Colors.grey),
-                padding: const EdgeInsets.all(14),
+                    ? mythemecolor1
+                    : (product.stock > 0 ? const Color.fromARGB(255, 199, 180, 119) : Colors.grey),
+                padding: const EdgeInsets.all(8),
               ),
               child: _isAddingToCart
                   ? const SizedBox(
@@ -700,9 +699,9 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                               ? 'ADD TO CART'
                               : 'OUT OF STOCK'),
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        color: mythemecolor,
                       ),
                     ),
             ),
@@ -714,8 +713,8 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                   ? () => handleBuyNow(product, context)
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: product.stock > 0 ? Colors.green : Colors.grey,
-                padding: const EdgeInsets.all(14),
+                backgroundColor: product.stock > 0 ? mythemecolor: Colors.grey,
+                padding: const EdgeInsets.all(8),
               ),
               child: const Text(
                 'BUY NOW',
@@ -826,7 +825,7 @@ Widget _buildRelatedOfferProducts(BuildContext context) {
       final offers = snapshot.data!;
 
       return SizedBox(
-        height: isTablet ? 250 : 220,
+        height: isTablet ? 250 : 250,
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           padding: const EdgeInsets.symmetric(horizontal: 16),
