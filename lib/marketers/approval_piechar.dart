@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 
 class ApprovalPieChart extends StatefulWidget {
   const ApprovalPieChart({super.key});
@@ -63,7 +64,7 @@ class _ApprovalPieChartState extends State<ApprovalPieChart> {
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color:  Color.fromARGB(255, 48, 113, 55),
+                color:  Color.fromARGB(255, 85, 56, 97),
               ),
             ),
             const SizedBox(width: 20),
@@ -72,7 +73,7 @@ class _ApprovalPieChartState extends State<ApprovalPieChart> {
               style: const TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color: const Color.fromARGB(255, 142, 54, 54),
+                color: mythemecolor1,
               ),
             ),
           ],
@@ -84,9 +85,9 @@ class _ApprovalPieChartState extends State<ApprovalPieChart> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildLegend(const Color.fromARGB(255, 48, 113, 55),"Approved"),
+            _buildLegend(Color.fromARGB(255, 85, 56, 97),"Approved"),
             const SizedBox(width: 20),
-            _buildLegend(const Color.fromARGB(255, 142, 54, 54), "Rejected"),
+            _buildLegend(mythemecolor1, "Rejected"),
           ],
         ),
       ],
@@ -98,7 +99,7 @@ class _ApprovalPieChartState extends State<ApprovalPieChart> {
       PieChartSectionData(
         value: approvedCount.toDouble(),
         title: "$approvedCount",
-        color: const Color.fromARGB(255, 48, 113, 55),
+        color: Color.fromARGB(255, 85, 56, 97),
         radius: touchedIndex == 0 ? 70 : 60,
         titleStyle: const TextStyle(
           fontSize: 16,
@@ -109,7 +110,7 @@ class _ApprovalPieChartState extends State<ApprovalPieChart> {
       PieChartSectionData(
         value: rejectedCount.toDouble(),
         title: "$rejectedCount",
-        color: const Color.fromARGB(255, 142, 54, 54),
+        color: mythemecolor1,
         radius: touchedIndex == 1 ? 70 : 60,
         titleStyle: const TextStyle(
           fontSize: 16,

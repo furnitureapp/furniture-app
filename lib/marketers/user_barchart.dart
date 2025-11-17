@@ -25,9 +25,9 @@ class _UserCategoryBarChartState extends State<UserCategoryBarChart> {
     final counts = [widget.approvedCount, widget.rejectedCount, widget.pendingCount];
 
     final colors = [
-      [Colors.greenAccent.shade400, Colors.green.shade700],
-      [Colors.redAccent.shade200, Colors.red.shade600],
-      [Colors.orangeAccent.shade200, Colors.orange.shade600],
+      [const Color.fromARGB(255, 14, 123, 71), const Color.fromARGB(255, 21, 84, 24)],
+      [const Color.fromARGB(255, 124, 38, 38), const Color.fromARGB(255, 67, 15, 14)],
+      [const Color.fromARGB(255, 129, 80, 17), const Color.fromARGB(255, 87, 55, 15)],
     ];
 
     return Container(

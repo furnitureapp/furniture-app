@@ -8,16 +8,15 @@ import 'package:http/http.dart' as http;
 class ApiClient {
   static String get baseUrl {
     if (kIsWeb) {
-      return dotenv.env['WEB_URL'] ?? 'https://krishnan-admin-plzh.vercel.app';
+      return dotenv.env['WEB_URL'] ?? 'https://furniture-app-ruby.vercel.app';
     } else if (Platform.isAndroid) {
       return dotenv.env['ANDROID_URL'] ??
-          'https://krishnan-admin-plzh.vercel.app';
+          'https://furniture-app-ruby.vercel.app';
     } else if (Platform.isIOS) {
-      return dotenv.env['IOS_URL'] ?? 'https://krishnan-admin-plzh.vercel.app';
+      return dotenv.env['IOS_URL'] ?? 'https://furniture-app-ruby.vercel.app';
     } else {
       return dotenv.env['DESKTOP_URL'] ??
-          'https://krishnan-admin-plzh.vercel.app';
-    }
+          'https://furniture-app-ruby.vercel.app';    }
   }
 
   static Future<Map<String, String>> _headers({
@@ -83,3 +82,6 @@ class ApiClient {
     return http.delete(uri, headers: await _headers(withAuth: auth));
   }
 }
+
+
+// https://krishnan-admin-plzh.vercel.app

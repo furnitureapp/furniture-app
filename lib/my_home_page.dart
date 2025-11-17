@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/Manager/manager_home.dart';
 import 'package:furniture_ecom_app/admin/admin_home.dart';
-import 'package:furniture_ecom_app/my_ecom/splash_screen.dart';
 import 'package:furniture_ecom_app/marketers/marketer_dashboard.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/my_ecom/splash_screen.dart';
 import 'package:furniture_ecom_app/my_login_screen.dart';
 import 'package:furniture_ecom_app/super_admin/super_admin_home.dart';
 
@@ -23,17 +24,16 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Background Image
           Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/kailogo.png'),
+                image: AssetImage('assets/images/theme.png'),
                 fit: BoxFit.fill,
               ),
             ),
           ),
           Align(
-            alignment: Alignment.bottomCenter,
+            alignment: Alignment.center,
             child: Container(
               padding: const EdgeInsets.all(20),
               child: Wrap(
@@ -82,8 +82,8 @@ class GradientButton extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [
-              Color.fromARGB(255, 114, 85, 57),
-              Color.fromARGB(255, 70, 48, 27),
+             mythemecolor,
+             mythemecolor1
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
