@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:furniture_ecom_app/marketers/models/activity.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +18,70 @@ class DealerApiService {
     }
   }
 
+  // static Future<Map<String, dynamic>> registerDealer({
+  //   required String companyName,
+  //   required String phoneNumber,
+  //   required String gstNumber,
+  //   required String address,
+  //   required String email,
+  //   required String username,
+  //   required String password,
+  // }) async {
+  //   try {
+  //     final prefs = await SharedPreferences.getInstance();
+  //     final authToken = prefs.getString('auth_token');
+  //     final gstToken = prefs.getString('gst_verification_token');
+
+  //     if (authToken == null) {
+  //       return {'success': false, 'message': 'Login required.'};
+  //     }
+
+  //     if (gstToken == null) {
+  //       return {
+  //         'success': false,
+  //         'message': 'GST verification required before registration.',
+  //       };
+  //     }
+
+  //     final response = await http.post(
+  //       Uri.parse('$baseUrl/api/register/dealer'),
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         'Authorization': 'Bearer $authToken',
+  //         'gst-verification-token': gstToken,
+  //       },
+  //       body: jsonEncode({
+  //         'companyName': companyName,
+  //         'phoneNumber': phoneNumber,
+  //         'gstNumber': gstNumber,
+  //         'address': address,
+  //         'email': email,
+  //         'username': username,
+  //         'password': password,
+  //       }),
+  //     );
+  //     print('Response status of register dealer: ${response.statusCode}');
+  //     print('Response body of register dealer: ${response.body}');
+
+  //     final data = jsonDecode(response.body);
+
+  //     if (response.statusCode == 201) {
+  //       return {
+  //         'success': true,
+  //         'message': data['message'] ?? 'Dealer registered successfully.',
+  //         'data': data['data'],
+  //       };
+  //     } else {
+  //       return {
+  //         'success': false,
+  //         'message': data['message'] ?? 'Failed to register dealer.',
+  //       };
+  //     }
+  //   } catch (e) {
+  //     return {'success': false, 'message': 'Error registering dealer: $e'};
+  //   }
+  // }
+
   static Future<Map<String, dynamic>> registerDealer({
     required String companyName,
     required String phoneNumber,
@@ -28,21 +93,18 @@ class DealerApiService {
   }) async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final authToken = prefs.getString('auth_token');
-      final gstToken = prefs.getString('gst_verification_token');
+      final authToken = prefs.getString('auth_token') ?? '';
+      final gstToken = prefs.getString('gst_verification_token') ?? '';
 
-      if (authToken == null) {
+      if (authToken.isEmpty) {
         return {'success': false, 'message': 'Login required.'};
       }
 
-      if (gstToken == null) {
-        return {
-          'success': false,
-          'message': 'GST verification required before registration.',
-        };
+      if (gstToken.isEmpty) {
+        return {'success': false, 'message': 'GST verification required before registration.'};
       }
 
-      final response = await http.post(
+      final resp = await http.post(
         Uri.parse('$baseUrl/api/register/dealer'),
         headers: {
           'Content-Type': 'application/json',
@@ -59,28 +121,32 @@ class DealerApiService {
           'password': password,
         }),
       );
-      print('Response status of register dealer: ${response.statusCode}');
-      print('Response body of register dealer: ${response.body}');
 
-      final data = jsonDecode(response.body);
+      debugPrint('Response status of register dealer: ${resp.statusCode}');
+      debugPrint(resp.body, wrapWidth: 1024);
 
-      if (response.statusCode == 201) {
+      final Map<String, dynamic> body = jsonDecode(resp.body);
+
+      if (resp.statusCode == 201 || (body['success'] == true)) {
+        // Optionally return created dealer data
+        final dealerData = body['data'] != null ? DealerModel.fromJson(body['data']) : null;
         return {
           'success': true,
-          'message': data['message'] ?? 'Dealer registered successfully.',
-          'data': data['data'],
+          'message': body['message'] ?? 'Dealer registered successfully.',
+          'data': dealerData
         };
       } else {
         return {
           'success': false,
-          'message': data['message'] ?? 'Failed to register dealer.',
+          'message': body['message'] ?? 'Failed to register dealer.',
+          'body': body,
         };
       }
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('registerDealer error: $e\n$st');
       return {'success': false, 'message': 'Error registering dealer: $e'};
     }
   }
-
 
   static Future<Map<String, dynamic>> fetchDealers({
     String? search,
@@ -106,10 +172,12 @@ class DealerApiService {
           approvalStatus != 'all') {
         queryParams['approvalStatus'] = approvalStatus;
       }
-      if (startDate != null && startDate.isNotEmpty)
+      if (startDate != null && startDate.isNotEmpty) {
         queryParams['startDate'] = startDate;
-      if (endDate != null && endDate.isNotEmpty)
+      }
+      if (endDate != null && endDate.isNotEmpty) {
         queryParams['endDate'] = endDate;
+      }
 
       final uri = Uri.parse(
         '$baseUrl/api/users/dealer',

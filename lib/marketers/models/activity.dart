@@ -1,46 +1,79 @@
-class Activity {
-  final String id;
-  final String actorId;
-  final String actorName;
-  final String role;
-  final String action;
-  final String resource;
-  final String resourceId;
-  final Map<String, dynamic> details;
-  final List<dynamic> allowedAccess;
-  final String ip;
-  final String userAgent;
-  final DateTime createdAt;
+class GstModel {
+  final String gstin;
+  final String tradeName;
+  final String address;
+  final Map<String, dynamic> raw; 
 
-  Activity({
-    required this.id,
-    required this.actorId,
-    required this.actorName,
-    required this.role,
-    required this.action,
-    required this.resource,
-    required this.resourceId,
-    required this.details,
-    required this.allowedAccess,
-    required this.ip,
-    required this.userAgent,
-    required this.createdAt,
+  GstModel({
+    required this.gstin,
+    required this.tradeName,
+    required this.address,
+    required this.raw,
   });
 
-  factory Activity.fromJson(Map<String, dynamic> json) {
-    return Activity(
-      id: json['id'] ?? json['_id'] ?? '',
-      actorId: json['actor']?['id'] ?? json['actorId'] ?? '',
-      actorName: json['actor']?['name'] ?? json['actorName'] ?? '',
-      role: json['actor']?['role'] ?? json['role'] ?? '',
-      action: json['action'] ?? '',
-      resource: json['resource'] ?? '',
-      resourceId: json['resourceId'] ?? '',
-      details: Map<String, dynamic>.from(json['details'] ?? {}),
-      allowedAccess: List<dynamic>.from(json['allowedAccess'] ?? []),
-      ip: json['ip'] ?? '',
-      userAgent: json['userAgent'] ?? '',
-      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+  factory GstModel.fromJson(Map<String, dynamic> json) {
+    final data = json['data'] ?? {};
+    final pradr = data['pradr'] ?? {};
+    final adrString = pradr['adr'] ??
+        (pradr['addr'] != null
+            ? [
+                pradr['addr']['bno'] ?? '',
+                pradr['addr']['bnm'] ?? '',
+                pradr['addr']['st'] ?? '',
+                pradr['addr']['loc'] ?? '',
+                pradr['addr']['dst'] ?? '',
+                pradr['addr']['stcd'] ?? '',
+                pradr['addr']['pncd'] ?? '',
+              ].where((s) => (s ?? '').toString().isNotEmpty).join(', ')
+            : '');
+
+    return GstModel(
+gstin: data['gstin'] ?? '',
+tradeName: data['tradeNam'] ?? '',
+      address: adrString as String,
+      raw: data as Map<String, dynamic>,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'gstin': gstin,
+      'tradeName': tradeName,
+      'address': address,
+      'raw': raw,
+    };
+  }
+}
+
+
+class DealerModel {
+  final String id;
+  final String companyName;
+  final String phoneNumber;
+  final String gstNumber;
+  final String address;
+  final String email;
+  final String username;
+
+  DealerModel({
+    required this.id,
+    required this.companyName,
+    required this.phoneNumber,
+    required this.gstNumber,
+    required this.address,
+    required this.email,
+    required this.username,
+  });
+
+  factory DealerModel.fromJson(Map<String, dynamic> json) {
+    return DealerModel(
+      id: json['id']?.toString() ?? '',
+      companyName: json['companyName'] ?? '',
+      phoneNumber: json['phoneNumber'] ?? '',
+      gstNumber: json['gstNumber'] ?? '',
+      address: json['address'] ?? '',
+      email: json['email'] ?? '',
+      username: json['username'] ?? '',
     );
   }
 }
