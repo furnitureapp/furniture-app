@@ -48,8 +48,6 @@ class _GstVerificationPageState extends State<GstVerificationPage> {
     );
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -116,7 +114,9 @@ class _GstVerificationPageState extends State<GstVerificationPage> {
               ),
             ),
             Positioned(
-              top: screenHeight * 0.22,
+              top: isTablet(context)
+                  ? screenHeight * 0.30
+                  : screenHeight * 0.22,
               left: 0,
               right: 0,
               bottom: 0,
@@ -133,33 +133,58 @@ class _GstVerificationPageState extends State<GstVerificationPage> {
                       ),
                       textAlign: TextAlign.center,
                     ),
-                    const SizedBox(height: 20),
-
-                    // GST Field
-                    TextField(
-                      cursorHeight: isTablet(context) ? 22 : 16,
-                      cursorColor: mythemecolor,
-                      controller: gstController,
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(
-                          Icons.numbers,
-                          color: mythemecolor,
+                    SizedBox(height: isTablet(context) ? 50 : 20),
+                    if (isTablet(context))
+                      SizedBox(
+                        width: 420,
+                        child: TextField(
+                          style: TextStyle(fontSize: 20),
+                          cursorHeight: 23,
+                          cursorColor: mythemecolor,
+                          controller: gstController,
+                          decoration: InputDecoration(
+                            prefixIcon: const Icon(
+                              Icons.numbers,
+                              color: mythemecolor,
+                            ),
+                            hintText: "Enter GST Number",
+                            hintStyle: const TextStyle(fontSize: 22),
+                            filled: true,
+                            fillColor: const Color.fromARGB(255, 236, 235, 235),
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 12,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide.none,
+                            ),
+                          ),
                         ),
-                        hintText: "Enter GST Number",
-                        hintStyle: TextStyle(
-                          fontSize: isTablet(context) ? 22 : 12,
-                        ),
-                        filled: true,
-                        fillColor: Colors.grey.shade100,
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 12,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
-                          borderSide: BorderSide.none,
+                      )
+                    else
+                      TextField(
+                        cursorHeight: 16,
+                        cursorColor: mythemecolor,
+                        controller: gstController,
+                        style: TextStyle(fontSize: 14),
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(
+                            Icons.numbers,
+                            color: mythemecolor,
+                          ),
+                          hintText: "Enter GST Number",
+                          hintStyle: TextStyle(fontSize: 12),
+                          filled: true,
+                          fillColor: Colors.grey.shade100,
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 12,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
-                    ),
                     const SizedBox(height: 30),
                     Center(
                       child: SizedBox(

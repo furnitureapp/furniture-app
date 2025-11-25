@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/marketers/approve_reject_dealer.dart';
+import 'package:furniture_ecom_app/marketers/dealers_api_service.dart';
 import 'package:furniture_ecom_app/marketers/gst_verification_page.dart';
 import 'package:furniture_ecom_app/marketers/marketer_activity.dart';
+import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_home_page.dart';
 import 'package:furniture_ecom_app/marketers/approval_piechar.dart';
@@ -24,24 +26,60 @@ bool isTablet(BuildContext context) {
 
 class _MarketerHomeState extends State<MarketerHome> {
   int totalUsers = 0;
-  int pendingApprovals = 0;
-  int approvedCount = 12;
-  int rejectedCount = 5;
+  int pendingCount = 0;
+  int approvedCount = 0;
+  int rejectedCount = 0;
+  bool _isLoading = false;
+
   int? touchedIndex;
   @override
   void initState() {
     super.initState();
-    _loadCounts();
+    _fetchDealerStatusCounts();
   }
 
-  Future<void> _loadCounts() async {
-    final prefs = await SharedPreferences.getInstance();
-    final registeredData = prefs.getStringList('registeredUsers') ?? [];
-    final pendingData = prefs.getStringList('pendingApprovals') ?? [];
+  Future<void> _fetchDealerStatusCounts() async {
+    setState(() => _isLoading = true);
+
+    final response = await DealerApiService.fetchDealers();
 
     setState(() {
-      totalUsers = registeredData.length;
-      pendingApprovals = pendingData.length;
+      _isLoading = false;
+
+      if (response['success'] == true) {
+        final dealers = response['data'] ?? [];
+
+        int approved = 0;
+        int rejected = 0;
+        int pending = 0;
+
+        for (var d in dealers) {
+          final bool isApproved = d['isApproved'] == true;
+          final bool isRejected = d['isRejected'] == true;
+
+          if (isApproved) {
+            approved++;
+          } else if (isRejected) {
+            rejected++;
+          } else {
+            pending++;
+          }
+        }
+
+        approvedCount = approved;
+        rejectedCount = rejected;
+        pendingCount = pending;
+        totalUsers = dealers.length;
+      } else {
+        approvedCount = 0;
+        rejectedCount = 0;
+        pendingCount = 0;
+        totalUsers = 0;
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(response['message'] ?? "Error")));
+      }
     });
   }
 
@@ -71,9 +109,9 @@ class _MarketerHomeState extends State<MarketerHome> {
             title: Padding(
               padding: const EdgeInsets.only(top: 5),
               child: Text(
-                'Marketer Dashboard',
+                'MARKETER DASHBOARD',
                 style: GoogleFonts.poppins(
-                  fontSize: 13,
+                  fontSize: isTablet(context) ? 22 : 12,
                   fontWeight: FontWeight.w600,
                   color: mythemecolor,
                 ),
@@ -100,97 +138,164 @@ class _MarketerHomeState extends State<MarketerHome> {
 
       drawer: const MarketerDrawer(currentPage: "Dashboard"),
 
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final bool tablet = constraints.maxWidth >= 600;
+      body: _isLoading
+          ? const Center(child: AnimationPage1())
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                final bool tablet = constraints.maxWidth >= 600;
 
-          return RefreshIndicator(
-            color: mythemecolor,
-            strokeWidth: 3,
-            onRefresh: () async {
-              await _loadCounts();
-            },
+                return RefreshIndicator(
+                  color: mythemecolor,
+                  strokeWidth: 3,
+                  // onRefresh: () async {
+                  //   await _fetchDealerStatusCounts();
+                  // },
+                  onRefresh: () async {
+                    if (!_isLoading) {
+                      await _fetchDealerStatusCounts();
+                    }
+                  },
 
-            child: ListView(
-              padding: EdgeInsets.all(tablet ? 24 : 16),
+                  child: ListView(
+                    padding: EdgeInsets.all(tablet ? 24 : 16),
 
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      flex: tablet ? 1 : 1,
-                      child: _buildKpiCard(
-                        'Total Users',
-                        '$totalUsers',
-                        Icons.people,
-                        const Color.fromARGB(255, 16, 51, 79),
+                    children: [
+                      // ───────────────────────────────
+                      // KPI CARDS GRID (Responsive)
+                      // ───────────────────────────────
+                      LayoutBuilder(
+                        builder: (context, c) {
+                          final bool tablet = c.maxWidth >= 600;
+
+                          if (tablet) {
+                            // 🔥 TABLET → 4 Cards in One Row
+                            return Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _buildKpiCard(
+                                        'Total Users',
+                                        '$totalUsers',
+                                        Icons.people,
+                                        const Color.fromARGB(255, 16, 51, 79),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: _buildKpiCard(
+                                        'Pending Approvals',
+                                        '$pendingCount',
+                                        Icons.hourglass_bottom,
+                                        const Color.fromARGB(255, 123, 86, 29),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: _buildKpiCard(
+                                        'Approvals done',
+                                        '$approvedCount',
+                                        Icons.verified_user,
+                                        const Color.fromARGB(255, 33, 92, 35),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: _buildKpiCard(
+                                        'Rejected Users',
+                                        '$rejectedCount',
+                                        Icons.cancel,
+                                        const Color.fromARGB(255, 110, 38, 33),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 20),
+                                Text(
+                                  'Approval Overview',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: tablet ? 22 : 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                const ApprovalPieChart(),
+                                const SizedBox(height: 30),
+                              ],
+                            );
+                          }
+
+                          return Column(
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: _buildKpiCard(
+                                      'Total Users',
+                                      '$totalUsers',
+                                      Icons.people,
+                                      const Color.fromARGB(255, 16, 51, 79),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: _buildKpiCard(
+                                      'Pending Approvals',
+                                      '$pendingCount',
+                                      Icons.hourglass_bottom,
+                                      const Color.fromARGB(255, 123, 86, 29),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: _buildKpiCard(
+                                      'Approvals done',
+                                      '$approvedCount',
+                                      Icons.verified_user,
+                                      const Color.fromARGB(255, 33, 92, 35),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: _buildKpiCard(
+                                      'Rejected Users',
+                                      '$rejectedCount',
+                                      Icons.cancel,
+                                      const Color.fromARGB(255, 110, 38, 33),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                'Approval Overview',
+                                style: GoogleFonts.poppins(
+                                  fontSize: tablet ? 22 : 18,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              const ApprovalPieChart(),
+                              const SizedBox(height: 30),
+                            ],
+                          );
+                        },
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      flex: tablet ? 1 : 1,
-                      child: _buildKpiCard(
-                        'Pending Approvals',
-                        '$pendingApprovals',
-                        Icons.hourglass_bottom,
-                        const Color.fromARGB(255, 123, 86, 29),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                Row(
-                  children: [
-                    Expanded(
-                      flex: tablet ? 1 : 1,
-                      child: _buildKpiCard(
-                        'Approvals done',
-                        '${totalUsers - pendingApprovals}',
-                        Icons.verified_user,
-                        const Color.fromARGB(255, 33, 92, 35),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      flex: tablet ? 1 : 1,
-                      child: _buildKpiCard(
-                        'Rejected Users',
-                        '0',
-                        Icons.cancel,
-                        const Color.fromARGB(255, 110, 38, 33),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                Text(
-                  'Approval Overview',
-                  style: GoogleFonts.poppins(
-                    fontSize: tablet ? 22 : 18,
-                    fontWeight: FontWeight.w600,
+                    ],
                   ),
-                ),
-
-                const SizedBox(height: 12),
-
-                const ApprovalPieChart(),
-
-                const SizedBox(height: 30),
-              ],
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 
   Widget _buildKpiCard(String title, String count, IconData icon, Color color) {
     return Card(
-      color: const Color(0xFFF3F6F3),
+      color: Color.fromARGB(255, 227, 211, 244),
       elevation: 3,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
@@ -224,8 +329,8 @@ class _MarketerHomeState extends State<MarketerHome> {
 
 class MarketerDrawer extends StatelessWidget {
   bool isTablet(BuildContext context) {
-  return MediaQuery.of(context).size.shortestSide >= 600;
-}
+    return MediaQuery.of(context).size.shortestSide >= 600;
+  }
 
   final String currentPage;
   const MarketerDrawer({super.key, required this.currentPage});
@@ -271,7 +376,7 @@ class MarketerDrawer extends StatelessWidget {
                 Text(
                   "Marketing Hub",
                   style: GoogleFonts.montserrat(
-                    fontSize: isTablet(context)? 20: 12,
+                    fontSize: isTablet(context) ? 20 : 12,
                     fontWeight: FontWeight.bold,
                     color: mythemecolor,
                   ),
@@ -279,7 +384,10 @@ class MarketerDrawer extends StatelessWidget {
                 const SizedBox(height: 5),
                 Text(
                   "Hello, Marketer!",
-                  style: GoogleFonts.poppins(fontSize: isTablet(context)? 20: 12, color: mythemecolor),
+                  style: GoogleFonts.poppins(
+                    fontSize: isTablet(context) ? 20 : 12,
+                    color: mythemecolor,
+                  ),
                 ),
               ],
             ),

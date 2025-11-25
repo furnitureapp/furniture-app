@@ -35,7 +35,7 @@ class MarketersAppPreview extends StatelessWidget {
             title: Padding(
               padding: const EdgeInsets.only(top: 5),
               child: Text(
-                'DEALERSAPP PREVIEW',
+                'DEALERS APP PREVIEW',
                 style: GoogleFonts.poppins(
                   fontSize: isTablet(context)? 22: 12,
                   fontWeight: FontWeight.w600,

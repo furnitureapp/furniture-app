@@ -285,6 +285,8 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/marketers/dealers_api_service.dart';
 import 'package:furniture_ecom_app/marketers/marketer_dashboard.dart';
+import 'package:furniture_ecom_app/marketers/pagination_widget.dart';
+import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -363,7 +365,7 @@ class _MarketerActivityPageState extends State<MarketerActivityPage> {
   List<dynamic> pageLogs = [];
   bool isLoading = true;
   int currentPage = 1;
-  final int pageSize = 5;
+  final int pageSize = 6;
   int totalPages = 1;
 
   final Map<String, String> actionTypeMap = {
@@ -553,9 +555,9 @@ class _MarketerActivityPageState extends State<MarketerActivityPage> {
             title: Padding(
               padding: const EdgeInsets.only(top: 5),
               child: Text(
-                'Activity Log!',
+                'ACTIVITY LOG!',
                 style: GoogleFonts.poppins(
-                  fontSize: 20,
+                  fontSize: isTablet(context) ? 22 : 12,
                   fontWeight: FontWeight.w600,
                   color: mythemecolor,
                 ),
@@ -569,7 +571,7 @@ class _MarketerActivityPageState extends State<MarketerActivityPage> {
       ),
 
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const AnimationPage1()
           : RefreshIndicator(
               onRefresh: () async {
                 currentPage = 1;
@@ -759,16 +761,20 @@ class _MarketerActivityPageState extends State<MarketerActivityPage> {
     );
   }
 
-  Widget _buildLogsArea() {
-    final filtered = _applyFilters();
+Widget _buildLogsArea() {
+  final filtered = _applyFilters();
 
-    if (filtered.isEmpty) {
-      return const Center(child: Text("No activity logs available"));
-    }
+  if (filtered.isEmpty) {
+    return const Center(child: Text("No activity logs available"));
+  }
 
-    // make sure pageLogs are correct for current filters/page
-    _updatePageLogs(filtered: filtered);
+  // ensure page logs match filters/page
+  _updatePageLogs(filtered: filtered);
 
+  final isTablet = MediaQuery.of(context).size.shortestSide >= 600;
+
+  // ✅ MOBILE VIEW (UNCHANGED LISTVIEW)
+  if (!isTablet) {
     return ListView.builder(
       itemCount: pageLogs.length,
       itemBuilder: (context, index) {
@@ -796,6 +802,88 @@ Description: ${log["description"] ?? ''}
     );
   }
 
+  // ✅ TABLET VIEW — PREMIUM TWO-COLUMN GRID
+  return GridView.builder(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      crossAxisCount: 2,                 // ✅ Two logs per row
+      mainAxisSpacing: 14,
+      crossAxisSpacing: 14,
+      childAspectRatio: 2.5,             // ✅ Balanced layout esthetics
+    ),
+    itemCount: pageLogs.length,
+    itemBuilder: (context, index) {
+      final log = pageLogs[index];
+
+      return Container(
+        decoration: BoxDecoration(
+          color: _getActionColor(log['actionType'] ?? ''),
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.08),
+              blurRadius: 10,
+              offset: const Offset(2, 4),
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  _getActionIcon(log['actionType'] ?? ''),
+                  size: 26,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    log["actionType"] ?? "",
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Expanded(
+              child: Text(
+                """
+User: ${log["userName"] ?? ''}
+Role: ${log["role"] ?? ''}
+Status: ${log["status"] ?? '-'}
+Time: ${DateTime.tryParse(log["createdAt"] ?? '')?.toLocal() ?? ''}
+                """,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  height: 1.25,
+                ),
+              ),
+            ),
+            Divider(color: Colors.white.withOpacity(.4)),
+            Text(
+              log["description"] ?? '',
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontStyle: FontStyle.italic,
+              ),
+            )
+          ],
+        ),
+      );
+    },
+  );
+}
+
+
   Widget _paginationWidget() {
     // ensure totalPages is based on filtered list
     final filtered = _applyFilters();
@@ -804,7 +892,7 @@ Description: ${log["description"] ?? ''}
     if (currentPage > totalPages) currentPage = totalPages;
 
     return Padding(
-      padding: const EdgeInsets.all(12.0),
+      padding: const EdgeInsets.only(top: 12.0, bottom: 25.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -842,47 +930,44 @@ Description: ${log["description"] ?? ''}
   }
 }
 
-class GradientButtons extends StatelessWidget {
-  final String text;
-  final VoidCallback? onPressed;
-
-  const GradientButtons({super.key, required this.text, this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return Opacity(
-      opacity: onPressed == null ? 0.4 : 1.0,
-      child: Container(
-        width: 80,
-        height: 40,
-        decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [mythemecolor, mythemecolor1],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: ElevatedButton(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          onPressed: onPressed,
-          child: Text(
-            text,
-            style: const TextStyle(fontSize: 12, color: Colors.white),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 
+
+//   Widget _buildLogsArea() {
+//     final filtered = _applyFilters();
+
+//     if (filtered.isEmpty) {
+//       return const Center(child: Text("No activity logs available"));
+//     }
+
+//     _updatePageLogs(filtered: filtered);
+
+//     return ListView.builder(
+//       itemCount: pageLogs.length,
+//       itemBuilder: (context, index) {
+//         final log = pageLogs[index];
+
+//         return Card(
+//           color: _getActionColor(log['actionType'] ?? ''),
+//           margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+//           child: ListTile(
+//             leading: Icon(_getActionIcon(log['actionType'] ?? '')),
+//             title: Text(
+//               log["actionType"] ?? "",
+//               style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+//             ),
+//             subtitle: Text("""
+// User: ${log["userName"] ?? ''}
+// Role: ${log["role"] ?? ''}
+// Status: ${log["status"] ?? '-'}
+// Time: ${DateTime.tryParse(log["createdAt"] ?? '')?.toLocal() ?? ''}
+// Description: ${log["description"] ?? ''}
+//               """, style: GoogleFonts.poppins(fontSize: 13)),
+//           ),
+//         );
+//       },
+//     );
+//   }
 
    //  Column(
                 //   children: [
