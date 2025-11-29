@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/marketers/approve_reject_dealer.dart';
-import 'package:furniture_ecom_app/marketers/dealers_api_service.dart';
+import 'package:furniture_ecom_app/core/api/dealers_api_service.dart';
 import 'package:furniture_ecom_app/marketers/gst_verification_page.dart';
 import 'package:furniture_ecom_app/marketers/marketer_activity.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/my_home_page.dart';
 import 'package:furniture_ecom_app/marketers/approval_piechar.dart';
 import 'package:furniture_ecom_app/marketers/marketer_users.dart';
 import 'package:furniture_ecom_app/marketers/marketers_app_preview.dart';
+import 'package:furniture_ecom_app/my_home_page.dart';
 import 'package:furniture_ecom_app/my_login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -367,21 +367,18 @@ class MarketerDrawer extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const CircleAvatar(
-                  radius: 30,
-                  backgroundColor: Color.fromARGB(255, 224, 219, 223),
-                  child: Icon(Icons.campaign, size: 35, color: mythemecolor),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      'assets/images/woodpecker_logo.png',
+                      height: 100,
+                      width: 160,
+                      fit: BoxFit.contain,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  "Marketing Hub",
-                  style: GoogleFonts.montserrat(
-                    fontSize: isTablet(context) ? 20 : 12,
-                    fontWeight: FontWeight.bold,
-                    color: mythemecolor,
-                  ),
-                ),
-                const SizedBox(height: 5),
+
                 Text(
                   "Hello, Marketer!",
                   style: GoogleFonts.poppins(
@@ -540,66 +537,3 @@ class MarketerDrawer extends StatelessWidget {
     );
   }
 }
-
-
-
-   //   body: SingleChildScrollView(
-      //     padding: const EdgeInsets.all(16.0),
-      //     child: Column(
-      //       crossAxisAlignment: CrossAxisAlignment.start,
-      //       children: [
-      //         Row(
-      //           children: [
-      //             _buildKpiCard(
-      //               'Total Users',
-      //               '$totalUsers',
-      //               Icons.people,
-      //               const Color.fromARGB(255, 16, 51, 79),
-      //             ),
-      //             const SizedBox(width: 12),
-      //             _buildKpiCard(
-      //               'Pending Approvals',
-      //               '$pendingApprovals',
-      //               Icons.hourglass_bottom,
-      //               const Color.fromARGB(255, 123, 86, 29),
-      //             ),
-      //           ],
-      //         ),
-      //         const SizedBox(height: 20),
-      //         Row(
-      //           children: [
-      //             _buildKpiCard(
-      //               'Approvals done',
-      //               '${totalUsers - pendingApprovals}',
-      //               Icons.verified_user,
-      //               const Color.fromARGB(255, 33, 92, 35),
-      //             ),
-      //             const SizedBox(width: 12),
-      //             _buildKpiCard(
-      //               'Rejected Users',
-      //               '0', // Dummy for now
-      //               Icons.cancel,
-      //               const Color.fromARGB(255, 110, 38, 33),
-      //             ),
-      //           ],
-      //         ),
-      //         const SizedBox(height: 20),
-      //         Text(
-      //           'Approval Overview',
-      //           style: GoogleFonts.poppins(
-      //             fontSize: 18,
-      //             fontWeight: FontWeight.w600,
-      //           ),
-      //         ),
-      //         const SizedBox(height: 12),
-      //         const ApprovalPieChart(),
-      //         const SizedBox(height: 30),
-      //         // const UserCategoryBarChart(
-      //         //   approvedCount: 6,
-      //         //   rejectedCount: 5,
-      //         //   pendingCount: 1,
-      //         // ),
-      //       ],
-      //     ),
-      //   ),
-      // );

@@ -206,7 +206,7 @@ class SuperAdminDrawer extends StatelessWidget {
             context,
             Icons.list_alt,
             "Order Details with Amount",
-            const OrdersPage(),
+            const OrdersPageSuperAdmin(),
           ),
           const SizedBox(height: 10),
 

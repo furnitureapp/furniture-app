@@ -1,71 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:furniture_ecom_app/core/api/dealers_api_service.dart';
+import 'package:furniture_ecom_app/core/api/admin_api_service.dart';
+
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 
-class ApprovalPieChart extends StatefulWidget {
-  const ApprovalPieChart({super.key});
+class ApprovalPieChartManager extends StatefulWidget {
+  const ApprovalPieChartManager({super.key});
 
   @override
-  State<ApprovalPieChart> createState() => _ApprovalPieChartState();
+  State<ApprovalPieChartManager> createState() =>
+      _ApprovalPieChartManagerState();
 }
 
-class _ApprovalPieChartState extends State<ApprovalPieChart> {
-  int approvedCount = 0;
-  int rejectedCount = 0;
-  int pendingCount = 0;
-
+class _ApprovalPieChartManagerState extends State<ApprovalPieChartManager> {
   bool _isLoading = false;
   int? touchedIndex;
+
+  int placed = 0;
+  int shipped = 0;
+  int delivered = 0;
+  int cancelled = 0;
 
   @override
   void initState() {
     super.initState();
-    _fetchDealerStatusCounts();
+    _loadCounts();
   }
 
-  Future<void> _fetchDealerStatusCounts() async {
+  Future<void> _loadCounts() async {
     setState(() => _isLoading = true);
 
-    final response = await DealerApiService.fetchDealers();
+    final data = await AdminApiService.fetchDashboardCounts();
 
-    setState(() {
-      _isLoading = false;
+    if (data["success"] == true) {
+      setState(() {
+        placed = data["placed"];
+        shipped = data["shipped"];
+        delivered = data["delivered"];
+        cancelled = data["cancelled"];
+        _isLoading = false;
+      });
+    } else {
+      setState(() => _isLoading = false);
 
-      if (response['success'] == true) {
-        final dealers = response['data'] ?? [];
-
-        int approved = 0;
-        int rejected = 0;
-        int pending = 0;
-
-        for (var d in dealers) {
-          final bool isApproved = d['isApproved'] == true;
-          final bool isRejected = d['isRejected'] == true;
-
-          if (isApproved) {
-            approved++;
-          } else if (isRejected) {
-            rejected++;
-          } else {
-            pending++;
-          }
-        }
-
-        approvedCount = approved;
-        rejectedCount = rejected;
-        pendingCount = pending;
-      } else {
-        approvedCount = 0;
-        rejectedCount = 0;
-        pendingCount = 0;
-
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(response['message'] ?? "Error")));
-      }
-    });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(data["message"] ?? "Error loading data")),
+      );
+    }
   }
 
   @override
@@ -121,14 +103,17 @@ class _ApprovalPieChartState extends State<ApprovalPieChart> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _statusText("$approvedCount Approved", const Color(0xFF553861)),
+            _statusText("$placed Placed", const Color(0xFF553861)),
             const SizedBox(width: 15),
-            _statusText("$rejectedCount Rejected", mythemecolor1),
+            _statusText("$cancelled Cancelled", mythemecolor1),
             const SizedBox(width: 15),
             _statusText(
-              "$pendingCount Pending",
-              const Color.fromARGB(255, 166, 99, 168),
+              "$delivered Delivered",
+              const Color.fromARGB(255, 166, 195, 211),
             ),
+            const SizedBox(width: 15),
+
+            _statusText("$shipped Shipped", tdlightPink),
           ],
         ),
 
@@ -138,11 +123,14 @@ class _ApprovalPieChartState extends State<ApprovalPieChart> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _legend(const Color(0xFF553861), "Approved"),
+            _legend(const Color(0xFF553861), "Placed"),
             const SizedBox(width: 20),
-            _legend(mythemecolor1, "Rejected"),
+            _legend(mythemecolor1, "Cancelled"),
             const SizedBox(width: 20),
-            _legend(const Color.fromARGB(255, 166, 99, 168), "Pending"),
+            _legend(const Color.fromARGB(255, 166, 195, 211), "Delivered"),
+            const SizedBox(width: 20),
+
+            _legend(tdlightPink, "Shipped"),
           ],
         ),
       ],
@@ -198,8 +186,8 @@ class _ApprovalPieChartState extends State<ApprovalPieChart> {
                   MainAxisAlignment.center, // vertically centered
               children: [
                 _statCard(
-                  title: "Approved",
-                  count: approvedCount,
+                  title: "Placed",
+                  count: placed,
                   color: const Color(0xFF553861),
                   icon: Icons.check_circle,
                 ),
@@ -207,8 +195,8 @@ class _ApprovalPieChartState extends State<ApprovalPieChart> {
                 const SizedBox(height: 10),
 
                 _statCard(
-                  title: "Rejected",
-                  count: rejectedCount,
+                  title: " Cancelled",
+                  count: cancelled,
                   color: mythemecolor1,
                   icon: Icons.cancel,
                 ),
@@ -216,9 +204,17 @@ class _ApprovalPieChartState extends State<ApprovalPieChart> {
                 const SizedBox(height: 10),
 
                 _statCard(
-                  title: "Pending",
-                  count: pendingCount,
-                  color: const Color.fromARGB(255, 166, 99, 168),
+                  title: "Delivered",
+                  count: delivered,
+                  color: const Color.fromARGB(255, 166, 195, 211),
+                  icon: Icons.hourglass_top_rounded,
+                ),
+                const SizedBox(height: 10),
+
+                _statCard(
+                  title: "Shippped",
+                  count: shipped,
+                  color: tdlightPink,
                   icon: Icons.hourglass_top_rounded,
                 ),
               ],
@@ -279,9 +275,9 @@ class _ApprovalPieChartState extends State<ApprovalPieChart> {
               ),
               const SizedBox(height: 10),
               Text(
-                "$count Users",
+                "$count Dealers",
                 style: const TextStyle(
-                  fontSize: 20,
+                  fontSize: 16,
                   fontWeight: FontWeight.w500,
                   color: Colors.black87,
                 ),
@@ -302,23 +298,30 @@ class _ApprovalPieChartState extends State<ApprovalPieChart> {
 
     return [
       PieChartSectionData(
-        value: approvedCount.toDouble(),
+        value: placed.toDouble(),
         color: const Color(0xFF553861),
-        title: "$approvedCount",
+        title: "$placed",
         radius: touchedIndex == 0 ? touchedRadius : baseRadius,
         titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
       ),
       PieChartSectionData(
-        value: rejectedCount.toDouble(),
+        value: cancelled.toDouble(),
         color: mythemecolor1,
-        title: "$rejectedCount",
+        title: "$cancelled",
         radius: touchedIndex == 1 ? touchedRadius : baseRadius,
         titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
       ),
       PieChartSectionData(
-        value: pendingCount.toDouble(),
-        color: const Color.fromARGB(255, 166, 99, 168),
-        title: "$pendingCount",
+        value: delivered.toDouble(),
+        color: const Color.fromARGB(255, 166, 195, 211),
+        title: "$delivered",
+        radius: touchedIndex == 2 ? touchedRadius : baseRadius,
+        titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
+      ),
+      PieChartSectionData(
+        value: shipped.toDouble(),
+        color: tdlightPink,
+        title: "$shipped",
         radius: touchedIndex == 2 ? touchedRadius : baseRadius,
         titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
       ),
@@ -357,214 +360,183 @@ class _ApprovalPieChartState extends State<ApprovalPieChart> {
   }
 }
 
-
 // import 'package:flutter/material.dart';
 // import 'package:fl_chart/fl_chart.dart';
-// import 'package:furniture_ecom_app/marketers/dealers_api_service.dart';
+// import 'package:furniture_ecom_app/core/api/admin_api_service.dart';
 // import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 // import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 
-// class ApprovalPieChart extends StatefulWidget {
-//   const ApprovalPieChart({super.key});
+// class ApprovalPieChartManager extends StatefulWidget {
+//   const ApprovalPieChartManager({super.key});
 
 //   @override
-//   State<ApprovalPieChart> createState() => _ApprovalPieChartState();
+//   State<ApprovalPieChartManager> createState() =>
+//       _ApprovalPieChartManagerState();
 // }
 
-// class _ApprovalPieChartState extends State<ApprovalPieChart> {
-//   int approvedCount = 0;
-//   int rejectedCount = 0;
-//   int pendingCount = 0;
-
+// class _ApprovalPieChartManagerState extends State<ApprovalPieChartManager> {
 //   bool _isLoading = false;
 //   int? touchedIndex;
+
+//   int placed = 0;
+//   int shipped = 0;
+//   int delivered = 0;
+//   int cancelled = 0;
 
 //   @override
 //   void initState() {
 //     super.initState();
-//     _fetchDealerStatusCounts();
+//     _loadCounts();
 //   }
 
-  
-//   Future<void> _fetchDealerStatusCounts() async {
+//   Future<void> _loadCounts() async {
 //     setState(() => _isLoading = true);
 
-//     final response = await DealerApiService.fetchDealers();
+//     final data = await AdminApiService.fetchDashboardCounts();
 
-//     setState(() {
-//       _isLoading = false;
+//     if (data["success"] == true) {
+//       setState(() {
+//         placed = data["placed"];
+//         shipped = data["shipped"];
+//         delivered = data["delivered"];
+//         cancelled = data["cancelled"];
+//         _isLoading = false;
+//       });
+//     } else {
+//       setState(() => _isLoading = false);
 
-//       if (response['success'] == true) {
-//         final dealers = response['data'] ?? [];
-
-//         int approved = 0;
-//         int rejected = 0;
-//         int pending = 0;
-
-//         for (var d in dealers) {
-//           final bool isApproved = d['isApproved'] == true;
-//           final bool isRejected = d['isRejected'] == true;
-
-//           if (isApproved) {
-//             approved++;
-//           } else if (isRejected) {
-//             rejected++;
-//           } else {
-//             pending++;
-//           }
-//         }
-
-//         approvedCount = approved;
-//         rejectedCount = rejected;
-//         pendingCount = pending;
-//       } else {
-//         approvedCount = 0;
-//         rejectedCount = 0;
-//         pendingCount = 0;
-
-//         ScaffoldMessenger.of(context).showSnackBar(
-//           SnackBar(content: Text(response['message'] ?? "Error")),
-//         );
-//       }
-//     });
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         SnackBar(content: Text(data["message"] ?? "Error loading data")),
+//       );
+//     }
 //   }
 
- 
 //   @override
 //   Widget build(BuildContext context) {
+//     final bool isTablet = MediaQuery.of(context).size.width >= 600;
+
 //     if (_isLoading) {
-//       return
-//       Container(
-//           height: 250,
-//           padding: const EdgeInsets.all(16),
-//           decoration: BoxDecoration(
-//             color: Colors.white,
-//             borderRadius: BorderRadius.circular(20),
-//             boxShadow: [
-//               BoxShadow(color: Colors.black12, blurRadius: 8, spreadRadius: 2),
-//             ],
-//           ),
-//           child: const Center(child: AnimationPage1())
-//         );
+//       return Container(
+//         height: isTablet ? 350 : 250,
+//         padding: const EdgeInsets.all(16),
+//         decoration: _boxDeco(),
+//         child: const Center(child: AnimationPage1()),
+//       );
 //     }
 
-//     return Column(
-//       children: [
-//         Container(
-//           height: 250,
-//           padding: const EdgeInsets.all(16),
-//           decoration: BoxDecoration(
-//             color: Colors.white,
-//             borderRadius: BorderRadius.circular(20),
-//             boxShadow: [
-//               BoxShadow(color: Colors.black12, blurRadius: 8, spreadRadius: 2),
-//             ],
-//           ),
-//           child: PieChart(
-//             PieChartData(
-//               centerSpaceRadius: 28,
-//               sectionsSpace: 4,
-//               pieTouchData: PieTouchData(
-//                 touchCallback: (event, response) {
-//                   if (!event.isInterestedForInteractions ||
-//                       response == null ||
-//                       response.touchedSection == null) {
-//                     setState(() => touchedIndex = -1);
-//                     return;
-//                   }
-//                   setState(() {
-//                     touchedIndex =
-//                         response.touchedSection!.touchedSectionIndex;
-//                   });
-//                 },
+//     return Container(
+//       padding: const EdgeInsets.all(16),
+//       decoration: _boxDeco(),
+//       child: Column(
+//         mainAxisSize: MainAxisSize.min,
+//         children: [
+//           SizedBox(
+//             height: isTablet ? 320 : 250,
+//             child: PieChart(
+//               PieChartData(
+//                 centerSpaceRadius: isTablet ? 45 : 28,
+//                 sectionsSpace: 4,
+//                 pieTouchData: PieTouchData(
+//                   touchCallback: (event, response) {
+//                     if (!event.isInterestedForInteractions ||
+//                         response?.touchedSection == null) {
+//                       setState(() => touchedIndex = -1);
+//                       return;
+//                     }
+//                     setState(() {
+//                       touchedIndex =
+//                           response!.touchedSection!.touchedSectionIndex;
+//                     });
+//                   },
+//                 ),
+//                 sections: _sections(isTablet),
 //               ),
-//               sections: _buildSections(),
 //             ),
 //           ),
-//         ),
 
-//         const SizedBox(height: 16),
+//           const SizedBox(height: 20),
 
-//         Row(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             _statusText("$approvedCount Approved", const Color(0xFF553861)),
-//             const SizedBox(width: 15),
-//             _statusText("$rejectedCount Rejected", mythemecolor1),
-//             const SizedBox(width: 15),
-//             _statusText("$pendingCount Pending", const Color.fromARGB(255, 166, 99, 168)),
-//           ],
-//         ),
-
-
-//         const SizedBox(height: 16),
-
-//         /// LEGENDS
-//         Row(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             _legend(const Color(0xFF553861), "Approved"),
-//             const SizedBox(width: 20),
-//             _legend(mythemecolor1, "Rejected"),
-//             const SizedBox(width: 20),
-//             _legend(const Color.fromARGB(255, 166, 99, 168), "Pending"),
-//           ],
-//         )
-//       ],
+//           _legendRow(),
+//         ],
+//       ),
 //     );
 //   }
 
-//   /// -------------------------------------------------------------
-//   /// PIE SECTIONS
-//   /// -------------------------------------------------------------
-//   List<PieChartSectionData> _buildSections() {
+//   // -------------------------------------------------------------
+//   // PIE CHART SECTIONS
+//   // -------------------------------------------------------------
+//   List<PieChartSectionData> _sections(bool isTablet) {
+//     final double base = isTablet ? 75 : 55;
+//     final double touch = isTablet ? 95 : 70;
+
 //     return [
 //       PieChartSectionData(
-//         value: approvedCount.toDouble(),
-//         color: const Color(0xFF553861),
-//         title: "$approvedCount",
-//         radius: touchedIndex == 0 ? 70 : 60,
+//         value: placed.toDouble(),
+//         color: tdlightPink,
+//         title: "$placed",
+//         radius: touchedIndex == 0 ? touch : base,
 //         titleStyle: const TextStyle(color: Colors.white, fontSize: 16),
 //       ),
 //       PieChartSectionData(
-//         value: rejectedCount.toDouble(),
+//         value: shipped.toDouble(),
 //         color: mythemecolor1,
-//         title: "$rejectedCount",
-//         radius: touchedIndex == 1 ? 70 : 60,
+//         title: "$shipped",
+//         radius: touchedIndex == 1 ? touch : base,
 //         titleStyle: const TextStyle(color: Colors.white, fontSize: 16),
 //       ),
 //       PieChartSectionData(
-//         value: pendingCount.toDouble(),
-//         color: const Color.fromARGB(255, 166, 99, 168),
-//         title: "$pendingCount",
-//         radius: touchedIndex == 2 ? 70 : 60,
+//         value: delivered.toDouble(),
+//         color: mythemecolor,
+//         title: "$delivered",
+//         radius: touchedIndex == 2 ? touch : base,
+//         titleStyle: const TextStyle(color: Colors.white, fontSize: 16),
+//       ),
+//       PieChartSectionData(
+//         value: cancelled.toDouble(),
+//         color: tdgGrey,
+//         title: "$cancelled",
+//         radius: touchedIndex == 3 ? touch : base,
 //         titleStyle: const TextStyle(color: Colors.white, fontSize: 16),
 //       ),
 //     ];
 //   }
 
-//   Widget _legend(Color color, String text) {
+//   // -------------------------------------------------------------
+//   // LEGEND
+//   // -------------------------------------------------------------
+//   Widget _legendRow() {
 //     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
 //       children: [
-//         Container(
-//           width: 14,
-//           height: 14,
-//           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-//         ),
-//         const SizedBox(width: 6),
-//         Text(text),
+//         _legendItem(tdlightPink, "Placed"),
+//         _legendItem(mythemecolor1, "Shipped"),
+//         _legendItem(mythemecolor, "Delivered"),
+//         _legendItem(tdgGrey, "Cancelled"),
 //       ],
 //     );
 //   }
 
-//   Widget _statusText(String text, Color color) {
-//     return Text(
-//       text,
-//       style: TextStyle(
-//         fontSize: 15,
-//         fontWeight: FontWeight.w600,
-//         color: color,
-//       ),
+//   Widget _legendItem(Color color, String label) {
+//     return Row(
+//       children: [
+//         Container(
+//           width: 12,
+//           height: 12,
+//           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+//         ),
+//         const SizedBox(width: 6),
+//         Text(label, style: const TextStyle(fontSize: 14)),
+//       ],
+//     );
+//   }
+
+//   BoxDecoration _boxDeco() {
+//     return BoxDecoration(
+//       color: Colors.white,
+//       borderRadius: BorderRadius.circular(18),
+//       boxShadow: [
+//         BoxShadow(color: Colors.black12, blurRadius: 8, spreadRadius: 2),
+//       ],
 //     );
 //   }
 // }

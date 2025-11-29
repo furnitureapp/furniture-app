@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/marketers/dealers_api_service.dart';
+import 'package:furniture_ecom_app/core/api/dealers_api_service.dart';
 import 'package:furniture_ecom_app/marketers/marketer_dashboard.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
@@ -476,7 +476,6 @@ class _DealerApprovalPageState extends State<DealerApprovalPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              
                               ElevatedButton(
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: mythemecolor,
@@ -849,9 +848,15 @@ class _DealerApprovalPageState extends State<DealerApprovalPage> {
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: DataTable(
-                            headingTextStyle: GoogleFonts.poppins(
+                             headingTextStyle: GoogleFonts.poppins(
                               fontWeight: FontWeight.w600,
                               color: mythemecolor,
+                              fontSize: isTablet ? 24 : 14,
+                            ),
+                            dataTextStyle: GoogleFonts.poppins(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                              fontSize: isTablet ? 20 : 12,
                             ),
                             border: TableBorder.all(
                               color: Colors.grey.shade300,
@@ -860,50 +865,38 @@ class _DealerApprovalPageState extends State<DealerApprovalPage> {
                               DataColumn(
                                 label: Text(
                                   "Company",
-                                  style: TextStyle(
-                                    fontSize: isTablet ? 24 : 14,
-                                  ),
+                                 
                                 ),
                               ),
                               DataColumn(
                                 label: Text(
                                   "Owner",
-                                  style: TextStyle(
-                                    fontSize: isTablet ? 24 : 14,
-                                  ),
+                               
                                 ),
                               ),
                               DataColumn(
                                 label: Text(
                                   "Phone",
-                                  style: TextStyle(
-                                    fontSize: isTablet ? 24 : 14,
-                                  ),
+                                  
                                 ),
                               ),
 
                               DataColumn(
                                 label: Text(
                                   "Email",
-                                  style: TextStyle(
-                                    fontSize: isTablet ? 24 : 14,
-                                  ),
+                                 
                                 ),
                               ),
                               DataColumn(
                                 label: Text(
                                   "GST",
-                                  style: TextStyle(
-                                    fontSize: isTablet ? 24 : 14,
-                                  ),
+                                  
                                 ),
                               ),
                               DataColumn(
                                 label: Text(
                                   "Actions",
-                                  style: TextStyle(
-                                    fontSize: isTablet ? 24 : 14,
-                                  ),
+                                 
                                 ),
                               ),
                             ],
@@ -913,45 +906,34 @@ class _DealerApprovalPageState extends State<DealerApprovalPage> {
                                   DataCell(
                                     Text(
                                       dealer['companyName'] ?? '-',
-                                      style: TextStyle(
-                                        fontSize: isTablet ? 20 : 14,
-                                      ),
+                                    
                                     ),
                                   ),
                                   DataCell(
                                     Text(
                                       dealer['username'] ?? '-',
-                                      style: TextStyle(
-                                        fontSize: isTablet ? 20 : 14,
-                                      ),
+                                    
                                     ),
                                   ),
                                   DataCell(
                                     Text(
                                       dealer['phoneNumber'] ?? '-',
-                                      style: TextStyle(
-                                        fontSize: isTablet ? 20 : 14,
-                                      ),
+                                      
                                     ),
                                   ),
                                   DataCell(
                                     Text(
                                       dealer['email'] ?? '-',
-                                      style: TextStyle(
-                                        fontSize: isTablet ? 20 : 14,
-                                      ),
+                                    
                                     ),
                                   ),
                                   DataCell(
                                     Text(
                                       dealer['gstNumber'] ?? '-',
-                                      style: TextStyle(
-                                        fontSize: isTablet ? 20 : 14,
-                                      ),
+                                      
                                     ),
                                   ),
 
-                                  // ACTIONS (UNCHANGED style — Approved/Rejected containers or buttons)
                                   DataCell(
                                     dealer['isApproved'] == true
                                         ? Container(
@@ -960,7 +942,7 @@ class _DealerApprovalPageState extends State<DealerApprovalPage> {
                                               vertical: 6,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: const Color.fromARGB(
+                                              color: Color.fromARGB(
                                                 255,
                                                 220,
                                                 213,
@@ -972,22 +954,72 @@ class _DealerApprovalPageState extends State<DealerApprovalPage> {
                                             child: const Text("Approved"),
                                           )
                                         : dealer['isRejected'] == true
-                                        ? Container(
-                                            padding: const EdgeInsets.symmetric(
-                                              horizontal: 12,
-                                              vertical: 6,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: const Color.fromARGB(
-                                                255,
-                                                220,
-                                                213,
-                                                213,
+                                        ? GestureDetector(
+                                            onTap: () {
+                                              final reason =
+                                                  dealer['rejection']?['reason'] ??
+                                                  'No reason';
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    title: const Text(
+                                                      "Rejection Reason!",
+                                                    ),
+                                                    content: Text(reason),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                              context,
+                                                            ),
+                                                        child: const Text(
+                                                          "OK",
+                                                          style: TextStyle(
+                                                            color:
+                                                                Color.fromARGB(
+                                                                  255,
+                                                                  61,
+                                                                  33,
+                                                                  84,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 6,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: Color.fromARGB(
+                                                  255,
+                                                  236,
+                                                  218,
+                                                  218,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
+                                              child: const Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text("Rejected"),
+                                                  SizedBox(width: 6),
+                                                  Icon(
+                                                    Icons.logout_outlined,
+                                                    size: 16,
+                                                    color: mythemecolor,
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                            child: const Text("Rejected"),
                                           )
                                         : _actionButtons(dealer),
                                   ),
