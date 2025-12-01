@@ -179,6 +179,15 @@ class _MarketerHomeState extends State<MarketerHome> {
                                         '$totalUsers',
                                         Icons.people,
                                         const Color.fromARGB(255, 16, 51, 79),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const DealersListPage(),
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ),
                                     const SizedBox(width: 12),
@@ -188,6 +197,15 @@ class _MarketerHomeState extends State<MarketerHome> {
                                         '$pendingCount',
                                         Icons.hourglass_bottom,
                                         const Color.fromARGB(255, 123, 86, 29),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const DealerApprovalPage(),
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ),
                                     const SizedBox(width: 12),
@@ -197,6 +215,15 @@ class _MarketerHomeState extends State<MarketerHome> {
                                         '$approvedCount',
                                         Icons.verified_user,
                                         const Color.fromARGB(255, 33, 92, 35),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const DealerApprovalPage(),
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ),
                                     const SizedBox(width: 12),
@@ -206,6 +233,15 @@ class _MarketerHomeState extends State<MarketerHome> {
                                         '$rejectedCount',
                                         Icons.cancel,
                                         const Color.fromARGB(255, 110, 38, 33),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const DealerApprovalPage(),
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ),
                                   ],
@@ -235,6 +271,15 @@ class _MarketerHomeState extends State<MarketerHome> {
                                       '$totalUsers',
                                       Icons.people,
                                       const Color.fromARGB(255, 16, 51, 79),
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const DealersListPage(),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -244,6 +289,15 @@ class _MarketerHomeState extends State<MarketerHome> {
                                       '$pendingCount',
                                       Icons.hourglass_bottom,
                                       const Color.fromARGB(255, 123, 86, 29),
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const DealersListPage(),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ),
                                 ],
@@ -257,6 +311,15 @@ class _MarketerHomeState extends State<MarketerHome> {
                                       '$approvedCount',
                                       Icons.verified_user,
                                       const Color.fromARGB(255, 33, 92, 35),
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const DealerApprovalPage(),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -266,6 +329,15 @@ class _MarketerHomeState extends State<MarketerHome> {
                                       '$rejectedCount',
                                       Icons.cancel,
                                       const Color.fromARGB(255, 110, 38, 33),
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                const DealerApprovalPage(),
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ),
                                 ],
@@ -293,34 +365,43 @@ class _MarketerHomeState extends State<MarketerHome> {
     );
   }
 
-  Widget _buildKpiCard(String title, String count, IconData icon, Color color) {
-    return Card(
-      color: Color.fromARGB(255, 227, 211, 244),
-      elevation: 3,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Icon(icon, color: color, size: 28),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: GoogleFonts.poppins(
-                fontSize: isTablet(context) ? 20 : 12,
-                fontWeight: FontWeight.w500,
+  Widget _buildKpiCard(
+    String title,
+    String count,
+    IconData icon,
+    Color color, {
+    VoidCallback? onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        color: Color.fromARGB(255, 227, 211, 244),
+        elevation: 3,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              Icon(icon, color: color, size: 28),
+              const SizedBox(height: 8),
+              Text(
+                title,
+                style: GoogleFonts.poppins(
+                  fontSize: isTablet(context) ? 20 : 13,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              count,
-              style: GoogleFonts.poppins(
-                fontSize: isTablet(context) ? 22 : 12,
-                fontWeight: FontWeight.bold,
-                color: mythemecolor,
+              const SizedBox(height: 4),
+              Text(
+                count,
+                style: GoogleFonts.poppins(
+                  fontSize: isTablet(context) ? 22 : 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

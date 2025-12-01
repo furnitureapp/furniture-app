@@ -49,15 +49,18 @@ class _OrdersPageManagerState extends State<OrdersPageManager>
     _tabs.dispose();
     super.dispose();
   }
-double computeTodaysAmount(List<OrderModel> orders) {
-  final today = DateTime.now();
-  return orders
-      .where((o) =>
-          o.orderDate.year == today.year &&
-          o.orderDate.month == today.month &&
-          o.orderDate.day == today.day)
-      .fold<double>(0.0, (sum, o) => sum + o.overallTotal);
-}
+
+  double computeTodaysAmount(List<OrderModel> orders) {
+    final today = DateTime.now();
+    return orders
+        .where(
+          (o) =>
+              o.orderDate.year == today.year &&
+              o.orderDate.month == today.month &&
+              o.orderDate.day == today.day,
+        )
+        .fold<double>(0.0, (sum, o) => sum + o.overallTotal);
+  }
 
   // static Future<double> fetchTodaysOrderAmount() async {
   //   try {

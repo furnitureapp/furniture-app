@@ -292,41 +292,80 @@ class _ApprovalPieChartManagerState extends State<ApprovalPieChartManager> {
   // -------------------------------------------------------------
   // PIE CHART SECTIONS
   // -------------------------------------------------------------
-  List<PieChartSectionData> _buildSections({required bool isTablet}) {
-    final double baseRadius = isTablet ? 85 : 60;
-    final double touchedRadius = isTablet ? 100 : 70;
+ 
+  // List<PieChartSectionData> _buildSections({required bool isTablet}) {
+  //   final double baseRadius = isTablet ? 85 : 60;
+  //   final double touchedRadius = isTablet ? 100 : 70;
 
-    return [
-      PieChartSectionData(
-        value: placed.toDouble(),
-        color: const Color(0xFF553861),
-        title: "$placed",
-        radius: touchedIndex == 0 ? touchedRadius : baseRadius,
-        titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
-      ),
-      PieChartSectionData(
-        value: cancelled.toDouble(),
-        color: mythemecolor1,
-        title: "$cancelled",
-        radius: touchedIndex == 1 ? touchedRadius : baseRadius,
-        titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
-      ),
-      PieChartSectionData(
-        value: delivered.toDouble(),
-        color: const Color.fromARGB(255, 166, 195, 211),
-        title: "$delivered",
-        radius: touchedIndex == 2 ? touchedRadius : baseRadius,
-        titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
-      ),
-      PieChartSectionData(
-        value: shipped.toDouble(),
-        color: tdlightPink,
-        title: "$shipped",
-        radius: touchedIndex == 2 ? touchedRadius : baseRadius,
-        titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
-      ),
-    ];
-  }
+  //   return [
+  //     PieChartSectionData(
+  //       value: placed.toDouble(),
+  //       color: const Color(0xFF553861),
+  //       title: "$placed",
+  //       radius: touchedIndex == 0 ? touchedRadius : baseRadius,
+  //       titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
+  //     ),
+  //     PieChartSectionData(
+  //       value: cancelled.toDouble(),
+  //       color: mythemecolor1,
+  //       title: "$cancelled",
+  //       radius: touchedIndex == 1 ? touchedRadius : baseRadius,
+  //       titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
+  //     ),
+  //     PieChartSectionData(
+  //       value: delivered.toDouble(),
+  //       color: const Color.fromARGB(255, 166, 195, 211),
+  //       title: "$delivered",
+  //       radius: touchedIndex == 2 ? touchedRadius : baseRadius,
+  //       titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
+  //     ),
+  //     PieChartSectionData(
+  //       value: shipped.toDouble(),
+  //       color: tdlightPink,
+  //       title: "$shipped",
+  //       radius: touchedIndex == 2 ? touchedRadius : baseRadius,
+  //       titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
+  //     ),
+  //   ];
+  // }
+
+
+List<PieChartSectionData> _buildSections({required bool isTablet}) {
+  final double baseRadius = isTablet ? 85 : 60;
+  final double touchedRadius = isTablet ? 100 : 70;
+
+  return [
+    PieChartSectionData(
+      value: placed.toDouble(),
+      color: const Color(0xFF553861),
+      title: "$placed",
+      radius: touchedIndex == 0 ? touchedRadius : baseRadius,
+      titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
+    ),
+    PieChartSectionData(
+      value: cancelled.toDouble(),
+      color: mythemecolor1,
+      title: "$cancelled",
+      radius: touchedIndex == 1 ? touchedRadius : baseRadius,
+      titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
+    ),
+    PieChartSectionData(
+      value: delivered.toDouble(),
+      color: const Color.fromARGB(255, 166, 195, 211),
+      title: "$delivered",
+      radius: touchedIndex == 2 ? touchedRadius : baseRadius,
+      titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
+    ),
+    PieChartSectionData(
+      value: shipped.toDouble(),
+      color: tdlightPink,
+      title: "$shipped",
+      radius: touchedIndex == 3 ? touchedRadius : baseRadius, // FIXED
+      titleStyle: const TextStyle(color: Colors.white, fontSize: 18),
+    ),
+  ];
+}
+
 
   BoxDecoration _boxDeco() {
     return BoxDecoration(
