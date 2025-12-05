@@ -133,7 +133,7 @@ class _OfferGridWidgetState extends State<OfferGridWidget> {
               } else {
                 final offers = snapshot.data!;
                 _offersLength = offers.length;
-
+                print(_offersLength);
                 return SizedBox(
                   height: isTablet ? 400 : 250,
                   child: Stack(

@@ -8,7 +8,6 @@ import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/marketers/approval_piechar.dart';
 import 'package:furniture_ecom_app/marketers/marketer_users.dart';
 import 'package:furniture_ecom_app/marketers/marketers_app_preview.dart';
-import 'package:furniture_ecom_app/my_home_page.dart';
 import 'package:furniture_ecom_app/my_login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -120,18 +119,6 @@ class _MarketerHomeState extends State<MarketerHome> {
             backgroundColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.home, color: mythemecolor),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const HomePage()),
-                  );
-                },
-              ),
-              const SizedBox(width: 12),
-            ],
           ),
         ),
       ),
@@ -294,7 +281,7 @@ class _MarketerHomeState extends State<MarketerHome> {
                                           context,
                                           MaterialPageRoute(
                                             builder: (_) =>
-                                                const DealersListPage(),
+                                                const DealerApprovalPage(),
                                           ),
                                         );
                                       },

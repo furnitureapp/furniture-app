@@ -290,64 +290,6 @@ class DealerApiService {
     }
   }
 
-  // static Future<Map<String, dynamic>> fetchActivities({
-  //   String? role,
-  //   String? actionType,
-  //   String? startDate,
-  //   String? endDate,
-  // }) async {
-  //   try {
-  //     final prefs = await SharedPreferences.getInstance();
-  //     final authToken = prefs.getString('auth_token');
-
-  //     if (authToken == null) {
-  //       return {
-  //         'success': false,
-  //         'message': 'Unauthorized. Please login again.',
-  //       };
-  //     }
-
-  //     final Map<String, String> queryParams = {};
-
-  //     if (role != null) queryParams['role'] = role;
-  //     if (actionType != null) queryParams['actionType'] = actionType;
-  //     if (startDate != null) queryParams['startDate'] = startDate;
-  //     if (endDate != null) queryParams['endDate'] = endDate;
-
-  //     final uri = Uri.parse(
-  //       '$baseUrl/api/activity-logs',
-  //     ).replace(queryParameters: queryParams.isEmpty ? null : queryParams);
-
-  //     final response = await http.get(
-  //       uri,
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': 'Bearer $authToken',
-  //       },
-  //     );
-
-  //     final jsonBody = jsonDecode(response.body);
-
-  //     print("📌 Activity Logs Response: ${response.statusCode}");
-  //     print(jsonBody);
-
-  //     if (response.statusCode == 200) {
-  //       return {
-  //         'success': true,
-  //         'message': jsonBody['message'],
-  //         'data': jsonBody['data'], // All logs (array)
-  //       };
-  //     } else {
-  //       return {
-  //         'success': false,
-  //         'message': jsonBody['message'] ?? 'Failed to load activities',
-  //       };
-  //     }
-  //   } catch (err) {
-  //     return {'success': false, 'message': 'Server error: $err'};
-  //   }
-  // }
-
 
 static Future<Map<String, dynamic>> fetchActivities({
   String? role,

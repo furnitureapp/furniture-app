@@ -4,6 +4,7 @@ import 'package:furniture_ecom_app/core/services/orders_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/my_ecom/navbar/drawer.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/new_appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_detail.dart';
 import 'package:intl/intl.dart';
@@ -63,6 +64,8 @@ class _OrderListPageState extends State<OrderListPage> {
           preferredSize: Size.fromHeight(60),
           child: NewAppbar(title: 'My Orders'),
         ),
+        drawer:  CustomDrawer(),
+
         body: Center(child: AnimationPage1()),
       );
     }
@@ -73,6 +76,8 @@ class _OrderListPageState extends State<OrderListPage> {
           preferredSize: Size.fromHeight(60),
           child: NewAppbar(title: 'My Orders'),
         ),
+        drawer: const CustomDrawer(),
+
         body: SizedBox.expand(
           child: Stack(
             children: [
@@ -177,6 +182,8 @@ class _OrderListPageState extends State<OrderListPage> {
         preferredSize: Size.fromHeight(60),
         child: NewAppbar(title: 'My Orders'),
       ),
+      drawer: const CustomDrawer(),
+
       body: RefreshIndicator(
         color: mythemecolor,
         backgroundColor: const Color.fromARGB(255, 245, 240, 242),

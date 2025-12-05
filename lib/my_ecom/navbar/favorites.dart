@@ -7,6 +7,7 @@ import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
+import 'package:furniture_ecom_app/my_ecom/navbar/drawer.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/new_appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_confirmationpage.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
@@ -53,6 +54,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
         preferredSize: Size.fromHeight(60),
         child: NewAppbar(title: 'My Favorites'),
       ),
+      drawer: const CustomDrawer(),
+
       body: SizedBox.expand(
         child: Stack(
           children: [
@@ -61,9 +64,8 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 isTablet
                     ? 'assets/images/theme.png'
                     : 'assets/images/theme.png',
-                    fit: BoxFit.cover,
+                fit: BoxFit.cover,
               ),
-              
             ),
 
             _isLoggedIn
@@ -314,7 +316,9 @@ class MyMobileView extends StatelessWidget {
                     stock: product['stock'] != null
                         ? product['stock'] as int
                         : 0,
-                    unit: product['unit'] ?? '',
+                    measurement: product['measurement'] ?? '',
+                    size: product['size'] ?? '',
+                    weight: product['weight'] ?? '',
                   );
 
                   return GestureDetector(
@@ -700,7 +704,9 @@ class MyTabView extends StatelessWidget {
                           ? product['stock'] as int
                           : 0,
                       gstPercentage: (product['gstPercentage'] ?? 0).toDouble(),
-                      unit: product['unit'] ?? '',
+                      measurement: product['measurement'] ?? '',
+                      size: product['size'] ?? '',
+                      weight: product['weight'] ?? '',
                     );
 
                     return GestureDetector(
@@ -804,7 +810,7 @@ class MyTabView extends StatelessWidget {
                                   Container(
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                        color:       mythemecolor,
+                                        color: mythemecolor,
                                         width: 3, // Border width
                                       ),
                                       borderRadius: BorderRadius.circular(9),
@@ -841,7 +847,8 @@ class MyTabView extends StatelessWidget {
                                       icon: Icon(
                                         Icons.shopping_cart_outlined,
                                         color: productObj.stock > 0
-                                            ? mythemecolor        : Colors.grey,
+                                            ? mythemecolor
+                                            : Colors.grey,
                                         size: 26,
                                       ),
                                       onPressed: productObj.stock > 0

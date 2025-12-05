@@ -8,6 +8,8 @@ class OfferService {
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
+       print('Response status of fetch offers: ${response.statusCode}');
+    print('Response bodyof fetch offers: ${response.body}');
       final offers = data['offers'] as List;
       return offers.map((offer) => Offer.fromJson(offer)).toList();
     } else {

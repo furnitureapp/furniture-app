@@ -3,9 +3,9 @@ import 'package:furniture_ecom_app/core/model/model_file.dart';
 import 'package:furniture_ecom_app/core/services/cat_sub_banners.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/my_ecom/navbar/drawer.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/new_appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/subc_screen.dart';
-
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
@@ -34,13 +34,12 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     });
   }
 
-  
-Future<void> _refreshData() async {
-  setState(() {
-    _categoriesFuture = CatSubBannersService.fetchCategories();
-  });
-  await _categoriesFuture;
-}
+  Future<void> _refreshData() async {
+    setState(() {
+      _categoriesFuture = CatSubBannersService.fetchCategories();
+    });
+    await _categoriesFuture;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,10 +47,11 @@ Future<void> _refreshData() async {
     final bool isTablet = screenWidth >= 600;
 
     return Scaffold(
-      appBar:  PreferredSize(
+      appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
         child: NewAppbar(title: 'Categories'),
       ),
+      drawer: const CustomDrawer(),
       body: RefreshIndicator(
         onRefresh: _refreshData,
         color: mythemecolor,
@@ -104,7 +104,8 @@ Future<void> _refreshData() async {
                             Expanded(
                               child: ClipRRect(
                                 borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(12)),
+                                  top: Radius.circular(12),
+                                ),
                                 child: Image.network(
                                   category.images[0],
                                   fit: BoxFit.cover,
@@ -114,7 +115,9 @@ Future<void> _refreshData() async {
                             ),
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  vertical: 6, horizontal: 8),
+                                vertical: 6,
+                                horizontal: 8,
+                              ),
                               child: Text(
                                 category.title,
                                 style: const TextStyle(

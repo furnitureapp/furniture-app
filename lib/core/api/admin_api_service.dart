@@ -221,7 +221,7 @@ class AdminApiService {
       final ordersResponse = await AdminApiService.fetchOrders();
 
       final List orders = ordersResponse.orders;
-
+    
       int placed = 0;
       int shipped = 0;
       int delivered = 0;
@@ -245,12 +245,16 @@ class AdminApiService {
       }
 
       final int totalOrders = ordersResponse.totalOrders;
+      final int totalrevenue = ordersResponse.overallDealerOrderAmount;
       final adminsResponse = await AdminApiService.fetchAdmins();
       final int adminCount = adminsResponse['count'] ?? 0;
       final marketersResponse = await AdminApiService.fetchMarketers();
       final int marketerCount = marketersResponse['count'] ?? 0;
       final dealersResponse = await DealerApiService.fetchDealers();
       final int dealerCount = dealersResponse['count'] ?? 0;
+      final managerresponse = await AdminApiService.fetchManagers();
+      final int managercount = managerresponse['count'] ?? 0;
+
 
       return {
         "success": true,
@@ -262,6 +266,8 @@ class AdminApiService {
         "adminCount": adminCount,
         "marketerCount": marketerCount,
         "dealerCount": dealerCount,
+        "managercount": managercount,
+        "totalrevenue": totalrevenue,
       };
     } catch (e) {
       return {
@@ -270,4 +276,68 @@ class AdminApiService {
       };
     }
   }
+
+static Future<Map<String, dynamic>> fetchManagers({
+  String? search,
+  String? role,
+}) async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    final authToken = prefs.getString('auth_token');
+
+    if (authToken == null) {
+      return {
+        'success': false,
+        'message': 'Unauthorized. Please log in again.',
+      };
+    }
+
+    // Build query params
+    final queryParams = <String, String>{};
+
+    if (search != null && search.trim().isNotEmpty) {
+      queryParams['search'] = search.trim();
+    }
+
+    if (role != null && role.isNotEmpty && role != 'all') {
+      queryParams['role'] = role;
+    }
+
+    // Build URI
+    final uri = Uri.parse(
+      '$baseUrl/api/users/manager',
+    ).replace(queryParameters: queryParams);
+
+    // Make request
+    final response = await http.get(
+      uri,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $authToken',
+      },
+    );
+
+    final data = jsonDecode(response.body);
+
+    print("🔹 Admin API: ${response.statusCode}");
+    print("🔹 Response: ${response.body}");
+
+    if (response.statusCode == 200) {
+      return {
+        'success': true,
+        'data': data['managers'] ?? [],   
+        'count': data['count'] ?? 0,
+        'message': data['message'] ?? 'Managers retrieved successfully',
+      };
+    } else {
+      return {
+        'success': false,
+        'message': data['message'] ?? 'Failed to fetch managers',
+      };
+    }
+  } catch (e) {
+    return {'success': false, 'message': 'Server error: $e'};
+  }
+}
+
 }

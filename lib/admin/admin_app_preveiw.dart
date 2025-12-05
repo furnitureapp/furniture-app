@@ -1,38 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/admin/admin_home.dart';
-import 'package:furniture_ecom_app/constants/colors.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/my_ecom/splash_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class AppPreviewAdmin extends StatelessWidget {
-  const AppPreviewAdmin({super.key});
+class AppPreviewAd extends StatelessWidget {
+  const AppPreviewAd({super.key});
 
-  final String previewUrl = 'https://grocery-ecom-user.vercel.app/myhome';
-
-  Future<void> _launchUrl() async {
-    final Uri url = Uri.parse(previewUrl);
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
-      debugPrint('Could not launch $previewUrl');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey[100],
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80.0),
         child: Container(
           decoration: const BoxDecoration(
-            color: adminPrimaryColor,
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 221, 197, 251),
+                Colors.white,
+                Color.fromARGB(255, 221, 197, 251),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(50),
               bottomRight: Radius.circular(50),
             ),
           ),
           child: AppBar(
-            iconTheme: const IconThemeData(color: Colors.white),
+            iconTheme: const IconThemeData(color: mythemecolor),
             title: Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Text('App Preview', style: AppTextStyles.heading),
+              padding: const EdgeInsets.only(top: 5),
+              child: Text(
+                'DEALERS APP PREVIEW',
+                style: GoogleFonts.poppins(
+                  fontSize: isTablet(context)? 22: 12,
+                  fontWeight: FontWeight.w600,
+                  color: mythemecolor,
+                ),
+              ),
             ),
             backgroundColor: Colors.transparent,
             elevation: 0,
@@ -43,21 +52,24 @@ class AppPreviewAdmin extends StatelessWidget {
       drawer: const AdminDrawer(currentPage: "App Preview"),
       body: Center(
         child: ElevatedButton(
-          onPressed: _launchUrl,
+          onPressed:(){
+             Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SplashScreen(),
+                        ),
+                      );
+          } ,
           style: ElevatedButton.styleFrom(
-            backgroundColor: adminPrimaryColor,
+            backgroundColor: mythemecolor,
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(16),
             ),
           ),
-          child: const Text(
+          child:  Text(
             "Open App Preview",
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
+            style: TextStyle(fontSize:  isTablet(context) ? 22 : 12, fontWeight: FontWeight.w600, color: Colors.white),
           ),
         ),
       ),

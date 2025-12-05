@@ -1,3 +1,346 @@
+// import 'package:flutter/material.dart';
+// import 'package:furniture_ecom_app/constants/colors.dart';
+// import 'package:furniture_ecom_app/models/order_history.dart';
+// import 'package:furniture_ecom_app/super_admin/super_admin_home.dart';
+// bool isSameDate(DateTime d1, DateTime d2) =>
+//     d1.year == d2.year && d1.month == d2.month && d1.day == d2.day;
+
+// List<FurnitureOrder> filterOrders(
+//   List<FurnitureOrder> orders,
+//   String filterType, {
+//   DateTime? from,
+//   DateTime? to,
+// }) {
+//   DateTime today = DateTime.now();
+//   DateTime startOfToday = DateTime(today.year, today.month, today.day);
+
+//   switch (filterType) {
+//     case 'All Dates':
+//       return orders;
+
+//     case 'Today':
+//       return orders.where((o) => isSameDate(o.orderDate, today)).toList();
+
+//     case 'Last 7 Days':
+//       DateTime weekAgo = startOfToday.subtract(const Duration(days: 6));
+//       return orders.where(
+//         (o) =>
+//             !o.orderDate.isBefore(weekAgo) && // >= weekAgo
+//             !o.orderDate.isAfter(startOfToday), // <= today
+//       ).toList();
+
+//     case 'Specific Date':
+//       if (from != null) {
+//         return orders.where((o) => isSameDate(o.orderDate, from)).toList();
+//       }
+//       return orders;
+
+//     case 'From-To':
+//       if (from != null && to != null) {
+//         DateTime fromDay = DateTime(from.year, from.month, from.day);
+//         DateTime toDay = DateTime(to.year, to.month, to.day);
+//         return orders.where(
+//           (o) =>
+//               !o.orderDate.isBefore(fromDay) && // >= from
+//               !o.orderDate.isAfter(toDay),      // <= to
+//         ).toList();
+//       }
+//       return orders;
+
+//     default:
+//       return orders;
+//   }
+// }
+
+// Widget buildOrderCard(FurnitureOrder order) {
+//   Color borderColor;
+//   Color statusColor;
+
+//   switch (order.status) {
+//     case 'Placed':
+//       borderColor = kPrimaryColor;
+//       statusColor = Colors.orange;
+//       break;
+//     case 'Delivered':
+//       borderColor = kPrimaryColor;
+//       statusColor = Colors.green;
+//       break;
+//     case 'Cancelled':
+//       borderColor = kPrimaryColor;
+//       statusColor = Colors.red;
+//       break;
+//     default:
+//       borderColor = Colors.grey;
+//       statusColor = Colors.grey;
+//   }
+
+//   return Card(
+//     shape: RoundedRectangleBorder(
+//       side: BorderSide(color: borderColor, width: 3),
+//       borderRadius: BorderRadius.circular(12),
+//     ),
+//     child: Padding(
+//       padding: const EdgeInsets.all(20),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Row(
+//             children: [
+//               Icon(Icons.shopping_cart, color: statusColor),
+//               const SizedBox(width: 8),
+//               Text(
+//                 order.status,
+//                 style: TextStyle(
+//                   color: statusColor,
+//                   fontWeight: FontWeight.bold,
+//                 ),
+//               ),
+//               const Spacer(),
+//             ],
+//           ),
+//           const SizedBox(height: 8),
+//           Text(
+//             'Order Date: ${order.orderDate.month}/${order.orderDate.day}/${order.orderDate.year}',
+//           ),
+//           Text('Order Quantity: ${order.quantity}'),
+//           const SizedBox(height: 8),
+//           Container(
+//             padding: const EdgeInsets.all(8),
+//             color: Colors.grey[200],
+//             child: Column(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Text('Username: ${order.username}'),
+//                 Text('Phone: ${order.phone}'),
+//                 Text('Address: ${order.address}'),
+//                 Text('Product: ${order.productName}'),
+//                 Text('Price: ₹${order.price}'),
+//               ],
+//             ),
+//           ),
+//           const SizedBox(height: 8),
+//           Text(
+//             'Total: ₹${order.totalAmount}',
+//             style: const TextStyle(fontWeight: FontWeight.bold),
+//           ),
+//         ],
+//       ),
+//     ),
+//   );
+// }
+
+// class OrdersPage extends StatefulWidget {
+//   const OrdersPage({super.key});
+
+//   @override
+//   State<OrdersPage> createState() => _OrdersPageState();
+// }
+
+// class _OrdersPageState extends State<OrdersPage> {
+//   String selectedFilter = 'All Dates';
+//   DateTime? specificDate;
+//   DateTime? fromDate;
+//   DateTime? toDate;
+
+//   Future<DateTime?> _pickDate(
+//     BuildContext context,
+//     DateTime? initialDate,
+//   ) async {
+//     return await showDatePicker(
+//       context: context,
+//       initialDate: initialDate ?? DateTime.now(),
+//       firstDate: DateTime(2020),
+//       lastDate: DateTime(2030),
+//       builder: (context, child) {
+//         return Theme(
+//           data: Theme.of(context).copyWith(
+//             colorScheme: ColorScheme.light(
+//               primary: kPrimaryColor, // header background color
+//               onPrimary: Colors.white, // header text color
+//               onSurface: Colors.black, // body text color
+//             ),
+//             textButtonTheme: TextButtonThemeData(
+//               style: TextButton.styleFrom(
+//                 foregroundColor: kPrimaryColor, // CANCEL/OK button color
+//               ),
+//             ),
+//           ),
+//           child: child!,
+//         );
+//       },
+//     );
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     List<FurnitureOrder> filteredOrders = filterOrders(
+//       dummyOrders,
+//       selectedFilter,
+//       from: selectedFilter == 'Specific Date' ? specificDate : fromDate,
+//       to: toDate,
+//     );
+
+//     double totalRevenue = dummyOrders.fold(0, (sum, o) => sum + o.totalAmount);
+//     double filteredRevenue = filteredOrders.fold(
+//       0,
+//       (sum, o) => sum + o.totalAmount,
+//     );
+
+//     return Scaffold(
+//       appBar: PreferredSize(
+//         preferredSize: const Size.fromHeight(80.0),
+//         child: Container(
+//           decoration: const BoxDecoration(
+//             color: kPrimaryColor,
+//             borderRadius: BorderRadius.only(
+//               bottomLeft: Radius.circular(50),
+//               bottomRight: Radius.circular(50),
+//             ),
+//           ),
+//           child: AppBar(
+//             iconTheme: const IconThemeData(color: Colors.white),
+//             title: Padding(
+//               padding: const EdgeInsets.only(top: 10),
+//               child: Text(
+//                 'Order Details with Revenue',
+//                 style: AppTextStyles.heading,
+//               ),
+//             ),
+//             backgroundColor: Colors.transparent,
+//             elevation: 0,
+//             centerTitle: true,
+//           ),
+//         ),
+//       ),
+//       drawer: const SuperAdminDrawer(currentPage: "Order Details with Amount"),
+//       body: SafeArea(
+//         child: Padding(
+//           padding: const EdgeInsets.all(12),
+//           child: Column(
+//             children: [
+//               Row(
+//                 children: [
+//                   Expanded(
+//                     child: DropdownButton<String>(
+//                       value: selectedFilter,
+//                       items:
+//                           [
+//                                 'All Dates',
+//                                 'Today',
+//                                 'Last 7 Days',
+//                                 'Specific Date',
+//                                 'From-To',
+//                               ]
+//                               .map(
+//                                 (filter) => DropdownMenuItem(
+//                                   value: filter,
+//                                   child: Text(filter),
+//                                 ),
+//                               )
+//                               .toList(),
+//                       onChanged: (value) {
+//                         setState(() {
+//                           selectedFilter = value!;
+//                         });
+//                       },
+//                     ),
+//                   ),
+//                   if (selectedFilter == 'Specific Date')
+//                     TextButton(
+//                       onPressed: () async {
+//                         DateTime? picked = await _pickDate(
+//                           context,
+//                           specificDate,
+//                         );
+//                         if (picked != null) {
+//                           setState(() => specificDate = picked);
+//                         }
+//                       },
+//                       style: TextButton.styleFrom(
+//                         foregroundColor: kPrimaryColor,
+//                       ),
+//                       child: Text(
+//                         specificDate == null
+//                             ? 'Pick Date'
+//                             : '${specificDate!.month}/${specificDate!.day}/${specificDate!.year}',
+//                       ),
+//                     ),
+//                   if (selectedFilter == 'From-To') ...[
+//                     TextButton(
+//                       onPressed: () async {
+//                         DateTime? picked = await _pickDate(context, fromDate);
+//                         if (picked != null) setState(() => fromDate = picked);
+//                       },
+//                       style: TextButton.styleFrom(
+//                         foregroundColor: kPrimaryColor, // Text color
+//                       ),
+//                       child: Text(
+//                         fromDate == null
+//                             ? 'From'
+//                             : '${fromDate!.month}/${fromDate!.day}/${fromDate!.year}',
+//                       ),
+//                     ),
+
+//                     TextButton(
+//                       onPressed: () async {
+//                         DateTime? picked = await _pickDate(context, toDate);
+//                         if (picked != null) setState(() => toDate = picked);
+//                       },
+//                       style: TextButton.styleFrom(
+//                         foregroundColor: kPrimaryColor, // Text color
+//                       ),
+//                       child: Text(
+//                         toDate == null
+//                             ? 'To'
+//                             : '${toDate!.month}/${toDate!.day}/${toDate!.year}',
+//                       ),
+//                     ),
+//                   ],
+//                 ],
+//               ),
+//               const SizedBox(height: 12),
+//               // Totals
+//               Container(
+//                 padding: const EdgeInsets.all(20),
+//                 color: Colors.blueGrey[50],
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(
+//                       'Total Revenue (All Orders): ₹$totalRevenue',
+//                       style: const TextStyle(fontWeight: FontWeight.bold),
+//                     ),
+//                     const SizedBox(height: 10),
+//                     Text(
+//                       'Revenue for Selected Filter: ₹$filteredRevenue',
+//                       style: const TextStyle(
+//                         fontWeight: FontWeight.bold,
+//                         color: Colors.green,
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//               const SizedBox(height: 12),
+//               // Order list
+//               Expanded(
+//                 child: filteredOrders.isEmpty
+//                     ? const Center(child: Text('No orders found'))
+//                     : ListView.builder(
+//                         itemCount: filteredOrders.length,
+//                         itemBuilder: (context, index) =>
+//                             buildOrderCard(filteredOrders[index]),
+//                       ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
 // orders_page_manager.dart
 import 'dart:async';
 
@@ -9,13 +352,13 @@ import 'package:intl/intl.dart';
 import '../../core/api/admin_api_service.dart';
 import '../../core/model/orders_model.dart';
 
-class OrdersPageManager extends StatefulWidget {
-  const OrdersPageManager({super.key});
+class OrdersPageSuperAdmin extends StatefulWidget {
+  const OrdersPageSuperAdmin({super.key});
   @override
-  State<OrdersPageManager> createState() => _OrdersPageManagerState();
+  State<OrdersPageSuperAdmin> createState() => _OrdersPageSuperAdminState();
 }
 
-class _OrdersPageManagerState extends State<OrdersPageManager>
+class _OrdersPageSuperAdminState extends State<OrdersPageSuperAdmin>
     with TickerProviderStateMixin {
   bool _isLoading = false;
   List<OrderModel> _orders = [];
@@ -49,36 +392,6 @@ class _OrdersPageManagerState extends State<OrdersPageManager>
     _tabs.dispose();
     super.dispose();
   }
-
-  double computeTodaysAmount(List<OrderModel> orders) {
-    final today = DateTime.now();
-    return orders
-        .where(
-          (o) =>
-              o.orderDate.year == today.year &&
-              o.orderDate.month == today.month &&
-              o.orderDate.day == today.day,
-        )
-        .fold<double>(0.0, (sum, o) => sum + o.overallTotal);
-  }
-
-  // static Future<double> fetchTodaysOrderAmount() async {
-  //   try {
-  //     final orderResponse = await AdminApiService.fetchOrders(
-  //       filterType: '1day',
-  //     );
-  //     // Sum up overallTotal from all fetched orders
-  //     final totalAmount = orderResponse.orders.fold<double>(
-  //       0.0,
-  //       (sum, order) => sum + (order.overallTotal),
-  //     );
-
-  //     return totalAmount;
-  //   } catch (e) {
-  //     print("Error fetching today's total amount: $e");
-  //     return 0.0;
-  //   }
-  // }
 
   Future<void> _fetchOrders() async {
     if (!mounted) return;
@@ -570,7 +883,7 @@ class _OrdersPageManagerState extends State<OrdersPageManager>
                         fontWeight: FontWeight.w600,
                         fontSize: isTablet(context) ? 18 : 12,
                       ),
-                    ),
+                    ), 
                     subtitle: Text(
                       "Qty: ${it.quantity}  |  ₹${it.offerPrice.toStringAsFixed(2)}",
                       style: TextStyle(fontSize: isTablet(context) ? 18 : 12),
@@ -607,6 +920,8 @@ class _OrdersPageManagerState extends State<OrdersPageManager>
       ),
     );
   }
+
+  
 
   Widget _buildKpiMiniCard({
     required String title,
@@ -646,91 +961,65 @@ class _OrdersPageManagerState extends State<OrdersPageManager>
     );
   }
 
-  Widget _buildOrdersListView(
-    List<OrderModel> list,
-    Map<String, dynamic> totals,
-  ) {
-    if (_isLoading) return const Center(child: CircularProgressIndicator());
-    if (list.isEmpty) {
-      return Center(
-        child: Text('No orders found', style: GoogleFonts.poppins()),
-      );
-    }
 
-    return CustomScrollView(
-      slivers: [
-        // 🔹 KPI Row
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildKpiMiniCard(
-                    title: "Total Orders",
-                    value: "${totals['count']}",
-                    icon: Icons.shopping_cart,
-                    color: const Color.fromARGB(255, 16, 51, 79),
-                  ),
-                ),
-                const SizedBox(width: 12),
-
-                // Expanded(
-                //   child: FutureBuilder<double>(
-                //     future: fetchTodaysOrderAmount(),
-                //     builder: (context, snapshot) {
-                //       if (snapshot.connectionState == ConnectionState.waiting) {
-                //         return _buildKpiMiniCard(
-                //           title: "Total Amount",
-                //           value: "...",
-                //           icon: Icons.currency_rupee,
-                //           color: const Color.fromARGB(255, 101, 57, 161),
-                //         );
-                //       } else if (snapshot.hasError) {
-                //         return _buildKpiMiniCard(
-                //           title: "Total Amount",
-                //           value: "0.00",
-                //           icon: Icons.currency_rupee,
-                //           color: const Color.fromARGB(255, 101, 57, 161),
-                //         );
-                //       } else {
-                //         return _buildKpiMiniCard(
-                //           title: "Total Amount",
-                //           value: snapshot.data!.toStringAsFixed(2),
-                //           icon: Icons.currency_rupee,
-                //           color: const Color.fromARGB(255, 101, 57, 161),
-                //         );
-                //       }
-                //     },
-                //   ),
-                // ),
-                Expanded(
-                  child: _buildKpiMiniCard(
-                    title: "Total Amount",
-
-                    value: computeTodaysAmount(list).toStringAsFixed(2),
-                    icon: Icons.currency_rupee,
-                    color: const Color.fromARGB(255, 101, 57, 161),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-        // 🔹 Orders List
-        SliverList(
-          delegate: SliverChildBuilderDelegate((context, index) {
-            final o = list[index];
-            return _orderTile(o); // your existing tile
-          }, childCount: list.length),
-        ),
-      ],
+Widget _buildOrdersListView(
+  List<OrderModel> list,
+  Map<String, dynamic> totals,
+) {
+  if (_isLoading) return const Center(child: CircularProgressIndicator());
+  if (list.isEmpty) {
+    return Center(
+      child: Text('No orders found', style: GoogleFonts.poppins()),
     );
   }
 
+  return CustomScrollView(
+    slivers: [
+      // 🔹 KPI Row
+      SliverToBoxAdapter(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildKpiMiniCard(
+                  title: "Total Orders",
+                  value: "${totals['count']}",
+                  icon: Icons.shopping_cart,
+                  color: const Color.fromARGB(255, 16, 51, 79),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildKpiMiniCard(
+                  title: "Total Amount",
+                  value: totals['amount'].toStringAsFixed(2),
+                  icon: Icons.currency_rupee,
+                  color: const Color.fromARGB(255, 101, 57, 161),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+
+      const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+      // 🔹 Orders List
+      SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            final o = list[index];
+            return _orderTile(o); // your existing tile
+          },
+          childCount: list.length,
+        ),
+      ),
+    ],
+  );
+}
+
+  
   @override
   Widget build(BuildContext context) {
     final allList = _ordersForTab(0);

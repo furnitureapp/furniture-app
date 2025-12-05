@@ -63,6 +63,45 @@ class RelatedProducts {
   }
 }
 
+// class Product {
+//   final String id;
+//   final String title;
+//   final double price;
+//   final double offerPrice;
+//   final String description;
+//   final List<String> images;
+//   final int stock;
+//   final double gstPercentage;
+//   final String unit;
+
+//   Product({
+//     required this.id,
+//     required this.title,
+//     required this.price,
+//     required this.description,
+//     required this.images,
+//     required this.offerPrice,
+//     required this.stock,
+//     required this.gstPercentage,
+//     required this.unit,
+//   });
+//   factory Product.fromJson(Map<String, dynamic> json) {
+//     return Product(
+//       id: json['_id'] ?? '',
+//       title: json['title'],
+//       price: json['price'].toDouble(),
+//       offerPrice: json['offerPrice'].toDouble(),
+//       description: json['description'] ?? '',
+//       images: List<String>.from(json['images'] ?? []),
+//       stock: json['stock'] != null ? json['stock'] as int : 0,
+//       gstPercentage: (json['gstPercentage'] != null)
+//           ? double.tryParse(json['gstPercentage'].toString()) ?? 0.0
+//           : 0.0,
+//       unit: json['unit'] ?? '',
+//     );
+//   }
+// }
+
 class Product {
   final String id;
   final String title;
@@ -72,35 +111,41 @@ class Product {
   final List<String> images;
   final int stock;
   final double gstPercentage;
-  final String unit;
+  final String measurement;
+  final String size;
+  final String weight;
 
   Product({
     required this.id,
     required this.title,
     required this.price,
+    required this.offerPrice,
     required this.description,
     required this.images,
-    required this.offerPrice,
     required this.stock,
     required this.gstPercentage,
-    required this.unit,
+    required this.measurement,
+    required this.size,
+    required this.weight,
   });
+
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       id: json['_id'] ?? '',
-      title: json['title'],
-      price: json['price'].toDouble(),
-      offerPrice: json['offerPrice'].toDouble(),
+      title: json['title'] ?? '',
+      price: (json['price'] ?? 0).toDouble(),
+      offerPrice: (json['offerPrice'] ?? 0).toDouble(),
       description: json['description'] ?? '',
       images: List<String>.from(json['images'] ?? []),
-      stock: json['stock'] != null ? json['stock'] as int : 0,
-      gstPercentage: (json['gstPercentage'] != null)
-          ? double.tryParse(json['gstPercentage'].toString()) ?? 0.0
-          : 0.0,
-      unit: json['unit'] ?? '',
+      stock: json['stock'] ?? 0,
+      gstPercentage: (json['gstPercentage'] ?? 0).toDouble(),
+      measurement: json['measurement'] ?? '',
+      size: json['size'] ?? '',
+      weight: json['weight'] ?? '',
     );
   }
 }
+
 
 class Categorys {
   final String id;
@@ -118,9 +163,65 @@ class Categorys {
   }
 }
 
+// class Offer {
+//   final String id;
+//   final String productId;
+//   final String title;
+//   final String description;
+//   final double actualPrice;
+//   final double offerPrice;
+//   final List<String> images;
+//   final int stock;
+//   final double gstPercentage;
+//   final String unit;
+
+//   Offer({
+//     required this.id,
+//     required this.productId,
+//     required this.title,
+//     required this.description,
+//     required this.actualPrice,
+//     required this.offerPrice,
+//     required this.images,
+//     required this.stock,
+//     required this.gstPercentage,
+//     required this.unit,
+//   });
+
+//   factory Offer.fromJson(Map<String, dynamic> json) {
+//     return Offer(
+//       id: json['_id'],
+//       productId: json['product'],
+//       title: json['title'],
+//       description: json['description'],
+//       actualPrice: (json['actualPrice'] as num).toDouble(),
+//       offerPrice: (json['offerPrice'] as num).toDouble(),
+//       images: List<String>.from(json['images'] ?? []),
+//       stock: json['stock'] ?? 1,
+//       gstPercentage: (json['gstPercentage'] ?? 0).toDouble(),
+//       unit: json['unit'] ?? '',
+//     );
+//   }
+
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'id': id,
+//       'productId': productId,
+//       'title': title,
+//       'actualPrice': actualPrice,
+//       'offerPrice': offerPrice,
+//       'description': description,
+//       'images': images,
+//       'stock': stock,
+//       'gstPercentage': gstPercentage,
+//       'unit': unit,
+//     };
+//   }
+// }
+
 class Offer {
   final String id;
-  final String productId;
+  final Product product;
   final String title;
   final String description;
   final double actualPrice;
@@ -128,11 +229,13 @@ class Offer {
   final List<String> images;
   final int stock;
   final double gstPercentage;
-  final String unit;
+  final String measurement;
+  final String size;
+  final String weight;
 
   Offer({
     required this.id,
-    required this.productId,
+    required this.product,
     required this.title,
     required this.description,
     required this.actualPrice,
@@ -140,39 +243,29 @@ class Offer {
     required this.images,
     required this.stock,
     required this.gstPercentage,
-    required this.unit,
+    required this.measurement,
+    required this.size,
+    required this.weight,
   });
 
   factory Offer.fromJson(Map<String, dynamic> json) {
     return Offer(
-      id: json['_id'],
-      productId: json['product'],
-      title: json['title'],
-      description: json['description'],
-      actualPrice: (json['actualPrice'] as num).toDouble(),
-      offerPrice: (json['offerPrice'] as num).toDouble(),
+      id: json['_id'] ?? '',
+      product: Product.fromJson(json['product'] ?? {}),
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      actualPrice: (json['actualPrice'] ?? 0).toDouble(),
+      offerPrice: (json['offerPrice'] ?? 0).toDouble(),
       images: List<String>.from(json['images'] ?? []),
-      stock: json['stock'] ?? 1,
+      stock: json['stock'] ?? 0,
       gstPercentage: (json['gstPercentage'] ?? 0).toDouble(),
-      unit: json['unit'] ?? '',
+      measurement: json['measurement'] ?? '',
+      size: json['size'] ?? '',
+      weight: json['weight'] ?? '',
     );
   }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'productId': productId,
-      'title': title,
-      'actualPrice': actualPrice,
-      'offerPrice': offerPrice,
-      'description': description,
-      'images': images,
-      'stock': stock,
-      'gstPercentage': gstPercentage,
-      'unit': unit,
-    };
-  }
 }
+
 
 class SubCategory {
   final String id;

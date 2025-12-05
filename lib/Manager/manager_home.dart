@@ -9,7 +9,6 @@ import 'package:furniture_ecom_app/Manager/dealers_list_manager.dart';
 import 'package:furniture_ecom_app/core/api/admin_api_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/my_home_page.dart';
 import 'package:furniture_ecom_app/my_login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -102,18 +101,7 @@ class _ManagerHomeState extends State<ManagerHome> {
             backgroundColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.home, color: mythemecolor),
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const HomePage()),
-                  );
-                },
-              ),
-              const SizedBox(width: 12),
-            ],
+
           ),
         ),
       ),

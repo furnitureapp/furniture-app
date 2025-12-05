@@ -96,7 +96,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
-      home: const SplashScreens(),
+      home: const SplashScreenMY(),
       routes: {
         '/homeoffer': (context) => const OfferPage(),
         '/category': (context) => const CategoriesScreen(),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/admin/admin_home.dart';
 import 'package:furniture_ecom_app/core/api/dealers_api_service.dart';
 import 'package:furniture_ecom_app/marketers/pagination_widget.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/super_admin/super_admin_home.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 bool isSameDate(DateTime d1, DateTime d2) =>
@@ -58,14 +58,14 @@ List<dynamic> filterDealersByDate(
   }).toList();
 }
 
-class TotalUsersSA extends StatefulWidget {
-  const TotalUsersSA({super.key});
+class TotalUsersAD extends StatefulWidget {
+  const TotalUsersAD({super.key});
 
   @override
-  State<TotalUsersSA> createState() => _TotalUsersSAState();
+  State<TotalUsersAD> createState() => _TotalUsersADState();
 }
 
-class _TotalUsersSAState extends State<TotalUsersSA> {
+class _TotalUsersADState extends State<TotalUsersAD> {
   bool _isLoading = true;
   List<dynamic> _dealers = [];
   String _selectedDealerType = 'All';
@@ -214,7 +214,7 @@ class _TotalUsersSAState extends State<TotalUsersSA> {
     final bool isTablet = MediaQuery.of(context).size.width >= 600;
 
     return Scaffold(
-      drawer: const SuperAdminDrawer(currentPage: "Dealers Management"),
+      drawer: const AdminDrawer(currentPage: "Dealers Management"),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80.0),
         child: Container(

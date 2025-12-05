@@ -57,6 +57,7 @@ class NewAppbar extends StatelessWidget implements PreferredSizeWidget {
           elevation: 0,
           iconTheme: const IconThemeData(color: mythemecolor, size: 32),
           centerTitle: true,
+          
           title: FutureBuilder<bool>(
             future: _isLoggedIn(),
             builder: (context, snapshot) {

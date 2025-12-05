@@ -5,15 +5,15 @@ import 'package:furniture_ecom_app/core/api/admin_api_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 
-class ApprovalPieChartManager extends StatefulWidget {
-  const ApprovalPieChartManager({super.key});
+class ApprovalPieChartAdmin extends StatefulWidget {
+  const ApprovalPieChartAdmin({super.key});
 
   @override
-  State<ApprovalPieChartManager> createState() =>
-      _ApprovalPieChartManagerState();
+  State<ApprovalPieChartAdmin> createState() =>
+      _ApprovalPieChartAdminState();
 }
 
-class _ApprovalPieChartManagerState extends State<ApprovalPieChartManager> {
+class _ApprovalPieChartAdminState extends State<ApprovalPieChartAdmin> {
   bool _isLoading = false;
   int? touchedIndex;
 
@@ -405,15 +405,15 @@ List<PieChartSectionData> _buildSections({required bool isTablet}) {
 // import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 // import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 
-// class ApprovalPieChartManager extends StatefulWidget {
-//   const ApprovalPieChartManager({super.key});
+// class ApprovalPieChartAdmin extends StatefulWidget {
+//   const ApprovalPieChartAdmin({super.key});
 
 //   @override
-//   State<ApprovalPieChartManager> createState() =>
-//       _ApprovalPieChartManagerState();
+//   State<ApprovalPieChartAdmin> createState() =>
+//       _ApprovalPieChartAdminState();
 // }
 
-// class _ApprovalPieChartManagerState extends State<ApprovalPieChartManager> {
+// class _ApprovalPieChartAdminState extends State<ApprovalPieChartAdmin> {
 //   bool _isLoading = false;
 //   int? touchedIndex;
 

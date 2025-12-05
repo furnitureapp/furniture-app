@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/provider/login_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/user_profile.dart';
 import 'package:furniture_ecom_app/my_ecom/categories.dart';
@@ -26,7 +25,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
       const CategoriesScreen(),
       const OrderListPage(),
       const FavoritesPage(),
-      isLoggedIn ? const ProfileScreen() : const LoginScreen(),
+       const ProfileScreen() 
     ];
   }
 
@@ -196,7 +195,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     ),
                     BottomNavigationBarItem(
                       icon: const Icon(Icons.account_circle, size: 26),
-                      label: isLoggedIn ? 'Profile' : 'Login',
+                      label:  'Profile' ,
                     ),
                   ],
                 ),

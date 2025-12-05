@@ -204,8 +204,8 @@ class _MyhomeState extends State<Myhome> {
                     itemBuilder: (context, index) {
                       final product = products[index];
 
-                      debugPrint(
-                          'Navigating to product: ${product.title}, Stock: ${product.stock}');
+                      // debugPrint(
+                      //     'Navigating to product: ${product.title}, Stock: ${product.stock}');
 
                       return ProductWidget(
                         product: product,

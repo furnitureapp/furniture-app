@@ -57,17 +57,16 @@ List<dynamic> filterDealersByDate(
   }).toList();
 }
 
-class TotalMarketersSA extends StatefulWidget {
-  const TotalMarketersSA({super.key});
+class TotalManagerSA extends StatefulWidget {
+  const TotalManagerSA({super.key});
 
   @override
-  State<TotalMarketersSA> createState() => _TotalMarketersSAState();
+  State<TotalManagerSA> createState() => _TotalManagerSAState();
 }
 
-class _TotalMarketersSAState extends State<TotalMarketersSA> {
+class _TotalManagerSAState extends State<TotalManagerSA> {
   bool _isLoading = true;
   List<dynamic> _dealers = [];
-  String _selectedRole = 'All Roles';
 
   String _searchQuery = '';
   String selectedDateFilter = 'All Dates';
@@ -78,18 +77,20 @@ class _TotalMarketersSAState extends State<TotalMarketersSA> {
   @override
   void initState() {
     super.initState();
-    _fetchAdmins();
+    _fetchManagers();
   }
 
-  Future<void> _fetchAdmins() async {
+  Future<void> _fetchManagers() async {
     setState(() => _isLoading = true);
-    final response = await AdminApiService.fetchMarketers();
+
+    final response = await AdminApiService.fetchManagers();
 
     setState(() {
       _isLoading = false;
-      if (response['success']) {
-        _dealers = response['data'];
-        print("🔹 Fetched $_dealers admins");
+
+      if (response['success'] == true) {
+        _dealers = response['data'] ?? []; // Ensure it's never null
+        print("🔹 Fetched ${_dealers.length} managers");
       } else {
         _dealers = [];
         ScaffoldMessenger.of(
@@ -110,17 +111,9 @@ class _TotalMarketersSAState extends State<TotalMarketersSA> {
             ) ||
             (dealer['email'] ?? '').toString().toLowerCase().contains(query) ||
             (dealer['role'] ?? '').toString().toLowerCase().contains(query) ||
-            (dealer['creatorModel'] ?? '').toString().toLowerCase().contains(
+            (dealer['createdBy'] ?? '').toString().toLowerCase().contains(
               query,
             );
-      }).toList();
-    }
-
-    // Role Filter (creatorModel)
-    if (_selectedRole != 'All Roles') {
-      filtered = filtered.where((dealer) {
-        return (dealer['creatorModel'] ?? '').toString().toLowerCase() ==
-            _selectedRole.toLowerCase();
       }).toList();
     }
 
@@ -178,7 +171,7 @@ class _TotalMarketersSAState extends State<TotalMarketersSA> {
             title: Padding(
               padding: const EdgeInsets.only(top: 5),
               child: Text(
-                'MARKETER MANAGEMENT',
+                'MANAGER MANAGEMENT',
                 style: GoogleFonts.poppins(
                   fontSize: isTablet ? 22 : 12,
                   fontWeight: FontWeight.w600,
@@ -192,10 +185,12 @@ class _TotalMarketersSAState extends State<TotalMarketersSA> {
           ),
         ),
       ),
-      drawer: SuperAdminDrawer(currentPage: "Marketers Management"),
+      drawer: SuperAdminDrawer(currentPage: "Manager Management"),
       body: RefreshIndicator(
+        color: mythemecolor,
+        strokeWidth: 3,
         onRefresh: () async {
-          await _fetchAdmins();
+          await _fetchManagers();
         },
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -365,27 +360,6 @@ class _TotalMarketersSAState extends State<TotalMarketersSA> {
                             ],
                           ),
                       ],
-                    ),
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 4,
-                      vertical: 4,
-                    ),
-                    child: DropdownButton<String>(
-                      isExpanded: true,
-                      value: _selectedRole,
-                      items: ['All Roles', 'SuperAdmin', 'Admin', 'Manager']
-                          .map(
-                            (role) => DropdownMenuItem(
-                              value: role,
-                              child: Text(role),
-                            ),
-                          )
-                          .toList(),
-                      onChanged: (value) =>
-                          setState(() => _selectedRole = value!),
                     ),
                   ),
                 ] else ...[
@@ -608,27 +582,6 @@ class _TotalMarketersSAState extends State<TotalMarketersSA> {
                                       ),
                                     ),
                                     const SizedBox(height: 10),
-                                    DropdownButton<String>(
-                                      isExpanded: true,
-                                      value: _selectedRole,
-                                      items:
-                                          [
-                                                'All Roles',
-                                                'SuperAdmin',
-                                                'Admin',
-                                                'Manager',
-                                              ]
-                                              .map(
-                                                (role) => DropdownMenuItem(
-                                                  value: role,
-                                                  child: Text(role),
-                                                ),
-                                              )
-                                              .toList(),
-                                      onChanged: (value) => setState(
-                                        () => _selectedRole = value!,
-                                      ),
-                                    ),
                                   ],
                                 ),
                               ),
@@ -642,10 +595,6 @@ class _TotalMarketersSAState extends State<TotalMarketersSA> {
 
                 const SizedBox(height: 6),
 
-                // ----------------------
-                // TABLE AREA (scrollable horizontally)
-                // ----------------------
-                // We can't use Expanded inside ListView; give the table a height.
                 Builder(
                   builder: (context) {
                     // Determine a reasonable height for the table area
@@ -663,9 +612,7 @@ class _TotalMarketersSAState extends State<TotalMarketersSA> {
                     if (dealers.isEmpty) {
                       return SizedBox(
                         height: 200,
-                        child: const Center(
-                          child: Text("No Marketers available"),
-                        ),
+                        child: const Center(child: Text("No Admins available")),
                       );
                     }
 
@@ -692,27 +639,20 @@ class _TotalMarketersSAState extends State<TotalMarketersSA> {
                             ),
 
                             columns: [
-                              DataColumn(label: Text("Marketer Name")),
-                              DataColumn(label: Text("Marketer Email")),
+                              DataColumn(label: Text("Manager Name")),
+                              DataColumn(label: Text("Manager Email")),
                               DataColumn(label: Text("Role")),
-                              DataColumn(label: Text("Creator Email")),
-                              DataColumn(label: Text("Creator Name")),
-                              DataColumn(label: Text("Creator Role")),
                               DataColumn(label: Text("Created At")),
+                              DataColumn(label: Text("Creator ID")),
                               DataColumn(label: Text("Status")),
-                              DataColumn(label: Text("Zone")),
                             ],
                             rows: dealers.map((dealer) {
-                              final creator = dealer['createdBy'] ?? {};
-
                               return DataRow(
                                 cells: [
                                   DataCell(Text(dealer['name'] ?? '-')),
                                   DataCell(Text(dealer['email'] ?? '-')),
                                   DataCell(Text(dealer['role'] ?? '-')),
-                                  DataCell(Text(creator['email'] ?? '-')),
-                                  DataCell(Text(creator['name'] ?? '-')),
-                                  DataCell(Text(creator['role'] ?? '-')),
+
                                   DataCell(
                                     Text(
                                       dealer['createdAt'] != null
@@ -723,6 +663,8 @@ class _TotalMarketersSAState extends State<TotalMarketersSA> {
                                           : '-',
                                     ),
                                   ),
+                                  DataCell(Text(dealer['createdBy'] ?? '-')),
+
                                   DataCell(
                                     Text(
                                       dealer['isActive']
@@ -730,7 +672,6 @@ class _TotalMarketersSAState extends State<TotalMarketersSA> {
                                           : "Inactive",
                                     ),
                                   ),
-                                  DataCell(Text(dealer['zone'] ?? '-')),
                                 ],
                               );
                             }).toList(),
