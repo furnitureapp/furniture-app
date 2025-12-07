@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/marketers/gst_api_service.dart';
 import 'package:furniture_ecom_app/marketers/marketer_dashboard.dart';
 import 'package:furniture_ecom_app/marketers/models/activity.dart';
-import 'package:furniture_ecom_app/my_ecom/register_dealer.dart';
+import 'package:furniture_ecom_app/my_ecom/userprofile/register_dealer.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 

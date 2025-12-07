@@ -73,7 +73,7 @@ class _RegisterDealerPageState extends State<RegisterDealerPage> {
 
     setState(() => _isLoading = true);
 
-    final response = await DealerApiService.registerDealer(
+    final response = await DealerApiService.registerDealerbyMarketer(
       companyName: _companyNameController.text.trim(),
       phoneNumber: _phoneController.text.trim(),
       gstNumber: gst,

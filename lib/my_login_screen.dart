@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/dealer_gstverify.dart';
+import 'package:furniture_ecom_app/my_ecom/userprofile/dealer_gstverify.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
+import 'package:furniture_ecom_app/my_ecom/userprofile/wait_gst_approval.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:furniture_ecom_app/core/api/api_service_auth.dart';
 import 'package:furniture_ecom_app/Manager/manager_home.dart';
@@ -23,59 +24,69 @@ class _MyLoginScreenState extends State<MyLoginScreen> {
   bool _isPasswordVisible = false;
 
   Future<void> handleLogin() async {
-    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter email and password')),
-      );
-      return;
-    }
+  setState(() => isLoading = true);
 
-    setState(() => isLoading = true);
+  final result = await ApiAuthService.loginUser(
+    _emailController.text.trim(),
+    _passwordController.text.trim(),
+  );
 
-    final result = await ApiAuthService.loginUser(
-      _emailController.text.trim(),
-      _passwordController.text.trim(),
+  setState(() => isLoading = false);
+
+  // ✅ HANDLE PENDING APPROVAL
+  if (result['pending'] == true) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => WaitForGSTApprovalPage(
+          // email: _emailController.text.trim(),
+        ),
+      ),
     );
-
-    setState(() => isLoading = false);
-
-    if (result['success']) {
-      final role = result['role'];
-      Widget targetScreen;
-
-      switch (role) {
-        case 'superadmin':
-          targetScreen = const SuperAdminHome();
-          break;
-        case 'admin':
-          targetScreen = const AdminHomes();
-          break;
-        case 'manager':
-          targetScreen = const ManagerHome();
-          break;
-        case 'marketer':
-          targetScreen = const MarketerHome();
-          break;
-        case 'dealer':
-          targetScreen = const BottomNavBar();
-          break;
-        default:
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Unknown role: $role')));
-          return;
-      }
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => targetScreen),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result['message'] ?? 'Login failed')),
-      );
-    }
+    return;
   }
+
+  // ✅ NORMAL SUCCESS LOGIN
+  if (result['success'] == true) {
+    final role = result['role'];
+    Widget targetScreen;
+
+    switch (role) {
+      case 'superadmin':
+        targetScreen = const SuperAdminHome();
+        break;
+      case 'admin':
+        targetScreen = const AdminHomes();
+        break;
+      case 'manager':
+        targetScreen = const ManagerHome();
+        break;
+      case 'marketer':
+        targetScreen = const MarketerHome();
+        break;
+      case 'dealer':
+        targetScreen = const BottomNavBar();
+        break;
+      default:
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Unknown role')),
+        );
+        return;
+    }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => targetScreen),
+    );
+    return;
+  }
+
+  // ❌ LOGIN FAILED
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(content: Text(result['message'] ?? 'Login failed')),
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +97,7 @@ class _MyLoginScreenState extends State<MyLoginScreen> {
     final double horizontalPadding = isTablet ? 140 : 24;
     final double logoSize = isTablet ? 130 : 100;
     final double inputFontSize = isTablet ? 15 : 12;
-    final double welcomeFont = isTablet ? 24 : 20;
+    final double welcomeFont = isTablet ? 24 : 16;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -163,6 +174,7 @@ class _MyLoginScreenState extends State<MyLoginScreen> {
                     Text(
                       "Welcome Back!",
                       style: TextStyle(
+                      
                         fontSize: welcomeFont,
                         fontWeight: FontWeight.bold,
                         color: mythemecolor,
@@ -297,7 +309,7 @@ class _MyLoginScreenState extends State<MyLoginScreen> {
                         Text(
                           "Not Yet created Account?  ",
                           style: GoogleFonts.poppins(
-                            fontSize: isTablet ? 18 : 16,
+                            fontSize: isTablet ? 18 : 12,
                           ),
                         ),
                         GestureDetector(
@@ -313,7 +325,7 @@ class _MyLoginScreenState extends State<MyLoginScreen> {
                           child: Text(
                             "Register Here!",
                             style: GoogleFonts.poppins(
-                              fontSize: isTablet ? 18 : 16,
+                              fontSize: isTablet ? 18 : 12,
                               color: mythemecolor,
                               fontWeight: FontWeight.w600,
                             ),
@@ -332,3 +344,61 @@ class _MyLoginScreenState extends State<MyLoginScreen> {
     );
   }
 }
+
+
+
+
+  // Future<void> handleLogin() async {
+  //   if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('Please enter email and password')),
+  //     );
+  //     return;
+  //   }
+
+  //   setState(() => isLoading = true);
+
+  //   final result = await ApiAuthService.loginUser(
+  //     _emailController.text.trim(),
+  //     _passwordController.text.trim(),
+  //   );
+
+  //   setState(() => isLoading = false);
+
+  //   if (result['success']) {
+  //     final role = result['role'];
+  //     Widget targetScreen;
+
+  //     switch (role) {
+  //       case 'superadmin':
+  //         targetScreen = const SuperAdminHome();
+  //         break;
+  //       case 'admin':
+  //         targetScreen = const AdminHomes();
+  //         break;
+  //       case 'manager':
+  //         targetScreen = const ManagerHome();
+  //         break;
+  //       case 'marketer':
+  //         targetScreen = const MarketerHome();
+  //         break;
+  //       case 'dealer':
+  //         targetScreen = const BottomNavBar();
+  //         break;
+  //       default:
+  //         ScaffoldMessenger.of(
+  //           context,
+  //         ).showSnackBar(SnackBar(content: Text('Unknown role: $role')));
+  //         return;
+  //     }
+
+  //     Navigator.pushReplacement(
+  //       context,
+  //       MaterialPageRoute(builder: (_) => targetScreen),
+  //     );
+  //   } else {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text(result['message'] ?? 'Login failed')),
+  //     );
+  //   }
+  // }

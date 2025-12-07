@@ -2,8 +2,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/Manager/manager_home.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/super_admin/super_admin_home.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../../core/api/admin_api_service.dart';
@@ -675,35 +675,6 @@ class _OrdersPageManagerState extends State<OrdersPageManager>
                 ),
                 const SizedBox(width: 12),
 
-                // Expanded(
-                //   child: FutureBuilder<double>(
-                //     future: fetchTodaysOrderAmount(),
-                //     builder: (context, snapshot) {
-                //       if (snapshot.connectionState == ConnectionState.waiting) {
-                //         return _buildKpiMiniCard(
-                //           title: "Total Amount",
-                //           value: "...",
-                //           icon: Icons.currency_rupee,
-                //           color: const Color.fromARGB(255, 101, 57, 161),
-                //         );
-                //       } else if (snapshot.hasError) {
-                //         return _buildKpiMiniCard(
-                //           title: "Total Amount",
-                //           value: "0.00",
-                //           icon: Icons.currency_rupee,
-                //           color: const Color.fromARGB(255, 101, 57, 161),
-                //         );
-                //       } else {
-                //         return _buildKpiMiniCard(
-                //           title: "Total Amount",
-                //           value: snapshot.data!.toStringAsFixed(2),
-                //           icon: Icons.currency_rupee,
-                //           color: const Color.fromARGB(255, 101, 57, 161),
-                //         );
-                //       }
-                //     },
-                //   ),
-                // ),
                 Expanded(
                   child: _buildKpiMiniCard(
                     title: "Total Amount",
@@ -749,7 +720,7 @@ class _OrdersPageManagerState extends State<OrdersPageManager>
     final bool isTablet = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
-      drawer: const SuperAdminDrawer(currentPage: "Orders Management"),
+      drawer: const ManagerDrawer(currentPage: "Orders Management"),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(120.0),
         child: Container(
@@ -796,15 +767,24 @@ class _OrdersPageManagerState extends State<OrdersPageManager>
                 child: TabBar(
                   controller: _tabs,
                   indicatorColor: mythemecolor,
+
+                  labelColor: mythemecolor, // ✔ selected text color
+                  unselectedLabelColor:
+                      Colors.grey[600], // ✔ unselected text color
+
                   labelStyle: GoogleFonts.poppins(
-                    fontSize: isTablet ? 18 : 14,
-                    color: mythemecolor,
+                    fontSize: isTablet ? 16 : 10,
                     fontWeight: FontWeight.w600,
                   ),
-                  tabs: const [
-                    Tab(text: '  All DEALERS  '),
-                    Tab(text: '  TYPE 1  '),
-                    Tab(text: '  TYPE 2  '),
+                  unselectedLabelStyle: GoogleFonts.poppins(
+                    fontSize: isTablet ? 16 : 10,
+                    fontWeight: FontWeight.w500,
+                  ),
+
+                  tabs: [
+                    Tab(child: Text('ALL DEALERS')),
+                    Tab(child: Text('TYPE 1')),
+                    Tab(child: Text('TYPE 2')),
                   ],
                 ),
               ),

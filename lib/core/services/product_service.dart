@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../api/api_client.dart';
@@ -11,7 +10,8 @@ class ProductService {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       debugPrint('API Response: ${response.body}');
-
+      print('Response status of fetch all products: ${response.statusCode}');
+      print('Response body of fetch all products: ${response.body}');
       if (data['success'] == true && data.containsKey('products')) {
         return (data['products'] as List)
             .map((product) => Product.fromJson(product))
@@ -29,7 +29,10 @@ class ProductService {
   }
 
   static Future<Map<String, dynamic>> getProductById(String productId) async {
-    final response = await ApiClient.get('/api/products/$productId', auth: true);
+    final response = await ApiClient.get(
+      '/api/products/$productId',
+      auth: true,
+    );
 
     debugPrint("Response status: ${response.statusCode}");
     debugPrint("Response body: ${response.body}");
@@ -51,7 +54,10 @@ class ProductService {
   }
 
   static Future<List<Product>> fetchProducts(String subCategoryId) async {
-    final response = await ApiClient.get('/api/getproduct/$subCategoryId', auth: true);
+    final response = await ApiClient.get(
+      '/api/getproduct/$subCategoryId',
+      auth: true,
+    );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -63,7 +69,10 @@ class ProductService {
   }
 
   static Future<List<Product>> getRelatedProducts(String productId) async {
-    final response = await ApiClient.get('/api/productlist/$productId', auth: true);
+    final response = await ApiClient.get(
+      '/api/productlist/$productId',
+      auth: true,
+    );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -79,6 +88,3 @@ class ProductService {
     }
   }
 }
-
-
-

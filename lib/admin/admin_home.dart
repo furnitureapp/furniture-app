@@ -6,8 +6,10 @@ import 'package:furniture_ecom_app/admin/dealers_list.dart';
 import 'package:furniture_ecom_app/admin/order_management.dart';
 import 'package:furniture_ecom_app/admin/total_marketers.dart';
 import 'package:furniture_ecom_app/core/api/admin_api_service.dart';
+import 'package:furniture_ecom_app/core/services/user_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -100,7 +102,6 @@ class _AdminHomesState extends State<AdminHomes> {
             backgroundColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
-            
           ),
         ),
       ),
@@ -159,7 +160,7 @@ class _AdminHomesState extends State<AdminHomes> {
                                       ),
                                     ),
                                     const SizedBox(width: 12),
-                                   
+
                                     Expanded(
                                       child: _buildKpiCard(
                                         'Total Marketers',
@@ -234,7 +235,6 @@ class _AdminHomesState extends State<AdminHomes> {
                                     ),
                                   ),
                                   const SizedBox(width: 12),
-                                 
                                 ],
                               ),
                               const SizedBox(height: 20),
@@ -351,15 +351,21 @@ class AdminDrawer extends StatelessWidget {
   final String currentPage;
   const AdminDrawer({super.key, required this.currentPage});
 
-  Future<void> _logout(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+ Future<void> _logout(BuildContext context) async {
+    final result = await UserService.logout();
 
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const MyLoginScreen()),
-      (route) => false,
-    );
+    if (result["success"] == true) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const MyLoginScreen()),
+        (route) => false,
+      );
+    } else {
+      showTopSnackBar(context, result["message"]);
+    }
   }
 
   @override
@@ -435,7 +441,7 @@ class AdminDrawer extends StatelessWidget {
           const SizedBox(height: 10),
 
           const SizedBox(height: 10),
-         
+
           _drawerItem(
             context,
             Icons.people,
@@ -541,6 +547,8 @@ class AdminDrawer extends StatelessWidget {
         title: Text(
           title,
           style: GoogleFonts.poppins(
+            fontSize: isTablet(context) ? 14 : 12,
+
             color: isSelected ? mythemecolor : Colors.black87,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
           ),

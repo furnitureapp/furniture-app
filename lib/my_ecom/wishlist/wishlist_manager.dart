@@ -66,18 +66,26 @@ class WishlistManager extends ChangeNotifier {
       if (alreadyInWishlist) {
         await WishlistService.removeFromWishlist(productId);
         _wishlist.remove(productId);
+        if (context.mounted) {
         showTopSnackBar(context, "Removed from wishlist");
+      }
+        // showTopSnackBar(context, "Removed from wishlist");
       } else {
         await WishlistService.addToWishlist(productId);
         _wishlist.add(productId);
+        if (context.mounted) {
         showTopSnackBar(context, "Added to wishlist");
+      }
+        // showTopSnackBar(context, "Added to wishlist");
       }
 
       await _saveWishlist();
     } catch (e) {
       print("Error updating wishlist: $e");
+      if (context.mounted) {
       showTopSnackBar(context, "Error updating wishlist");
-      // 👆 state not changed if API fails
+    }
+      // showTopSnackBar(context, "Error updating wishlist");
     } finally {
       _loadingItems.remove(productId);
       notifyListeners();

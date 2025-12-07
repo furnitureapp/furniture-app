@@ -2,10 +2,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/marketers/models/activity.dart';
+import 'package:furniture_ecom_app/my_ecom/userprofile/wait_gst_approval.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/core/api/dealers_api_service.dart';
-import 'package:furniture_ecom_app/marketers/marketer_dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DealerRegistrationPage extends StatefulWidget {
@@ -59,6 +59,10 @@ class _DealerRegistrationPageState extends State<DealerRegistrationPage> {
   }
 
   Future<void> _registerDealer() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("dealer_email", _emailController.text.trim());
+    await prefs.setString("dealer_username", _usernameController.text.trim());
+
     if (!_formKey.currentState!.validate()) return;
 
     final gst = _gstController.text.trim();
@@ -73,7 +77,7 @@ class _DealerRegistrationPageState extends State<DealerRegistrationPage> {
 
     setState(() => _isLoading = true);
 
-    final response = await DealerApiService.registerDealer(
+    final response = await DealerApiService.selfregisterDealer(
       companyName: _companyNameController.text.trim(),
       phoneNumber: _phoneController.text.trim(),
       gstNumber: gst,
@@ -89,9 +93,15 @@ class _DealerRegistrationPageState extends State<DealerRegistrationPage> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text("✅ ${response["message"]}")));
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool("dealer_pending_approval", true);
+
+      await prefs.setString("dealer_email", _emailController.text.trim());
+      await prefs.setString("dealer_username", _usernameController.text.trim());
+
       Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (_) => const MarketerHome()),
+        MaterialPageRoute(builder: (_) => const WaitForGSTApprovalPage()),
         (route) => false,
       );
     } else {
@@ -338,4 +348,3 @@ class _DealerRegistrationPageState extends State<DealerRegistrationPage> {
     super.dispose();
   }
 }
-

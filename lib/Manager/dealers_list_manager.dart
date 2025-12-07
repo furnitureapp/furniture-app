@@ -176,6 +176,9 @@ class _TotalUsersMState extends State<TotalUsersM> {
         return creator == 'marketer';
       }
 
+  if (_selectedCreatorFilter == 'dealer') {
+        return creator == 'dealer';
+      }
       return true; // All
     }).toList();
 
@@ -379,7 +382,7 @@ class _TotalUsersMState extends State<TotalUsersM> {
                     children: [
                       DropdownButtonFormField<String>(
                         value: _selectedCreatorFilter,
-                        items: ['All', 'Admin', 'Marketer']
+                        items: ['All', 'Admin', 'Marketer','dealer']
                             .map(
                               (type) => DropdownMenuItem(
                                 value: type,
@@ -541,7 +544,7 @@ class _TotalUsersMState extends State<TotalUsersM> {
                     children: [
                       DropdownButtonFormField<String>(
                         value: _selectedCreatorFilter,
-                        items: ['All', 'Admin', 'Marketer']
+                        items: ['All', 'Admin', 'Marketer', 'dealer']
                             .map(
                               (type) => DropdownMenuItem(
                                 value: type,

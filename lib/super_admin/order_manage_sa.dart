@@ -340,7 +340,6 @@
 //   }
 // }
 
-
 // orders_page_manager.dart
 import 'dart:async';
 
@@ -883,7 +882,7 @@ class _OrdersPageSuperAdminState extends State<OrdersPageSuperAdmin>
                         fontWeight: FontWeight.w600,
                         fontSize: isTablet(context) ? 18 : 12,
                       ),
-                    ), 
+                    ),
                     subtitle: Text(
                       "Qty: ${it.quantity}  |  ₹${it.offerPrice.toStringAsFixed(2)}",
                       style: TextStyle(fontSize: isTablet(context) ? 18 : 12),
@@ -920,8 +919,6 @@ class _OrdersPageSuperAdminState extends State<OrdersPageSuperAdmin>
       ),
     );
   }
-
-  
 
   Widget _buildKpiMiniCard({
     required String title,
@@ -961,65 +958,60 @@ class _OrdersPageSuperAdminState extends State<OrdersPageSuperAdmin>
     );
   }
 
+  Widget _buildOrdersListView(
+    List<OrderModel> list,
+    Map<String, dynamic> totals,
+  ) {
+    if (_isLoading) return const Center(child: CircularProgressIndicator());
+    if (list.isEmpty) {
+      return Center(
+        child: Text('No orders found', style: GoogleFonts.poppins()),
+      );
+    }
 
-Widget _buildOrdersListView(
-  List<OrderModel> list,
-  Map<String, dynamic> totals,
-) {
-  if (_isLoading) return const Center(child: CircularProgressIndicator());
-  if (list.isEmpty) {
-    return Center(
-      child: Text('No orders found', style: GoogleFonts.poppins()),
+    return CustomScrollView(
+      slivers: [
+        // 🔹 KPI Row
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _buildKpiMiniCard(
+                    title: "Total Orders",
+                    value: "${totals['count']}",
+                    icon: Icons.shopping_cart,
+                    color: const Color.fromARGB(255, 16, 51, 79),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _buildKpiMiniCard(
+                    title: "Total Amount",
+                    value: totals['amount'].toStringAsFixed(2),
+                    icon: Icons.currency_rupee,
+                    color: const Color.fromARGB(255, 101, 57, 161),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+
+        // 🔹 Orders List
+        SliverList(
+          delegate: SliverChildBuilderDelegate((context, index) {
+            final o = list[index];
+            return _orderTile(o); // your existing tile
+          }, childCount: list.length),
+        ),
+      ],
     );
   }
 
-  return CustomScrollView(
-    slivers: [
-      // 🔹 KPI Row
-      SliverToBoxAdapter(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Row(
-            children: [
-              Expanded(
-                child: _buildKpiMiniCard(
-                  title: "Total Orders",
-                  value: "${totals['count']}",
-                  icon: Icons.shopping_cart,
-                  color: const Color.fromARGB(255, 16, 51, 79),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildKpiMiniCard(
-                  title: "Total Amount",
-                  value: totals['amount'].toStringAsFixed(2),
-                  icon: Icons.currency_rupee,
-                  color: const Color.fromARGB(255, 101, 57, 161),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-
-      const SliverToBoxAdapter(child: SizedBox(height: 16)),
-
-      // 🔹 Orders List
-      SliverList(
-        delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            final o = list[index];
-            return _orderTile(o); // your existing tile
-          },
-          childCount: list.length,
-        ),
-      ),
-    ],
-  );
-}
-
-  
   @override
   Widget build(BuildContext context) {
     final allList = _ordersForTab(0);
@@ -1039,6 +1031,68 @@ Widget _buildOrdersListView(
 
     return Scaffold(
       drawer: const SuperAdminDrawer(currentPage: "Orders Management"),
+      // appBar: PreferredSize(
+      //   preferredSize: const Size.fromHeight(120.0),
+      //   child: Container(
+      //     decoration: const BoxDecoration(
+      //       gradient: LinearGradient(
+      //         colors: [
+      //           Color.fromARGB(255, 221, 197, 251),
+      //           Colors.white,
+      //           Color.fromARGB(255, 221, 197, 251),
+      //         ],
+      //         begin: Alignment.topLeft,
+      //         end: Alignment.bottomRight,
+      //       ),
+      //       borderRadius: BorderRadius.only(
+      //         bottomLeft: Radius.circular(50),
+      //         bottomRight: Radius.circular(50),
+      //       ),
+      //     ),
+      //     child: AppBar(
+      //       iconTheme: const IconThemeData(color: mythemecolor),
+      //       title: Text(
+      //         'ORDERS MANAGEMENT!',
+      //         style: GoogleFonts.poppins(
+      //           fontSize: isTablet ? 22 : 12,
+      //           fontWeight: FontWeight.w600,
+      //           color: mythemecolor,
+      //         ),
+      //       ),
+      //       backgroundColor: Colors.transparent,
+      //       elevation: 0,
+      //       centerTitle: true,
+      //       bottom: PreferredSize(
+      //         preferredSize: const Size.fromHeight(30),
+      //         child: Container(
+      //           margin: const EdgeInsets.symmetric(
+      //             horizontal: 20,
+      //             vertical: 10,
+      //           ),
+      //           padding: const EdgeInsets.all(5),
+      //           decoration: BoxDecoration(
+      //             color: Colors.white.withOpacity(0.7),
+      //             borderRadius: BorderRadius.circular(40),
+      //           ),
+      //           child: TabBar(
+      //             controller: _tabs,
+      //             indicatorColor: mythemecolor,
+      //             labelStyle: GoogleFonts.poppins(
+      //               fontSize: isTablet ? 18 : 14,
+      //               color: mythemecolor,
+      //               fontWeight: FontWeight.w600,
+      //             ),
+      //             tabs: const [
+      //               Tab(text: '  All DEALERS  '),
+      //               Tab(text: '  TYPE 1  '),
+      //               Tab(text: '  TYPE 2  '),
+      //             ],
+      //           ),
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      // ),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(120.0),
         child: Container(
@@ -1085,15 +1139,24 @@ Widget _buildOrdersListView(
                 child: TabBar(
                   controller: _tabs,
                   indicatorColor: mythemecolor,
+
+                  labelColor: mythemecolor, // ✔ selected text color
+                  unselectedLabelColor:
+                      Colors.grey[600], // ✔ unselected text color
+
                   labelStyle: GoogleFonts.poppins(
-                    fontSize: isTablet ? 18 : 14,
-                    color: mythemecolor,
+                    fontSize: isTablet ? 16 : 10,
                     fontWeight: FontWeight.w600,
                   ),
-                  tabs: const [
-                    Tab(text: '  All DEALERS  '),
-                    Tab(text: '  TYPE 1  '),
-                    Tab(text: '  TYPE 2  '),
+                  unselectedLabelStyle: GoogleFonts.poppins(
+                    fontSize: isTablet ? 16 : 10,
+                    fontWeight: FontWeight.w500,
+                  ),
+
+                  tabs: [
+                    Tab(child: Text('ALL DEALERS')),
+                    Tab(child: Text('TYPE 1')),
+                    Tab(child: Text('TYPE 2')),
                   ],
                 ),
               ),

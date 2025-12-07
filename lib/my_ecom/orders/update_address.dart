@@ -22,7 +22,7 @@ class UpdateAddressScreen extends StatefulWidget {
 class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
   List<Map<String, dynamic>> _deliveryAddresses = [];
   String? _selectedAddressId;
-  String? _selectedUsername;
+  String? _selecteddealername;
   String? _selectedPhoneNo;
   String? _selectedHouseNo;
   String? _selectedStreetName;
@@ -48,7 +48,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
         _deliveryAddresses = response.map<Map<String, dynamic>>((item) {
           return {
             'id': item['_id']?.toString() ?? '',
-            'username': item['username'] ?? '',
+            'dealername': item['dealername'] ?? '',
             'phoneNo': item['phoneNo']?.toString() ?? '',
             'houseNo': item['houseNo'] ?? '',
             'streetName': item['streetName'] ?? '',
@@ -64,7 +64,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
       if (_deliveryAddresses.isEmpty) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         await prefs.remove('selectedAddressId');
-        await prefs.remove('selectedUsername');
+        await prefs.remove('selecteddealername');
         await prefs.remove('selectedPhoneNo');
         await prefs.remove('selectedHouseNo');
         await prefs.remove('selectedStreetName');
@@ -84,7 +84,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
       if (!addressExistsInDb) {
         print("Saved address not found, clearing preferences.");
         await prefs.remove('selectedAddressId');
-        await prefs.remove('selectedUsername');
+        await prefs.remove('selecteddealername');
         await prefs.remove('selectedPhoneNo');
         await prefs.remove('selectedHouseNo');
         await prefs.remove('selectedStreetName');
@@ -119,7 +119,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
 
     setState(() {
       _selectedAddressId = prefs.getString('selectedAddressId');
-      _selectedUsername = prefs.getString('selectedUsername');
+      _selecteddealername = prefs.getString('selecteddealername');
       _selectedPhoneNo = prefs.getString('selectedPhoneNo');
       _selectedHouseNo = prefs.getString('selectedHouseNo');
       _selectedStreetName = prefs.getString('selectedStreetName');
@@ -128,13 +128,13 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
       _selectedPinCode = prefs.getString('selectedPinCode');
     });
 
-    print("Fetched saved address: $_selectedAddressId, $_selectedUsername");
+    print("Fetched saved address: $_selectedAddressId, $_selecteddealername");
   }
 
   void _clearSelectedAddress() {
     setState(() {
       _selectedAddressId = null;
-      _selectedUsername = "No Name Selected";
+      _selecteddealername = "No Name Selected";
       _selectedPhoneNo = "No Phone Selected";
       _selectedHouseNo = "No House No";
       _selectedStreetName = "No Street";
@@ -157,7 +157,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
     if (selectedAddress.isNotEmpty) {
       if (saveToPrefs) {
         await prefs.setString('selectedAddressId', addressId);
-        await prefs.setString('selectedUsername', selectedAddress['username']);
+        await prefs.setString('selecteddealername', selectedAddress['dealername']);
         await prefs.setString('selectedPhoneNo', selectedAddress['phoneNo']);
         await prefs.setString('selectedHouseNo', selectedAddress['houseNo']);
         await prefs.setString(
@@ -170,13 +170,13 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
       }
 
       print(
-        "Saved Address: ID: $addressId, Name: ${selectedAddress['username']}",
+        "Saved Address: ID: $addressId, Name: ${selectedAddress['dealername']}",
       );
 
       if (!mounted) return;
       setState(() {
         _selectedAddressId = addressId;
-        _selectedUsername = selectedAddress['username'];
+        _selecteddealername = selectedAddress['dealername'];
         _selectedPhoneNo = selectedAddress['phoneNo'];
         _selectedHouseNo = selectedAddress['houseNo'];
         _selectedStreetName = selectedAddress['streetName'];
@@ -192,7 +192,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
       context: context,
       builder: (context) {
         return EditUserDialog(
-          username: address['username'],
+          dealername: address['dealername'],
           phoneNo: address['phoneNo'],
           houseNo: address['houseNo'],
           streetName: address['streetName'],
@@ -201,7 +201,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
           pinCode: address['pinCode'],
           onUpdate:
               ({
-                required String updatedUsername,
+                required String updateddealername,
                 required String updatedPhoneNo,
                 required String houseNo,
                 required String streetName,
@@ -212,7 +212,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                 await DeliveryService.myupdateDelivery(
                   deliveryId: address['id'],
                   phoneNo: updatedPhoneNo,
-                  username: updatedUsername,
+                  dealername: updateddealername,
                   houseNo: houseNo,
                   streetName: streetName,
                   city: city,
@@ -220,7 +220,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                   pinCode: pinCode,
                 );
                 setState(() {
-                  address['username'] = updatedUsername;
+                  address['dealername'] = updateddealername;
                   address['phoneNo'] = updatedPhoneNo;
                   address['houseNo'] = houseNo;
                   address['streetName'] = streetName;
@@ -229,7 +229,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                   address['pinCode'] = pinCode;
                 });
                 SharedPreferences prefs = await SharedPreferences.getInstance();
-                await prefs.setString('selectedUsername', updatedUsername);
+                await prefs.setString('selecteddealername', updateddealername);
                 await prefs.setString('selectedPhoneNo', updatedPhoneNo);
                 await prefs.setString('selectedHouseNo', houseNo);
                 await prefs.setString('selectedStreetName', streetName);
@@ -565,7 +565,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                                 width: 6,
                                                               ),
                                                               Text(
-                                                                address['username'],
+                                                                address['dealername'],
                                                                 style: const TextStyle(
                                                                   fontSize: 15,
                                                                   fontWeight:
@@ -651,7 +651,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                             children: [
                                                               Expanded(
                                                                 child: Text(
-                                                                  address['username'],
+                                                                  address['dealername'],
                                                                   style: const TextStyle(
                                                                     fontSize:
                                                                         14,
@@ -864,7 +864,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                     ),
                                                     const SizedBox(height: 10),
                                                     Text(
-                                                      "Name     : ${_selectedUsername ?? ''}",
+                                                      "Name     : ${_selecteddealername ?? ''}",
                                                       style: const TextStyle(
                                                         fontSize: 18,
                                                         fontWeight:
@@ -1108,7 +1108,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                                                     ),
                                                     const SizedBox(height: 8),
                                                     Text(
-                                                      "Name: ${_selectedUsername ?? ''}",
+                                                      "Name: ${_selecteddealername ?? ''}",
                                                       style: const TextStyle(
                                                         fontSize: 16,
                                                         fontWeight:

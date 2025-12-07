@@ -75,7 +75,7 @@ class ApiClient {
   }
 
   static Future<http.Response> delete(
-    String endpoint, {
+    String endpoint, Map<String, String> map, {
     bool auth = false,
   }) async {
     final uri = Uri.parse('$baseUrl$endpoint');

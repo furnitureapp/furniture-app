@@ -23,15 +23,15 @@ static String get baseUrl {
 static Future<GstModel?> verifyGst(String gstNumber) async {
   try {
     final prefs = await SharedPreferences.getInstance();
-    final authToken = prefs.getString('auth_token');
+    // final authToken = prefs.getString('auth_token');
 
-    if (authToken == null) return null;
+    // if (authToken == null) return null;
 
     final response = await http.post(
       Uri.parse('$baseUrl/api/verify-gst'),
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer $authToken',
+        // 'Authorization': 'Bearer $authToken',
       },
       body: jsonEncode({'gstNumber': gstNumber}),
     );

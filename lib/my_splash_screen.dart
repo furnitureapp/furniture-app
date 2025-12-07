@@ -4,12 +4,15 @@ import 'package:furniture_ecom_app/admin/admin_home.dart';
 import 'package:furniture_ecom_app/core/api/api_service_auth.dart';
 import 'package:furniture_ecom_app/marketers/marketer_dashboard.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
+import 'package:furniture_ecom_app/my_ecom/userprofile/wait_gst_approval.dart';
 import 'package:furniture_ecom_app/my_login_screen.dart';
 import 'package:furniture_ecom_app/super_admin/super_admin_home.dart';
 import 'package:video_player/video_player.dart';
 import 'package:furniture_ecom_app/core/services/notif_maitence.dart';
 import 'package:furniture_ecom_app/my_ecom/maintenence.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class SplashScreenMY extends StatefulWidget {
   const SplashScreenMY({super.key});
@@ -41,60 +44,110 @@ class _SplashScreenMYState extends State<SplashScreenMY> {
     });
   }
 
-  // void _navigateBasedOnStatus() async {
-  //   final result = await NotifMaintenanceService.fetchMaintenanceStatus();
 
-  //   if (!mounted) return;
+//   void _navigateBasedOnStatus() async {
+//   final result = await NotifMaintenanceService.fetchMaintenanceStatus();
 
-  //   if (result['maintenance'] == true) {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (context) => MaintenanceScreen(
-  //           message: result['message'] ?? 'Under maintenance',
-  //         ),
-  //       ),
-  //     );
-  //   } else {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => const MyLoginScreen()),
-  //     );
-  //   }
-  // }
+//   if (!mounted) return;
 
-  void _navigateBasedOnStatus() async {
+//   // 1️⃣ Maintenance check
+//   if (result['maintenance'] == true) {
+//      Navigator.pushReplacement(
+//       context,
+//       MaterialPageRoute(
+//         builder: (context) => MaintenanceScreen(
+//           message: result['message'] ?? 'Under maintenance',
+//         ),
+//       ),
+//     );
+//   }
+
+//   // 2️⃣ Check JWT token
+//   final token = await ApiAuthService.getStoredToken();
+
+//   if (token == null || token.isEmpty) {
+//      Navigator.pushReplacement(
+//       context,
+//       MaterialPageRoute(builder: (_) => const MyLoginScreen()),
+//     );
+//   }
+
+//   // 3️⃣ Token exists — get role
+//   final role = await ApiAuthService.getStoredRole();
+
+//   Widget targetScreen;
+
+//   switch (role) {
+//     case 'superadmin':
+//       targetScreen = const SuperAdminHome();
+//       break;
+//     case 'admin':
+//       targetScreen = const AdminHomes();
+//       break;
+//     case 'manager':
+//       targetScreen = const ManagerHome();
+//       break;
+//     case 'marketer':
+//       targetScreen = const MarketerHome();
+//       break;
+//     case 'dealer':
+//       targetScreen = const BottomNavBar();
+//       break;
+//     default:
+//       targetScreen = const MyLoginScreen();
+//   }
+
+//   Navigator.pushReplacement(
+//     context,
+//     MaterialPageRoute(builder: (_) => targetScreen),
+//   );
+// }
+
+void _navigateBasedOnStatus() async {
   final result = await NotifMaintenanceService.fetchMaintenanceStatus();
-
   if (!mounted) return;
 
-  // 1️⃣ Maintenance check
+  // 1️⃣ Maintenance
   if (result['maintenance'] == true) {
-     Navigator.pushReplacement(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => MaintenanceScreen(
+        builder: (_) => MaintenanceScreen(
           message: result['message'] ?? 'Under maintenance',
         ),
       ),
     );
+    return;
   }
 
-  // 2️⃣ Check JWT token
+  final prefs = await SharedPreferences.getInstance();
+  final bool isDealerPending =
+      prefs.getBool("dealer_pending_approval") == true;
+
   final token = await ApiAuthService.getStoredToken();
 
+  // 2️⃣ ✅ Dealer pending approval → WAIT screen
+  if (isDealerPending) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const WaitForGSTApprovalPage()),
+    );
+    return;
+  }
+
+  // 3️⃣ No token → Login
   if (token == null || token.isEmpty) {
-     Navigator.pushReplacement(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => const MyLoginScreen()),
     );
+    return;
   }
 
-  // 3️⃣ Token exists — get role
+  // 4️⃣ Token exists → role based navigation
   final role = await ApiAuthService.getStoredRole();
 
   Widget targetScreen;
-
   switch (role) {
     case 'superadmin':
       targetScreen = const SuperAdminHome();
@@ -120,6 +173,7 @@ class _SplashScreenMYState extends State<SplashScreenMY> {
     MaterialPageRoute(builder: (_) => targetScreen),
   );
 }
+
 
 
   @override
@@ -179,61 +233,8 @@ class _SplashScreenMYState extends State<SplashScreenMY> {
                   ),
                 ],
               )
-            : const CircularProgressIndicator(color: Colors.white),
+            : const CircularProgressIndicator(color:  Color(0xFF461066)),
       ),
     );
   }
 }
-
-
-// import 'package:flutter/material.dart';
-// import 'package:furniture_ecom_app/my_login_screen.dart';
-// import 'package:lottie/lottie.dart';
-// import 'dart:async';
-
-// class SplashScreenMYs extends StatefulWidget {
-//   const SplashScreenMYs({super.key});
-
-//   @override
-//   State<SplashScreenMYs> createState() => _SplashScreenMYsState();
-// }
-
-// class _SplashScreenMYsState extends State<SplashScreenMYs> {
-//   @override
-//   void initState() {
-//     super.initState();
-
-//     Timer(const Duration(seconds: 5), () {
-//       if (mounted) {
-//         Navigator.pushReplacement(
-//           context,
-//           MaterialPageRoute(builder: (_) => const MyLoginScreen()),
-//         );
-//       }
-//     });
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     final screenWidth = MediaQuery.of(context).size.width;
-//     final isTablet = screenWidth > 600;
-
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             Lottie.asset(
-//               'assets/json/liv.json',
-//               width: isTablet ? 300 : 300,
-//               height: isTablet ? 300 : 600,
-//               fit: BoxFit.contain,
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-

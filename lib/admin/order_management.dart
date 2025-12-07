@@ -686,7 +686,7 @@ class _OrdersPageAdminState extends State<OrdersPageAdmin>
             backgroundColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
-            bottom: PreferredSize(
+           bottom: PreferredSize(
               preferredSize: const Size.fromHeight(30),
               child: Container(
                 margin: const EdgeInsets.symmetric(
@@ -701,15 +701,24 @@ class _OrdersPageAdminState extends State<OrdersPageAdmin>
                 child: TabBar(
                   controller: _tabs,
                   indicatorColor: mythemecolor,
+
+                  labelColor: mythemecolor, // ✔ selected text color
+                  unselectedLabelColor:
+                      Colors.grey[600], // ✔ unselected text color
+
                   labelStyle: GoogleFonts.poppins(
-                    fontSize: isTablet ? 18 : 14,
-                    color: mythemecolor,
+                    fontSize: isTablet ? 16 : 10,
                     fontWeight: FontWeight.w600,
                   ),
-                  tabs: const [
-                    Tab(text: '  All DEALERS  '),
-                    Tab(text: '  TYPE 1  '),
-                    Tab(text: '  TYPE 2  '),
+                  unselectedLabelStyle: GoogleFonts.poppins(
+                    fontSize: isTablet ? 16 : 10,
+                    fontWeight: FontWeight.w500,
+                  ),
+
+                  tabs: [
+                    Tab(child: Text('ALL DEALERS')),
+                    Tab(child: Text('TYPE 1')),
+                    Tab(child: Text('TYPE 2')),
                   ],
                 ),
               ),

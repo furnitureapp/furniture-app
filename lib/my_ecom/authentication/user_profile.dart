@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/edit_user_profile.dart';
+import 'package:furniture_ecom_app/my_ecom/userprofile/edit_user_profile.dart';
 import 'package:furniture_ecom_app/my_login_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:furniture_ecom_app/core/services/user_service.dart';

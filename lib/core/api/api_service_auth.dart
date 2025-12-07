@@ -63,12 +63,19 @@ class ApiAuthService {
           'message': data['message'] ?? 'printin successful',
           'role': role,
         };
-      } else {
-        return {
-          'success': false,
-          'message': data['message'] ?? 'printin failed',
-        };
       }
+      if (response.statusCode == 403 &&
+          data['message'] == "Your account is pending approval.") {
+        final prefs = await SharedPreferences.getInstance();
+
+        // ✅ SAVE EMAIL FOR STATUS CHECK
+        await prefs.setString('pending_email', email);
+
+        return {'success': false, 'pending': true, 'message': data['message']};
+      }
+
+      // ❌ NORMAL LOGIN ERROR
+      return {'success': false, 'message': data['message'] ?? 'Login failed'};
     } catch (error) {
       print('printin error: $error');
       return {'success': false, 'message': 'Something went wrong: $error'};

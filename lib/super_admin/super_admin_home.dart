@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/Manager/approval_pie.dart';
 import 'package:furniture_ecom_app/core/api/admin_api_service.dart';
+import 'package:furniture_ecom_app/core/services/user_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_login_screen.dart';
 import 'package:furniture_ecom_app/super_admin/activity_super_admin.dart';
 import 'package:furniture_ecom_app/super_admin/app_preview.dart';
@@ -108,7 +110,6 @@ class _SuperAdminHomeState extends State<SuperAdminHome> {
             backgroundColor: Colors.transparent,
             elevation: 0,
             centerTitle: true,
-           
           ),
         ),
       ),
@@ -478,15 +479,21 @@ class SuperAdminDrawer extends StatelessWidget {
   final String currentPage;
   const SuperAdminDrawer({super.key, required this.currentPage});
 
-  Future<void> _logout(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+ Future<void> _logout(BuildContext context) async {
+    final result = await UserService.logout();
 
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const MyLoginScreen()),
-      (route) => false,
-    );
+    if (result["success"] == true) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const MyLoginScreen()),
+        (route) => false,
+      );
+    } else {
+      showTopSnackBar(context, result["message"]);
+    }
   }
 
   @override
@@ -680,6 +687,8 @@ class SuperAdminDrawer extends StatelessWidget {
           title,
           style: GoogleFonts.poppins(
             color: isSelected ? mythemecolor : Colors.black87,
+            fontSize: isTablet(context) ? 14 : 12,
+
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
           ),
         ),

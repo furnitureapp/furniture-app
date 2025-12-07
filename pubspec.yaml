@@ -66,6 +66,13 @@ dependencies:
   flutter_dotenv: ^6.0.0
   video_player: ^2.10.0
   audioplayers: ^6.5.1
+  flutter_launcher_icons: ^0.14.4
+
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: assets/icons/app_icon.png
 
 dev_dependencies:
   flutter_test:

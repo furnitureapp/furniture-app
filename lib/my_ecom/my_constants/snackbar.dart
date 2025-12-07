@@ -1,57 +1,8 @@
-// import 'package:flutter/material.dart';
-// import 'package:model_app/constants/colors.dart';
-
-// void showTopSnackBar(BuildContext context, String message, {Color backgroundColor = tdgreen}) {
-//   final overlay = Overlay.of(context);
-//   final snackBar = OverlayEntry(
-//     builder: (context) => Positioned(
-//       top: 70.0, 
-//       left: 20.0,
-//       right: 20.0, 
-//       child: Material(
-//         color: Colors.transparent,
-//         child: Container(
-//           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 12.0),
-//           decoration: BoxDecoration(
-//             color: backgroundColor,
-//             borderRadius: BorderRadius.circular(10),
-//             boxShadow: [
-//               BoxShadow(
-//                 color: Colors.black.withOpacity(0.5),
-//                 offset: const Offset(0, 2),
-//                 blurRadius: 6,
-//               ),
-//             ],
-//           ),
-//           child: Row(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               Expanded(
-//                 child: Text(
-//                   message,
-//                   textAlign: TextAlign.center,
-//                   style: const TextStyle(color: Colors.white, fontSize: 16),
-//                   overflow: TextOverflow.ellipsis, 
-//                 ),
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     ),
-//   );
-
-//   overlay.insert(snackBar);
-
-//   Future.delayed(const Duration(seconds: 2), () {
-//     snackBar.remove();
-//   });
-// }
-
 
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 
-void showTopSnackBar(BuildContext context, String message, {Color backgroundColor = const Color.fromARGB(255, 120, 119, 119)}) {
+void showTopSnackBar(BuildContext context, String message, {Color backgroundColor = mythemecolor}) {
   final overlay = Overlay.of(context);
   final double screenWidth = MediaQuery.of(context).size.width;
 
@@ -59,7 +10,7 @@ void showTopSnackBar(BuildContext context, String message, {Color backgroundColo
 
   final snackBar = OverlayEntry(
     builder: (context) => Positioned(
-      top: 90.0,
+      top: 110.0,
       left: (screenWidth - snackBarWidth) / 2,
       width: snackBarWidth,
       child: Material(
@@ -108,3 +59,5 @@ void showTopSnackBar(BuildContext context, String message, {Color backgroundColo
     snackBar.remove();
   });
 }
+
+

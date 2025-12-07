@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/services/user_service.dart';
 import 'package:furniture_ecom_app/marketers/approve_reject_dealer.dart';
 import 'package:furniture_ecom_app/core/api/dealers_api_service.dart';
 import 'package:furniture_ecom_app/marketers/gst_verification_page.dart';
@@ -8,6 +9,7 @@ import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/marketers/approval_piechar.dart';
 import 'package:furniture_ecom_app/marketers/marketer_users.dart';
 import 'package:furniture_ecom_app/marketers/marketers_app_preview.dart';
+import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -162,7 +164,7 @@ class _MarketerHomeState extends State<MarketerHome> {
                                   children: [
                                     Expanded(
                                       child: _buildKpiCard(
-                                        'Total Users',
+                                        'Total Dealers',
                                         '$totalUsers',
                                         Icons.people,
                                         const Color.fromARGB(255, 16, 51, 79),
@@ -254,7 +256,7 @@ class _MarketerHomeState extends State<MarketerHome> {
                                 children: [
                                   Expanded(
                                     child: _buildKpiCard(
-                                      'Total Users',
+                                      'Total Dealers',
                                       '$totalUsers',
                                       Icons.people,
                                       const Color.fromARGB(255, 16, 51, 79),
@@ -403,15 +405,21 @@ class MarketerDrawer extends StatelessWidget {
   final String currentPage;
   const MarketerDrawer({super.key, required this.currentPage});
 
-  Future<void> _logout(BuildContext context) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+ Future<void> _logout(BuildContext context) async {
+    final result = await UserService.logout();
 
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (_) => const MyLoginScreen()),
-      (route) => false,
-    );
+    if (result["success"] == true) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const MyLoginScreen()),
+        (route) => false,
+      );
+    } else {
+      showTopSnackBar(context, result["message"]);
+    }
   }
 
   @override
@@ -590,7 +598,10 @@ class MarketerDrawer extends StatelessWidget {
         leading: Icon(icon, color: isSelected ? mythemecolor : Colors.black54),
         title: Text(
           title,
+
           style: GoogleFonts.poppins(
+            fontSize: isTablet(context) ? 14 : 12,
+
             color: isSelected ? mythemecolor : Colors.black87,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
           ),

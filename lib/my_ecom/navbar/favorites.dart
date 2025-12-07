@@ -3,7 +3,6 @@ import 'package:furniture_ecom_app/core/model/model_file.dart';
 import 'package:furniture_ecom_app/core/services/cart_service.dart';
 import 'package:furniture_ecom_app/core/services/wishlist_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
@@ -14,7 +13,6 @@ import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 import 'package:furniture_ecom_app/my_ecom/wishlist/wishlist_manager.dart';
 
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -25,23 +23,13 @@ class FavoritesPage extends StatefulWidget {
 
 class _FavoritesPageState extends State<FavoritesPage> {
   WishlistService wapiService = WishlistService();
-  bool _isLoggedIn = false;
 
   @override
   void initState() {
     super.initState();
-    _checkLoginStatus();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<WishlistManager>(context, listen: false).initialize();
-    });
-  }
-
-  Future<void> _checkLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
-    setState(() {
-      _isLoggedIn = token != null && token.isNotEmpty;
     });
   }
 
@@ -68,90 +56,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
               ),
             ),
 
-            _isLoggedIn
-                ? (isTablet ? const MyTabView() : const MyMobileView())
-                : Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(isTablet ? 40 : 20),
-                      child: Card(
-                        elevation: 10,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Container(
-                          padding: EdgeInsets.all(isTablet ? 30 : 20),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: mythemecolor1.withOpacity(0.5),
-                          ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Image.asset(
-                                'assets/images/fav.png',
-                                width: isTablet ? 150 : 150,
-                                height: isTablet ? 150 : 150,
-                              ),
-                              if (!isTablet) const SizedBox(height: 5),
-                              Text(
-                                "You are not logged in!",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: isTablet ? 24 : 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              const SizedBox(height: 20),
-                              Text(
-                                "Stay Logged to See Your Favos!",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: isTablet ? 18 : 14,
-                                  color: Colors.grey.shade700,
-                                ),
-                              ),
-                              const SizedBox(height: 25),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  SharedPreferences prefs =
-                                      await SharedPreferences.getInstance();
-                                  await prefs.setString(
-                                    'redirectRoute',
-                                    '/myorders',
-                                  );
-
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const LoginScreen(),
-                                    ),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: mythemecolor,
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: isTablet ? 40 : 30,
-                                    vertical: isTablet ? 14 : 12,
-                                  ),
-                                  textStyle: TextStyle(
-                                    fontSize: isTablet ? 18 : 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  foregroundColor: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                child: const Text("Go To Login"),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+            isTablet ? const MyTabView() : const MyMobileView(),
           ],
         ),
       ),
@@ -167,19 +72,10 @@ class MyMobileView extends StatelessWidget {
       final response = await CartService.addToCart(product, context);
       await Provider.of<CartProvider>(context, listen: false).fetchCartCount();
       if (response.containsKey('error')) {
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text(response['error']),
-        //   ),
-        // );
-
+       
         showTopSnackBar(context, response['error']);
       } else {
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text("Product Added to Cart!"),
-        //   ),
-        // );
+       
 
         showTopSnackBar(context, "Product Added to Cart!!");
       }
@@ -199,7 +95,7 @@ class MyMobileView extends StatelessWidget {
     return Consumer<WishlistManager>(
       builder: (context, wishlistManager, child) {
         return RefreshIndicator(
-          color: const Color.fromARGB(255, 13, 75, 15),
+          color: mythemecolor,
           backgroundColor: const Color.fromARGB(255, 245, 240, 242),
           displacement: 40,
           strokeWidth: 2.5,

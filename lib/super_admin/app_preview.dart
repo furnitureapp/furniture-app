@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/my_ecom/splash_screen.dart';
+// import 'package:furniture_ecom_app/my_ecom/splash_screen.dart';
 import 'package:furniture_ecom_app/super_admin/super_admin_home.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -49,16 +49,16 @@ class AppPreviewSA extends StatelessWidget {
           ),
         ),
       ),
-      drawer: const SuperAdminDrawer(currentPage: "App PreviewM"),
+      drawer: const SuperAdminDrawer(currentPage: "App Preview"),
       body: Center(
         child: ElevatedButton(
           onPressed:(){
-             Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const SplashScreen(),
-                        ),
-                      );
+            //  Navigator.push(
+            //             context,
+            //             MaterialPageRoute(
+            //               builder: (context) => const SplashScreen(),
+            //             ),
+            //           );
           } ,
           style: ElevatedButton.styleFrom(
             backgroundColor: mythemecolor,

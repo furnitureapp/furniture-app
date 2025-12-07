@@ -8,7 +8,6 @@ import 'package:furniture_ecom_app/my_ecom/product/productwidget.dart';
 import 'package:furniture_ecom_app/my_ecom/wishlist/wishlist_manager.dart';
 
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ResultScreen extends StatefulWidget {
   final String query;
@@ -22,23 +21,14 @@ class ResultScreen extends StatefulWidget {
 class _ResultScreenState extends State<ResultScreen> {
   late Future<List<Product>> _searchResultsFuture;
   late Future<List<Product>> _allProductsFuture;
-  bool _isLoggedIn = false;
 
   @override
   void initState() {
     super.initState();
     _searchResultsFuture = fetchProducts(widget.query);
     _allProductsFuture = ProductService.fetchAllProducts();
-    _checkLoginStatus();
   }
 
-  Future<void> _checkLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
-    setState(() {
-      _isLoggedIn = token != null && token.isNotEmpty;
-    });
-  }
 
   // Future<List<Product>> fetchProducts(String query) async {
   //   try {
@@ -227,7 +217,6 @@ class _ResultScreenState extends State<ResultScreen> {
                   ProductDetailPagep(product: product, productId: product.id),
             ),
           ),
-          isLoggedIn: _isLoggedIn,
         );
       },
     );

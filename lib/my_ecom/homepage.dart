@@ -209,7 +209,6 @@ class _MyhomeState extends State<Myhome> {
 
                       return ProductWidget(
                         product: product,
-                        isLoggedIn: _isLoggedIn,
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(

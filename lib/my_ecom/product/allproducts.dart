@@ -98,7 +98,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                             product.title,
                             style: const TextStyle(
                               fontSize: 14,
-                              color: Color.fromARGB(255, 8, 63, 17),
+                              color: mythemecolor,
                               fontWeight: FontWeight.bold,
                             ),
                             textAlign: TextAlign.center,
