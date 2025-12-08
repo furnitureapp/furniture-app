@@ -57,7 +57,10 @@ dependencies:
   open_file: ^3.5.10
   permission_handler: ^12.0.1
   razorpay_flutter:
-    path: E:/Furniture-app-Ecom/furniture_ecom_app/plugins/razorpay_flutter
+    git:
+      url: https://github.com/razorpay/razorpay-flutter.git
+      ref: ea2c2ac
+
   fluttertoast: ^8.2.12
   cached_network_image: ^3.4.1
   marquee: ^2.3.0
