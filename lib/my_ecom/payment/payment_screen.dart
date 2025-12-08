@@ -44,11 +44,10 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
   @override
   void initState() {
     super.initState();
-    _razorpay = Razorpay("rzp_test_1DP5mmOlF5G5aa");
+    _razorpay = Razorpay();
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, handlePaymentSuccess);
     _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, handlePaymentError);
     
-    // Add these animation controllers
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -65,7 +64,7 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
   @override
   void dispose() {
     _razorpay.clear();
-    _animationController.dispose(); // Dispose the animation controller
+    _animationController.dispose(); 
     super.dispose();
   }
 
@@ -125,21 +124,17 @@ class _PaymentScreenState extends State<PaymentScreen> with SingleTickerProvider
   });
 
   try {
-    // 1. VALIDATE REQUIRED FIELDS
     if (widget.deliveryId == null || widget.deliveryId!.isEmpty) {
       throw Exception('Delivery address is required');
     }
 
-    // 2. PREPARE REQUEST BODY
     final Map<String, dynamic> requestBody = {
       'paymentMethod': 'online',
       'type': widget.type,
       'deliveryId': widget.deliveryId,
     };
 
-    // 3. HANDLE TYPE-SPECIFIC FIELDS
     if (widget.type == 'buyNow') {
-      // Keep existing buyNow logic that works
       final int qty = int.tryParse(widget.quantity ?? '1') ?? 1;
       requestBody['quantity'] = qty;
       
