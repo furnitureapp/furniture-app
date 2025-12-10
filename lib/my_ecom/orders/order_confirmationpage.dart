@@ -345,7 +345,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
             onRefresh: () async {
               _loadAddressFromProvider();
             },
-            color: const Color.fromARGB(255, 13, 75, 15),
+            color: mythemecolor,
             backgroundColor: const Color.fromARGB(255, 245, 240, 242),
             displacement: 40,
             strokeWidth: 2.5,
@@ -823,7 +823,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
             onRefresh: () async {
               _loadAddressFromProvider();
             },
-            color: const Color.fromARGB(255, 13, 75, 15),
+            color: mythemecolor,
             backgroundColor: const Color.fromARGB(255, 245, 240, 242),
             displacement: 40,
             strokeWidth: 2.5,
@@ -844,7 +844,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                     ),
                     const SizedBox(height: 10),
                     Card(
-                      color: const Color.fromARGB(255, 243, 255, 243),
+                      color: const Color.fromARGB(255, 228, 215, 226),
                       elevation: 5,
                       margin: const EdgeInsets.symmetric(vertical: 8.0),
                       child: Padding(

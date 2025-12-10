@@ -8,13 +8,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class GSTApiService {
 static String get baseUrl {
     if (kIsWeb) {
-      return 'https://furniture-app-ruby.vercel.app';
+      return 'https://furniture-app-1q75.vercel.app';
     } else if (Platform.isAndroid) {
-      return 'https://furniture-app-ruby.vercel.app';
+      return 'https://furniture-app-1q75.vercel.app';
     } else if (Platform.isIOS) {
-      return 'https://furniture-app-ruby.vercel.app';
+      return 'https://furniture-app-1q75.vercel.app';
     } else {
-      return 'https://furniture-app-ruby.vercel.app';
+      return 'https://furniture-app-1q75.vercel.app';
     }
   } 
   

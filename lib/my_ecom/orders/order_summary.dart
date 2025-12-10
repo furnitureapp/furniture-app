@@ -551,12 +551,7 @@ void dispose() {
                                           'Quantity: ${item.quantity}',
                                           style: const TextStyle(
                                             fontSize: 12,
-                                            color: Color.fromARGB(
-                                              255,
-                                              224,
-                                              129,
-                                              5,
-                                            ),
+                                            color: Colors.grey
                                           ),
                                         ),
                                       ],

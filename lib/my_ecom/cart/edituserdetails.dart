@@ -90,7 +90,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
 
   String? _validateHouseNo(String value) {
     if (value.isEmpty) return "House number is required";
-    final validPattern = RegExp(r'^\d+[a-zA-Z]?$');
+      final validPattern = RegExp(r'^\d+[A-Za-z]?(\/\d+[A-Za-z]?)?$');
     if (!validPattern.hasMatch(value)) {
       return "Enter a valid house number (e.g. 12, 12A)";
     }

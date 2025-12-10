@@ -385,7 +385,7 @@
 //                   _fetchDeliveryAddresses();
 //                 });
 //               },
-//               color: const Color.fromARGB(255, 13, 75, 15),
+//               color: mythemecolor,
 //               backgroundColor: const Color.fromARGB(255, 245, 240, 242),
 //               displacement: 40,
 //               strokeWidth: 2.5,
@@ -1338,28 +1338,14 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
     if (updated == true) _fetchDeliveryAddresses();
   }
 
-  
   void _continue() {
-  Navigator.pop(context, true);
-}
+    Navigator.pop(context, true);
+  }
 
-
-// void _continue() {
-  //   if (widget.product != null) {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(
-  //         builder: (_) =>
-  //             OrderConfirmationPage(product: widget.product, refresh: true),
-  //       ),
-  //     );
-  //   } else {
-  //     Navigator.pushReplacement(
-  //       context,
-  //       MaterialPageRoute(builder: (_) => OrderSummary(refresh: true)),
-  //     );
-  //   }
-  // }
+  String capitalizeFirst(String value) {
+    if (value.isEmpty) return value;
+    return value[0].toUpperCase() + value.substring(1);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1371,27 +1357,53 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
     final bottomSpace = selectedAddress == null ? 12.0 : 90.0;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Update Delivery Details"),
-        backgroundColor: mythemecolor,
-        centerTitle: true,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [mythemecolor1, mythemecolor],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: const Text(
+              "Update Delivery Details",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        ),
       ),
-
-      /// ✅ CONTINUE BUTTON
       bottomNavigationBar: selectedAddress == null
           ? null
           : SafeArea(
               child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: ElevatedButton(
-                  onPressed: _continue,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: mythemecolor,
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                  ),
-                  child: const Text(
-                    "CONTINUE",
-                    style: TextStyle(color: Colors.white),
+                padding: const EdgeInsets.all(18),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: _continue,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: mythemecolor,
+                      padding: const EdgeInsets.all(10),
+                      textStyle: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text("CONTINUE"),
                   ),
                 ),
               ),
@@ -1401,26 +1413,40 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
           ? const Center(child: AnimationPage1())
           : _deliveryAddresses.isEmpty
           ? Center(
-              child: ElevatedButton(
-                onPressed: () async {
-                  final res = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const AddDeliveryDetailsScreen(),
-                    ),
-                  );
-                  if (res == true) _fetchDeliveryAddresses();
-                },
-                child: const Text("Add Delivery Address"),
+            child: SizedBox(
+                width: 150,
+                child: ElevatedButton(
+                  onPressed: () async {
+                    final res = await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const AddDeliveryDetailsScreen(),
+                      ),
+                    );
+                    if (res == true) _fetchDeliveryAddresses();
+                  },
+                  style: ElevatedButton.styleFrom(
+                            backgroundColor: mythemecolor,
+                            padding: const EdgeInsets.all(10),
+                            textStyle: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                  child: const Text("Add Delivery Address"),
+                ),
               ),
-            )
+          )
           : ListView.builder(
               padding: EdgeInsets.fromLTRB(12, 12, 12, bottomSpace),
               itemCount:
                   _deliveryAddresses.length +
                   (_deliveryAddresses.length < 5 ? 1 : 0),
               itemBuilder: (context, index) {
-                // ✅ ADD ADDRESS FOOTER
                 if (index == _deliveryAddresses.length) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 8),
@@ -1442,9 +1468,17 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                           style: TextStyle(color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: mythemecolor,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                        ),
+                            backgroundColor: mythemecolor,
+                            padding: const EdgeInsets.all(10),
+                            textStyle: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
                       ),
                     ),
                   );
@@ -1453,8 +1487,34 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                 final a = _deliveryAddresses[index];
                 final isSelected = selectedAddress?['id'] == a['id'];
 
+                // return Card(
+                //   color: isSelected ? Colors.purple.shade50 : Colors.white,
+                //   elevation: isSelected ? 6 : 2,
+                //   margin: const EdgeInsets.only(bottom: 10),
+                //   child: ListTile(
+                //     leading: Radio(
+                //       value: a['id'],
+                //       groupValue: selectedAddress?['id'],
+                //       onChanged: (_) => _onAddressSelected(a['id']),
+                //     ),
+                //     title: Text(
+                //       a['dealername'],
+                //       style: TextStyle(
+                //         fontWeight: FontWeight.bold,
+                //         color: isSelected ? mythemecolor : Colors.black,
+                //       ),
+                //     ),
+                //     subtitle: Text(
+                //       "${a['houseNo']}, ${a['streetName']}, ${a['city']} - ${a['pinCode']}",
+                //     ),
+                //     trailing: IconButton(
+                //       icon: const Icon(Icons.edit, color: mythemecolor),
+                //       onPressed: () => _editAddress(a),
+                //     ),
+                //   ),
+                // );
                 return Card(
-                  color: isSelected ? Colors.blue.shade50 : Colors.white,
+                  color: isSelected ? Colors.purple.shade50 : Colors.white,
                   elevation: isSelected ? 6 : 2,
                   margin: const EdgeInsets.only(bottom: 10),
                   child: ListTile(
@@ -1464,14 +1524,16 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                       onChanged: (_) => _onAddressSelected(a['id']),
                     ),
                     title: Text(
-                      a['dealername'],
+                      capitalizeFirst(a['dealername'] ?? ''),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: isSelected ? mythemecolor : Colors.black,
                       ),
                     ),
                     subtitle: Text(
-                      "${a['houseNo']}, ${a['streetName']}, ${a['city']} - ${a['pinCode']}",
+                      "${capitalizeFirst(a['houseNo'] ?? '')}, "
+                      "${capitalizeFirst(a['streetName'] ?? '')}, "
+                      "${capitalizeFirst(a['city'] ?? '')} - ${a['pinCode'] ?? ''}",
                     ),
                     trailing: IconButton(
                       icon: const Icon(Icons.edit, color: mythemecolor),

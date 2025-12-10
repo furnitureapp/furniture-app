@@ -213,7 +213,7 @@ class _WaitForGSTApprovalPageState extends State<WaitForGSTApprovalPage> {
                 onPressed: () async {
                   final prefs = await SharedPreferences.getInstance();
                   await prefs.remove("dealer_pending_approval");
-                  await prefs.remove("pending_email"); // optional but safe
+                  await prefs.remove("dealer_email"); // optional but safe
                   await ApiAuthService.clearAuthData();
                   if (!mounted) return;
                   Navigator.pushAndRemoveUntil(

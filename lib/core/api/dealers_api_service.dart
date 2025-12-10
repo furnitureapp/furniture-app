@@ -8,13 +8,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class DealerApiService {
   static String get baseUrl {
     if (kIsWeb) {
-      return 'https://furniture-app-ruby.vercel.app';
+      return 'https://furniture-app-1q75.vercel.app';
     } else if (Platform.isAndroid) {
-      return 'https://furniture-app-ruby.vercel.app';
+      return 'https://furniture-app-1q75.vercel.app';
     } else if (Platform.isIOS) {
-      return 'https://furniture-app-ruby.vercel.app';
+      return 'https://furniture-app-1q75.vercel.app';
     } else {
-      return 'https://furniture-app-ruby.vercel.app';
+      return 'https://furniture-app-1q75.vercel.app';
     }
   }
 
@@ -46,7 +46,7 @@ class DealerApiService {
 
 static Future<Map<String, dynamic>> getDealerStatus() async {
   final prefs = await SharedPreferences.getInstance();
-  final email = prefs.getString("pending_email");
+final email = prefs.getString("dealer_email");
 
   if (email == null) {
     throw Exception("Pending dealer email not found");

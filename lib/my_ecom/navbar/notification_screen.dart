@@ -243,7 +243,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 _notificationHistory = NotifMaintenanceService.getNotifications();
               });
             },
-            color: const Color.fromARGB(255, 13, 75, 15),
+            color: mythemecolor,
             backgroundColor: const Color.fromARGB(255, 245, 240, 242),
             displacement: 40,
             strokeWidth: 2.5,
@@ -342,7 +342,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 _notificationHistory = NotifMaintenanceService.getNotifications();
               });
             },
-            color: const Color.fromARGB(255, 13, 75, 15),
+            color: mythemecolor,
             backgroundColor: const Color.fromARGB(255, 245, 240, 242),
             displacement: 40,
             strokeWidth: 2.5,

@@ -47,14 +47,14 @@ class _FavoritesPageState extends State<FavoritesPage> {
       body: SizedBox.expand(
         child: Stack(
           children: [
-            Positioned.fill(
-              child: Image.asset(
-                isTablet
-                    ? 'assets/images/theme.png'
-                    : 'assets/images/theme.png',
-                fit: BoxFit.cover,
-              ),
-            ),
+            // Positioned.fill(
+            //   child: Image.asset(
+            //     isTablet
+            //         ? 'assets/images/theme.png'
+            //         : 'assets/images/theme.png',
+            //     fit: BoxFit.cover,
+            //   ),
+            // ),
 
             isTablet ? const MyTabView() : const MyMobileView(),
           ],
@@ -227,7 +227,7 @@ class MyMobileView extends StatelessWidget {
                     ),
                     child: Card(
                       color: const Color.fromARGB(255, 247, 251, 248),
-                      elevation: 4,
+                      elevation: 6,
                       margin: const EdgeInsets.symmetric(vertical: 8),
                       child: Padding(
                         padding: const EdgeInsets.all(20),
@@ -241,11 +241,11 @@ class MyMobileView extends StatelessWidget {
                                     ? productObj.images[0]
                                     : 'https://yourbackupimage.com/placeholder.png',
                                 fit: BoxFit.cover,
-                                width: 80,
-                                height: 80,
+                                width: 100,
+                                height: 130,
                                 errorBuilder: (context, error, stackTrace) {
                                   return Image.asset(
-                                    'assets/images/man.png',
+                                    'assets/images/fav.png',
                                     width: 80,
                                     height: 80,
                                   );
@@ -509,7 +509,7 @@ class MyTabView extends StatelessWidget {
                         padding: EdgeInsets.all(30),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color: mythemecolor1.withOpacity(0.5),
+                          color: const Color.fromARGB(255, 228, 215, 226),
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -614,7 +614,7 @@ class MyTabView extends StatelessWidget {
                         ),
                       ),
                       child: Card(
-                        color: Colors.white,
+                        color: const Color.fromARGB(255, 228, 215, 226),
                         elevation: 4,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),

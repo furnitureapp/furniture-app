@@ -93,14 +93,14 @@ class CustomDrawer extends StatelessWidget {
                         );
                       },
                     ),
-                    ListTile(
-                      leading: const Icon(Icons.web, color: mythemecolor),
-                      title: Text(
-                        "Visit Website",
-                        style: TextStyle(fontSize: isTablet ? 19 : 14),
-                      ),
-                      onTap: () => _launchUrl(settings.websiteUrl),
-                    ),
+                    // ListTile(
+                    //   leading: const Icon(Icons.web, color: mythemecolor),
+                    //   title: Text(
+                    //     "Visit Website",
+                    //     style: TextStyle(fontSize: isTablet ? 19 : 14),
+                    //   ),
+                    //   onTap: () => _launchUrl(settings.websiteUrl),
+                    // ),
                     ListTile(
                       leading: const Icon(Icons.call, color: mythemecolor),
                       title: Text(

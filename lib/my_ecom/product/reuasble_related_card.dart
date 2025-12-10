@@ -180,7 +180,7 @@ class MyrelatedproductWidget extends StatelessWidget {
                     : 'https://via.placeholder.com/150',
                 width: double.infinity,
                 height: isTablet ? 140 : 120,
-                fit: BoxFit.cover,
+                fit: BoxFit.contain,
                 errorBuilder: (_, __, ___) => Container(
                   height: isTablet ? 140 : 120,
                   color: Colors.grey.shade300,

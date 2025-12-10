@@ -100,7 +100,7 @@ class _ResultScreenState extends State<ResultScreen> {
             _searchResultsFuture = fetchProducts(widget.query);
           });
         },
-        color: const Color.fromARGB(255, 13, 75, 15),
+        color: mythemecolor,
         backgroundColor: const Color.fromARGB(255, 245, 240, 242),
         displacement: 40,
         strokeWidth: 2.5,

@@ -467,7 +467,7 @@ class _CartScreenState extends State<CartScreen> {
           Expanded(
             child: RefreshIndicator(
               onRefresh: () => _fetchCartItems(),
-              color: const Color.fromARGB(255, 13, 75, 15),
+              color: mythemecolor,
               backgroundColor: const Color.fromARGB(255, 245, 240, 242),
               displacement: 40,
               strokeWidth: 2.5,
@@ -589,7 +589,7 @@ class _CartScreenState extends State<CartScreen> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  'Gst Percentage: ${item.gstPercentage.round()}%',
+                                  'GST Percentage: ${item.gstPercentage.round()}%',
                                   style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -854,7 +854,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Gst Percentage: ${item.gstPercentage.round()}%',
+                                    'GST Percentage: ${item.gstPercentage.round()}%',
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,

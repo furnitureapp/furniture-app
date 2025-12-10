@@ -183,7 +183,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                 ProductService.getRelatedProducts(product.id);
               });
             },
-            color: const Color.fromARGB(255, 13, 75, 15),
+            color: mythemecolor,
             backgroundColor: const Color.fromARGB(255, 245, 240, 242),
             displacement: 40,
             strokeWidth: 2.5,
@@ -205,7 +205,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                             itemBuilder: (context, index) {
                               return Image.network(
                                 product.images[index],
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                                 width: double.infinity,
                               );
                             },
@@ -270,7 +270,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
           ProductService.getRelatedProducts(product.id);
         });
       },
-      color: const Color.fromARGB(255, 13, 75, 15),
+      color: mythemecolor,
       backgroundColor: const Color.fromARGB(255, 245, 240, 242),
       displacement: 40,
       strokeWidth: 2.5,
@@ -300,7 +300,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                                       itemBuilder: (context, index) {
                                         return Image.network(
                                           product.images[index],
-                                          fit: BoxFit.cover,
+                                          fit: BoxFit.contain,
                                         );
                                       },
                                     ),
@@ -876,7 +876,7 @@ Widget _buildRelatedOfferProducts(BuildContext context) {
                                   : 'https://via.placeholder.com/150',
                               width: double.infinity,
                               height: isTablet ? 150 : 160,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                             ),
                           ),
                           if (offer.actualPrice > offer.offerPrice)
@@ -1013,128 +1013,6 @@ Widget _buildRelatedOfferProducts(BuildContext context) {
 }
 
 
-  // Widget _buildNoResultsUI(BuildContext context) {
-  //   final screenWidth = MediaQuery.of(context).size.width;
-  //   final bool isTablet = screenWidth >= 600;
-
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       FutureBuilder<List<Product>>(
-  //         future: ProductService.fetchAllProducts(),
-  //         builder: (context, relatedSnapshot) {
-  //           if (relatedSnapshot.connectionState == ConnectionState.waiting) {
-  //             return const Center(
-  //               child: CircularProgressIndicator(color: mythemecolor),
-  //             );
-  //           } else if (relatedSnapshot.hasError) {
-  //             return Center(
-  //               child: Text(
-  //                 'Failed to load products: ${relatedSnapshot.error}',
-  //               ),
-  //             );
-  //           } else if (!relatedSnapshot.hasData ||
-  //               relatedSnapshot.data!.isEmpty) {
-  //             return const Center(child: Text('No products available.'));
-  //           }
-
-  //           final relatedProducts = relatedSnapshot.data!;
-
-  //           return SizedBox(
-  //             height: isTablet ? 420 : 220, // match card height
-  //             child: ListView.separated(
-  //               scrollDirection: Axis.horizontal,
-  //               padding: const EdgeInsets.symmetric(horizontal: 8),
-  //               itemCount: relatedProducts.length,
-  //               separatorBuilder: (_, __) => const SizedBox(width: 12),
-  //               itemBuilder: (context, index) {
-  //                 final product = relatedProducts[index];
-
-  //                 return SizedBox(
-  //                   width: isTablet ? 320 : 190, // fixed card width
-  //                   child: MyrelatedproductWidget(
-  //                     product: product,
-  //                     onTap: () {
-  //                       Navigator.push(
-  //                         context,
-  //                         MaterialPageRoute(
-  //                           builder: (context) =>
-  //                               ProductDetailPagep(product: product),
-  //                         ),
-  //                       );
-  //                     },
-  //                   ),
-  //                 );
-  //               },
-  //             ),
-  //           );
-  //         },
-  //       ),
-  //     ],
-  //   );
-  // }
-
-//   Widget _buildRelatedProducts(Product product, BuildContext context) {
-//     final screenWidth = MediaQuery.of(context).size.width;
-//     final bool isTablet = screenWidth >= 600;
-
-//     return Column(
-//       crossAxisAlignment: CrossAxisAlignment.start,
-//       children: [
-//         const Text(
-//           'You Might Like These Products!',
-//           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-//         ),
-//         const SizedBox(height: 16),
-//         FutureBuilder<List<Product>>(
-//           future: ProductService.getRelatedProducts(product.id),
-//           builder: (context, relatedSnapshot) {
-//             if (relatedSnapshot.connectionState == ConnectionState.waiting) {
-//               return const Center(
-//                 child: CircularProgressIndicator(color: mythemecolor),
-//               );
-//             } else if (relatedSnapshot.hasError) {
-//               return _buildRelatedOfferProducts(context);
-//             } else if (!relatedSnapshot.hasData ||
-//                 relatedSnapshot.data!.isEmpty) {
-//               return _buildNoResultsUI(context);
-//             }
-
-//             final relatedProducts = relatedSnapshot.data!;
-
-//             return SizedBox(
-//               height: isTablet ? 420 : 300, // enough height for full card
-//               child: ListView.separated(
-//                 scrollDirection: Axis.horizontal,
-//                 padding: const EdgeInsets.symmetric(horizontal: 8),
-//                 itemCount: relatedProducts.length,
-//                 separatorBuilder: (_, __) => const SizedBox(width: 12),
-//                 itemBuilder: (context, index) {
-//                   final relatedProduct = relatedProducts[index];
-
-//                   return SizedBox(
-//                     width: isTablet ? 320 : 190, // fixed width per card
-//                     child: MyrelatedproductWidget(
-//                       product: relatedProduct,
-//                       onTap: () {
-//                         Navigator.push(
-//                           context,
-//                           MaterialPageRoute(
-//                             builder: (context) =>
-//                                 ProductDetailPagep(product: relatedProduct),
-//                           ),
-//                         );
-//                       },
-//                     ),
-//                   );
-//                 },
-//               ),
-//             );
-//           },
-//         ),
-//       ],
-//     );
-//   }
 Widget _buildRelatedProducts(Product product, BuildContext context) {
   final isTablet = MediaQuery.of(context).size.width >= 600;
 

@@ -8,7 +8,7 @@ class OfferGridWidget extends StatefulWidget {
   const OfferGridWidget({super.key});
 
   @override
-  _OfferGridWidgetState createState() => _OfferGridWidgetState();
+  State<OfferGridWidget> createState() => _OfferGridWidgetState();
 }
 
 class _OfferGridWidgetState extends State<OfferGridWidget> {
@@ -65,17 +65,13 @@ class _OfferGridWidgetState extends State<OfferGridWidget> {
       builder: (context, constraints) {
         bool isTablet = constraints.maxWidth > 600;
         _cardWidth = isTablet ? 405 : constraints.maxWidth - 32;
+        final double cardHeight = isTablet ? 400 : 250;
 
         return Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-            
               image: AssetImage('assets/images/b.jpg'),
               fit: BoxFit.cover,
-              // colorFilter: ColorFilter.mode(
-              //   Colors.black.withOpacity(0.5),
-              //   BlendMode.darken,
-              // ),
             ),
           ),
           child: FutureBuilder<List<Offer>>(
@@ -83,7 +79,7 @@ class _OfferGridWidgetState extends State<OfferGridWidget> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return SizedBox(
-                  height: isTablet ? 380 : 270,
+                  height: cardHeight,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 5,
@@ -94,10 +90,10 @@ class _OfferGridWidgetState extends State<OfferGridWidget> {
                         ),
                         child: Container(
                           width: _cardWidth,
-                          height: isTablet ? 380 : 300,
+                          height: cardHeight,
                           decoration: BoxDecoration(
-                            color: Colors.grey[300],
-                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(25),
                           ),
                         ),
                       );
@@ -115,19 +111,10 @@ class _OfferGridWidgetState extends State<OfferGridWidget> {
                         height: 200,
                         fit: BoxFit.fitWidth,
                       ),
-                      // const SizedBox(height: 10),
-                      // const Text(
-                      //   'No offers available right now!',
-                      //   style: TextStyle(
-                      //     fontSize: 16,
-                      //     color: Colors.grey,
-                      //     fontWeight: FontWeight.bold,
-                      //   ),
-                      // ),
+                     
                     ],
                   ),
                 );
-                // return Center(child: Text('Error: ${snapshot.error}'));
               } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return const Center(child: Text('No offers found'));
               } else {
@@ -245,10 +232,10 @@ class _OfferCard extends StatelessWidget {
         ((offer.actualPrice - offer.offerPrice) / offer.actualPrice) * 100;
 
     return Card(
-      elevation: 6,
+      elevation: 4,
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
-      color: const Color.fromARGB(255, 246, 252, 246),
+      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -261,7 +248,7 @@ class _OfferCard extends StatelessWidget {
                   ),
                   child: Image.network(
                     offer.images.isNotEmpty ? offer.images[0] : '',
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                     width: double.infinity,
                     errorBuilder: (context, error, stackTrace) => const Center(
                       child: Icon(
@@ -310,8 +297,8 @@ class _OfferCard extends StatelessWidget {
                       offer.title,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                        color: Color.fromARGB(135, 18, 16, 16),
+                        fontSize: 14,
+                        color: mythemecolor,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -321,7 +308,7 @@ class _OfferCard extends StatelessWidget {
                       '₹ ${offer.offerPrice.round()}',
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                        fontSize: 14,
                         color: mythemecolor,
                       ),
                     ),
@@ -334,7 +321,7 @@ class _OfferCard extends StatelessWidget {
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     color: Color.fromARGB(255, 132, 131, 131),
-                    fontSize: 12,
+                    fontSize: 10,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,

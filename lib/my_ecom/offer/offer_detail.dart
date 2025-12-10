@@ -196,7 +196,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                 OfferService.fetchOfferProductsAsOffers();
               });
             },
-            color: const Color.fromARGB(255, 13, 75, 15),
+            color: mythemecolor,
             backgroundColor: const Color.fromARGB(255, 245, 240, 242),
             displacement: 40,
             strokeWidth: 2.5,
@@ -257,10 +257,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
                   const Text(
                     'DESCRIPTION:',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color:  Colors.grey),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, ),
                   ),
                   const SizedBox(height: 8),
-                  Text(offer.description, style: const TextStyle(fontSize: 12, color:  Colors.grey)),
+                  Text(offer.description, style: const TextStyle(fontSize: 12,)),
                   const SizedBox(height: 20),
                   _buildRelatedProducts(context, widget.offer.product.id),
                 ],
@@ -366,7 +366,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
         Text(
           text,
           style: const TextStyle(
-            fontSize: 12,
+            fontSize: 10,
             fontWeight: FontWeight.w600,
             color: Colors.black87,
           ),
@@ -634,7 +634,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           OfferService.fetchOfferProductsAsOffers();
         });
       },
-      color: const Color.fromARGB(255, 13, 75, 15),
+      color: mythemecolor,
       backgroundColor: const Color.fromARGB(255, 245, 240, 242),
       displacement: 40,
       strokeWidth: 2.5,

@@ -8,15 +8,15 @@ import 'package:http/http.dart' as http;
 class ApiClient {
   static String get baseUrl {
     if (kIsWeb) {
-      return dotenv.env['WEB_URL'] ?? 'https://furniture-app-ruby.vercel.app';
+      return dotenv.env['WEB_URL'] ?? 'https://furniture-app-1q75.vercel.app';
     } else if (Platform.isAndroid) {
       return dotenv.env['ANDROID_URL'] ??
-          'https://furniture-app-ruby.vercel.app';
+          'https://furniture-app-1q75.vercel.app';
     } else if (Platform.isIOS) {
-      return dotenv.env['IOS_URL'] ?? 'https://furniture-app-ruby.vercel.app';
+      return dotenv.env['IOS_URL'] ?? 'https://furniture-app-1q75.vercel.app';
     } else {
       return dotenv.env['DESKTOP_URL'] ??
-          'https://furniture-app-ruby.vercel.app';    }
+          'https://furniture-app-1q75.vercel.app';    }
   }
 
   static Future<Map<String, String>> _headers({

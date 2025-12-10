@@ -40,7 +40,7 @@ class MyOfferWidget extends StatelessWidget {
                     offer.images.isNotEmpty
                         ? offer.images[0]
                         : 'https://via.placeholder.com/150',
-                    fit: BoxFit.cover,
+                    fit: BoxFit.contain,
                     width: double.infinity,
                     height: isTablet ? 270 : 140 * scale,
                     errorBuilder: (context, error, stackTrace) => Container(
@@ -77,7 +77,7 @@ class MyOfferWidget extends StatelessWidget {
                           fontSize: isTablet ? 18 : 10 * scale,
                           color: const Color.fromARGB(255, 100, 99, 99),
                         ),
-                        maxLines: isTablet ? 5 : 4,
+                        maxLines: isTablet ? 5 : 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),

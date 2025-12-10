@@ -14,8 +14,7 @@ class AddDeliveryDetailsScreen extends StatefulWidget {
 class _AddDeliveryDetailsScreenState extends State<AddDeliveryDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _dealerNameController =
-      TextEditingController();
+  final TextEditingController _dealerNameController = TextEditingController();
   final TextEditingController _phoneNoController = TextEditingController();
   final TextEditingController _houseNoController = TextEditingController();
   final TextEditingController _streetNameController = TextEditingController();
@@ -41,7 +40,7 @@ class _AddDeliveryDetailsScreenState extends State<AddDeliveryDetailsScreen> {
 
   String? _validateHouseNo(String value) {
     if (value.isEmpty) return "House number is required";
-    final validPattern = RegExp(r'^\d+[a-zA-Z]?$');
+    final validPattern = RegExp(r'^\d+[A-Za-z]?(\/\d+[A-Za-z]?)?$');
     if (!validPattern.hasMatch(value)) {
       return "Enter a valid house number (e.g. 12, 12A)";
     }
@@ -187,7 +186,9 @@ class _AddDeliveryDetailsScreenState extends State<AddDeliveryDetailsScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: mythemecolor,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 30, vertical: 12),
+                      horizontal: 30,
+                      vertical: 12,
+                    ),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -200,11 +201,31 @@ class _AddDeliveryDetailsScreenState extends State<AddDeliveryDetailsScreen> {
     );
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 236, 245, 236),
-      appBar: AppBar(
-        title: const Text("Add Delivery Details"),
-        centerTitle: true,
-        backgroundColor: mythemecolor,
+      backgroundColor: Colors.purple.shade50,
+       appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [mythemecolor1, mythemecolor],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: const Text(
+              "Add Delivery Details",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        ),
       ),
       body: SafeArea(
         child: Center(

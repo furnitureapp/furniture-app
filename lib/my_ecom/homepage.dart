@@ -103,8 +103,8 @@ class _MyhomeState extends State<Myhome> {
 
       body: RefreshIndicator(
         onRefresh: _refreshData,
-        color: const Color.fromARGB(255, 13, 75, 15),
-        backgroundColor: const Color.fromARGB(255, 245, 240, 242),
+        color: mythemecolor,
+        backgroundColor: Colors.white,
         displacement: 40,
         strokeWidth: 2.5,
         child: SingleChildScrollView(
@@ -152,7 +152,7 @@ class _MyhomeState extends State<Myhome> {
                   "TOP DEALS FOR YOU!",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 20,
+                    fontSize: 16,
                     height: 1.5,
                     decorationThickness: 2.5,
                     decorationStyle: TextDecorationStyle.solid,
@@ -168,7 +168,7 @@ class _MyhomeState extends State<Myhome> {
                   "Products You May Like!",
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    fontSize: 20,
+                    fontSize: 16,
                     color: mythemecolor
                     
                   ),
