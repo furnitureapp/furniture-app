@@ -249,20 +249,20 @@ class _MyLoginScreenState extends State<MyLoginScreen> {
 
                     const SizedBox(height: 14),
 
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          "Forgot Password?",
-                          style: GoogleFonts.poppins(
-                            color: mythemecolor,
-                            fontWeight: FontWeight.w500,
-                            fontSize: inputFontSize + 1,
-                          ),
-                        ),
-                      ),
-                    ),
+                    // Align(
+                    //   alignment: Alignment.centerRight,
+                    //   child: TextButton(
+                    //     onPressed: () {},
+                    //     child: Text(
+                    //       "Forgot Password?",
+                    //       style: GoogleFonts.poppins(
+                    //         color: mythemecolor,
+                    //         fontWeight: FontWeight.w500,
+                    //         fontSize: inputFontSize + 1,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                     const SizedBox(height: 10),
 
                     // Login Button

@@ -390,7 +390,7 @@ class Order {
   final String state;
   final String pinCode;
   final String phoneNo;
-  final String username;
+  final String dealername;
   final String paymentMethod;
   final String status;
   final String deliveryId;
@@ -412,7 +412,7 @@ class Order {
     required this.pinCode,
     required this.paymentMethod,
     required this.status,
-    required this.username,
+    required this.dealername,
     required this.deliveryId,
     this.offerId,
     required this.gstAmount,
@@ -433,7 +433,7 @@ class Order {
       pinCode: json['pinCode'] ?? '',
       phoneNo: json['phoneNo'] ?? '',
       gstAmount: (json['gstAmount'] ?? 0).toDouble(),
-      username: json['username'] ?? '',
+      dealername: json['dealername'] ?? '',
       deliveryId: json['deliveryId'] ?? '',
       offerId: json['offerId'],
       items: (json['items'] as List<dynamic>? ?? [])

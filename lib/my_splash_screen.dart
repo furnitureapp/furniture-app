@@ -45,97 +45,32 @@ class _SplashScreenMYState extends State<SplashScreenMY> {
   }
 
 
-//   void _navigateBasedOnStatus() async {
-//   final result = await NotifMaintenanceService.fetchMaintenanceStatus();
 
-//   if (!mounted) return;
-
-//   // 1️⃣ Maintenance check
-//   if (result['maintenance'] == true) {
-//      Navigator.pushReplacement(
-//       context,
-//       MaterialPageRoute(
-//         builder: (context) => MaintenanceScreen(
-//           message: result['message'] ?? 'Under maintenance',
-//         ),
-//       ),
-//     );
-//   }
-
-//   // 2️⃣ Check JWT token
-//   final token = await ApiAuthService.getStoredToken();
-
-//   if (token == null || token.isEmpty) {
-//      Navigator.pushReplacement(
-//       context,
-//       MaterialPageRoute(builder: (_) => const MyLoginScreen()),
-//     );
-//   }
-
-//   // 3️⃣ Token exists — get role
-//   final role = await ApiAuthService.getStoredRole();
-
-//   Widget targetScreen;
-
-//   switch (role) {
-//     case 'superadmin':
-//       targetScreen = const SuperAdminHome();
-//       break;
-//     case 'admin':
-//       targetScreen = const AdminHomes();
-//       break;
-//     case 'manager':
-//       targetScreen = const ManagerHome();
-//       break;
-//     case 'marketer':
-//       targetScreen = const MarketerHome();
-//       break;
-//     case 'dealer':
-//       targetScreen = const BottomNavBar();
-//       break;
-//     default:
-//       targetScreen = const MyLoginScreen();
-//   }
-
-//   Navigator.pushReplacement(
-//     context,
-//     MaterialPageRoute(builder: (_) => targetScreen),
-//   );
-// }
-
-void _navigateBasedOnStatus() async {
-  final result = await NotifMaintenanceService.fetchMaintenanceStatus();
+Future<void> _navigateBasedOnStatus() async {
   if (!mounted) return;
 
-  // 1️⃣ Maintenance
-  if (result['maintenance'] == true) {
+  // 0️⃣ Maintenance check (highest priority)
+  final maintenanceResult =
+      await NotifMaintenanceService.fetchMaintenanceStatus();
+
+  if (!mounted) return;
+
+  if (maintenanceResult['maintenance'] == true) {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (_) => MaintenanceScreen(
-          message: result['message'] ?? 'Under maintenance',
+          message:
+              maintenanceResult['message'] ?? 'App under maintenance',
         ),
       ),
     );
     return;
   }
 
-  final prefs = await SharedPreferences.getInstance();
-  final bool isDealerPending =
-      prefs.getBool("dealer_pending_approval") == true;
-
+  // 1️⃣ Token check
   final token = await ApiAuthService.getStoredToken();
 
-  // 2️⃣ ✅ Dealer pending approval → WAIT screen
-  if (isDealerPending) {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => const WaitForGSTApprovalPage()),
-    );
-    return;
-  }
-
-  // 3️⃣ No token → Login
   if (token == null || token.isEmpty) {
     Navigator.pushReplacement(
       context,
@@ -144,26 +79,50 @@ void _navigateBasedOnStatus() async {
     return;
   }
 
-  // 4️⃣ Token exists → role based navigation
+  // 2️⃣ Role check
   final role = await ApiAuthService.getStoredRole();
 
+  // 3️⃣ Dealer-only GST pending check
+  if (role == 'dealer') {
+    final prefs = await SharedPreferences.getInstance();
+    final bool isDealerPending =
+        prefs.getBool("dealer_pending_approval") == true;
+
+    if (isDealerPending) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => const WaitForGSTApprovalPage(),
+        ),
+      );
+      return;
+    }
+  }
+
+  // 4️⃣ Role-based navigation
   Widget targetScreen;
+
   switch (role) {
     case 'superadmin':
       targetScreen = const SuperAdminHome();
       break;
+
     case 'admin':
       targetScreen = const AdminHomes();
       break;
+
     case 'manager':
       targetScreen = const ManagerHome();
       break;
+
     case 'marketer':
       targetScreen = const MarketerHome();
       break;
+
     case 'dealer':
       targetScreen = const BottomNavBar();
       break;
+
     default:
       targetScreen = const MyLoginScreen();
   }
@@ -238,3 +197,79 @@ void _navigateBasedOnStatus() async {
     );
   }
 }
+
+
+
+
+
+
+// void _navigateBasedOnStatus() async {
+//   final result = await NotifMaintenanceService.fetchMaintenanceStatus();
+//   if (!mounted) return;
+
+//   // 1️⃣ Maintenance
+//   if (result['maintenance'] == true) {
+//     Navigator.pushReplacement(
+//       context,
+//       MaterialPageRoute(
+//         builder: (_) => MaintenanceScreen(
+//           message: result['message'] ?? 'Under maintenance',
+//         ),
+//       ),
+//     );
+//     return;
+//   }
+
+//   final prefs = await SharedPreferences.getInstance();
+//   final bool isDealerPending =
+//       prefs.getBool("dealer_pending_approval") == true;
+
+//   final token = await ApiAuthService.getStoredToken();
+
+//   // 2️⃣ ✅ Dealer pending approval → WAIT screen
+//   if (isDealerPending) {
+//     Navigator.pushReplacement(
+//       context,
+//       MaterialPageRoute(builder: (_) => const WaitForGSTApprovalPage()),
+//     );
+//     return;
+//   }
+
+//   // 3️⃣ No token → Login
+//   if (token == null || token.isEmpty) {
+//     Navigator.pushReplacement(
+//       context,
+//       MaterialPageRoute(builder: (_) => const MyLoginScreen()),
+//     );
+//     return;
+//   }
+
+//   // 4️⃣ Token exists → role based navigation
+//   final role = await ApiAuthService.getStoredRole();
+
+//   Widget targetScreen;
+//   switch (role) {
+//     case 'superadmin':
+//       targetScreen = const SuperAdminHome();
+//       break;
+//     case 'admin':
+//       targetScreen = const AdminHomes();
+//       break;
+//     case 'manager':
+//       targetScreen = const ManagerHome();
+//       break;
+//     case 'marketer':
+//       targetScreen = const MarketerHome();
+//       break;
+//     case 'dealer':
+//       targetScreen = const BottomNavBar();
+//       break;
+//     default:
+//       targetScreen = const MyLoginScreen();
+//   }
+
+//   Navigator.pushReplacement(
+//     context,
+//     MaterialPageRoute(builder: (_) => targetScreen),
+//   );
+// }

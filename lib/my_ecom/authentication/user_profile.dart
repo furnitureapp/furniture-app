@@ -38,10 +38,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _loadProfile() async {
     final data = await UserService.getUserProfile();
 
-    if (data == null) {
-      showTopSnackBar(context, "Failed to load profile");
-      return;
-    }
+     if (data == null) {
+    if (!mounted) return;
+
+    showTopSnackBar(context, "Failed to load profile");
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const MyLoginScreen()),
+      (route) => false,
+    );
+    return;
+  }
+
 
     setState(() {
       fullUserData = data; 

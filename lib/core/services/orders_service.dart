@@ -42,33 +42,69 @@ class OrderService {
     }
   }
 
-  static Future<Map<String, dynamic>> cancelOrder(String orderId) async {
-    final token = await SecureStorage.getToken();
+  // static Future<Map<String, dynamic>> cancelOrder(String orderId) async {
+  //   final token = await SecureStorage.getToken();
 
-    if (token == null || token.isEmpty) {
-      throw Exception('Authentication token is missing. Please log in again.');
-    }
+  //   if (token == null || token.isEmpty) {
+  //     throw Exception('Authentication token is missing. Please log in again.');
+  //   }
 
-    try {
-      final response = await ApiClient.post(
-        '/api/orders/cancel',
-        {'orderId': orderId},
-        auth: true,
-      );
+  //   try {
+      
+  //     final response = await ApiClient.post('/api/orders/cancel', {
+  //       'orderId': orderId,
+  //     }, auth: true);
+  //     debugPrint('cancel order: ${response.body}');
+  //     debugPrint('cancel order: ${response.statusCode}');
+  //     debugPrint('cancel order:  ${jsonDecode(response.body)}');
 
-      if (response.statusCode == 200) {
-        return jsonDecode(response.body);
-      } else {
-        final error = jsonDecode(response.body);
-        return {
-          'error': true,
-          'message': error['message'] ?? 'Unknown error',
-        };
-      }
-    } catch (e) {
-      return {'error': true, 'message': e.toString()};
-    }
+  //     if (response.statusCode == 200) {
+  //       return jsonDecode(response.body);
+  //     } else {
+  //       final error = jsonDecode(response.body);
+  //       return {'error': true, 'message': error['message'] ?? 'Unknown error'};
+  //     }
+  //   } catch (e) {
+  //     return {'error': true, 'message': e.toString()};
+  //   }
+  // }
+
+static Future<Map<String, dynamic>> cancelOrder(String orderId) async {
+  final token = await SecureStorage.getToken();
+
+  if (token == null || token.isEmpty) {
+    throw Exception('Authentication token is missing. Please log in again.');
   }
+
+  try {
+    final response = await ApiClient.delete(
+      '/api/orders/cancel',
+      {
+        'orderId': orderId,
+      },
+      auth: true,
+    );
+
+    debugPrint('cancel order body: ${response.body}');
+    debugPrint('cancel order code: ${response.statusCode}');
+
+    final decoded = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      return decoded; // { message: "Order cancelled successfully" }
+    } else {
+      return {
+        'error': true,
+        'message': decoded['message'] ?? 'Unknown error',
+      };
+    }
+  } catch (e) {
+    return {
+      'error': true,
+      'message': e.toString(),
+    };
+  }
+}
 
   static Future<Order> fetchOrderDetail(String orderId) async {
     final token = await SecureStorage.getToken();
@@ -77,24 +113,19 @@ class OrderService {
       throw Exception('Authentication token is missing. Please log in again.');
     }
 
-    try {
-      final response =
-          await ApiClient.get('/api/orders/history/$orderId', auth: true);
+    final response = await ApiClient.get(
+      '/api/orders/history/$orderId',
+      auth: true,
+    );
 
-      debugPrint('Order detail response: ${response.body}');
+    debugPrint('Order detail response: ${response.body}');
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        return Order.fromJson(data['order']);
-      } else {
-        final errorData = json.decode(response.body);
-        throw Exception(
-          errorData['message'] ?? 'Failed to fetch order details.',
-        );
-      }
-    } catch (error) {
-      debugPrint('Error fetching order detail: $error');
-      throw Exception('Error fetching order detail: $error');
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return Order.fromJson(data['order']);
+    } else {
+      final error = json.decode(response.body);
+      throw Exception(error['message'] ?? 'Failed to fetch order details');
     }
   }
 }

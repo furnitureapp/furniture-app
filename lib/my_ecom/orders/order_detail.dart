@@ -26,10 +26,21 @@ String capitalizeFirst(String text) {
 }
 
 class _OrderDetailsScreenState extends State<OrderDetailsScreen>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   late AnimationController _animationController;
   List<double> offerPrices = [];
   bool isLoading = true;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   fetchOfferPrices();
+  //   _animationController = AnimationController(
+  //     vsync: this,
+  //     duration: const Duration(seconds: 2),
+  //   );
+  //   _animationController.forward();
+  // }
 
   @override
   void initState() {
@@ -39,7 +50,6 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
       vsync: this,
       duration: const Duration(seconds: 2),
     );
-    _animationController.forward();
   }
 
   void fetchOfferPrices() async {
@@ -239,24 +249,18 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
     try {
       final response = await OrderService.cancelOrder(orderId);
       if (response['error'] == true) {
-        // _scaffoldMessenger.showSnackBar(
-        //   SnackBar(content: Text(response['message'])),
-        // );
+       
         showTopSnackBar(
           context,
           response['message'] ?? 'Failed to cancel order',
         );
       } else {
-        // _scaffoldMessenger.showSnackBar(
-        //   const SnackBar(content: Text('Order cancelled successfully.')),
-        // );
+        
         showTopSnackBar(context, 'Order cancelled successfully.');
         setState(() {});
       }
     } catch (e) {
-      // _scaffoldMessenger.showSnackBar(
-      //   SnackBar(content: Text('Error: $e')),
-      // );
+     
       showTopSnackBar(context, 'Error: $e');
     }
   }
@@ -267,9 +271,6 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
     super.dispose();
   }
 
-  // String formatDate(DateTime date) {
-  //   return DateFormat('yyyy-MM-dd HH:mm').format(date);
-  // }
   String formatDate(DateTime dt) {
     return DateFormat('dd MMM yyyy, hh:mm a').format(dt.toLocal());
   }
@@ -374,299 +375,297 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
     String currentStatus,
     List<OrderStatusEntry> statusHistory,
   ) {
-    List<Map<String, String>> statuses = [
-      {'status': 'Placed', 'icon': '✅'},
-      {'status': 'Shipped', 'icon': '🚚'},
-      {'status': 'Delivered', 'icon': '📦'},
+    List<Map<String, dynamic>> statuses = [
+      {'status': 'Placed', 'icon': Icons.check_circle},
+      {'status': 'Shipped', 'icon': Icons.local_shipping_rounded},
+      {'status': 'Delivered', 'icon': Icons.inventory_2_rounded},
     ];
 
     if (currentStatus == 'Cancelled') {
       statuses = [
-        {'status': 'Placed', 'icon': '✅'},
-        {'status': 'Cancelled', 'icon': '❌'},
+        {'status': 'Placed', 'icon': Icons.check_circle},
+        {'status': 'Cancelled', 'icon': Icons.cancel_rounded},
       ];
     } else if (currentStatus == 'Failed') {
       statuses = [
-        {'status': 'Placed', 'icon': '✅'},
-        {'status': 'Failed', 'icon': '⚠️'},
+        {'status': 'Placed', 'icon': Icons.check_circle},
+        {'status': 'Failed', 'icon': Icons.warning_rounded},
       ];
     }
 
     final currentIndex = statuses.indexWhere(
-      (element) => element['status'] == currentStatus,
+      (e) => e['status'] == currentStatus,
     );
+
+    // OrderStatusEntry? getEntry(String s) {
+    //   try {
+    //     return statusHistory.firstWhere((e) => e.status == s);
+    //   } catch (_) {
+    //     return null;
+    //   }
+    // }
+
+    OrderStatusEntry? getEntry(String status) {
+  // real entry from backend
+  final entry = statusHistory.cast<OrderStatusEntry?>().firstWhere(
+        (e) => e?.status == status,
+        orElse: () => null,
+      );
+
+  // ✅ Frontend fallback for Cancelled / Failed
+  if (entry == null &&
+      (status == 'Cancelled' || status == 'Failed') &&
+      currentStatus == status) {
+    return OrderStatusEntry(
+      status: status,
+      // best fallback: NOW or orderDate
+      timestamp: DateTime.now(),
+    );
+  }
+
+  return entry;
+}
+
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        bool isTablet = constraints.maxWidth > 600;
+        final isTablet = constraints.maxWidth > 600;
 
-        return Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: isTablet
-              ? Column(
-                  children: [
-                    Row(
-                      children: List.generate(statuses.length * 2 - 1, (i) {
-                        if (i.isEven) {
-                          int index = i ~/ 2;
-                          bool isActive = index <= currentIndex;
-                          bool isCancelled =
-                              currentStatus == 'Cancelled' &&
-                              index == currentIndex;
-                          bool isFailed =
-                              currentStatus == 'Failed' &&
-                              index == currentIndex;
+        return Card(
+          elevation: 12,
+          shadowColor: mythemecolor.withOpacity(0.25),
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 16),
 
-                          return Expanded(
-                            flex: 1,
-                            child: Column(
-                              children: [
-                                AnimatedContainer(
-                                  duration: Duration(milliseconds: 500),
-                                  width: 55,
-                                  height: 55,
-                                  alignment: Alignment.center,
+            /// ================= TABLET =================
+            child: isTablet
+                ? Column(
+                    children: [
+                      Row(
+                        children: List.generate(statuses.length * 2 - 1, (i) {
+                          if (i.isEven) {
+                            final index = i ~/ 2;
+                            final isActive = index <= currentIndex;
+                            final isCurrent = index == currentIndex;
+
+                            return Expanded(
+                              child: AnimatedScale(
+                                duration: const Duration(milliseconds: 600),
+                                curve: Curves.easeOutBack,
+                                scale: isCurrent ? 1.15 : 1.0,
+                                child: AnimatedContainer(
+                                  duration: const Duration(milliseconds: 500),
+                                  height: 60,
+                                  width: 60,
                                   decoration: BoxDecoration(
-                                    color: (isCancelled || isFailed)
-                                        ? const Color.fromARGB(
-                                            255,
-                                            249,
-                                            149,
-                                            142,
-                                          )
-                                        : (isActive
-                                              ? mythemecolor
-                                              : Colors.grey.shade300),
                                     shape: BoxShape.circle,
+                                    gradient: isActive
+                                        ? LinearGradient(
+                                            colors: [
+                                              mythemecolor,
+                                              mythemecolor.withOpacity(0.8),
+                                            ],
+                                          )
+                                        : null,
+                                    color: isActive
+                                        ? null
+                                        : Colors.grey.shade200,
                                     boxShadow: isActive
                                         ? [
                                             BoxShadow(
-                                              color: mythemecolor,
-                                              blurRadius: 8,
+                                              blurRadius: 12,
+                                              spreadRadius: 1,
+                                              color: mythemecolor.withOpacity(
+                                                0.35,
+                                              ),
                                             ),
                                           ]
                                         : [],
                                   ),
-                                  child: Text(
-                                    statuses[index]['icon']!,
-                                    style: const TextStyle(fontSize: 27),
+                                  child: Icon(
+                                    statuses[index]['icon'],
+                                    color: Colors.white,
+                                    size: 28,
                                   ),
                                 ),
-                              ],
-                            ),
-                          );
-                        } else {
-                          int leftIndex = i ~/ 2;
-                          bool isActive = leftIndex < currentIndex;
+                              ),
+                            );
+                          }
 
+                          final active = (i ~/ 2) < currentIndex;
                           return Expanded(
-                            flex: 2,
                             child: AnimatedContainer(
-                              duration: Duration(milliseconds: 800),
-                              height: 5,
-                              margin: const EdgeInsets.symmetric(horizontal: 4),
+                              duration: const Duration(milliseconds: 700),
+                              height: 6,
+                              margin: const EdgeInsets.symmetric(horizontal: 8),
                               decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
                                 gradient: LinearGradient(
-                                  colors: isActive
-                                      ? [mythemecolor, mythemecolor]
+                                  colors: active
+                                      ? [
+                                          mythemecolor,
+                                          mythemecolor.withOpacity(0.7),
+                                        ]
                                       : [
                                           Colors.grey.shade300,
-                                          Colors.grey.shade400,
+                                          Colors.grey.shade300,
                                         ],
-                                  begin: Alignment.centerLeft,
-                                  end: Alignment.centerRight,
                                 ),
                               ),
                             ),
                           );
-                        }
-                      }),
-                    ),
+                        }),
+                      ),
 
-                    const SizedBox(height: 12),
+                      const SizedBox(height: 18),
 
-                    // Status text & updated time
-                    Row(
-                      children: List.generate(statuses.length * 2 - 1, (i) {
-                        if (i.isEven) {
-                          int index = i ~/ 2;
-                          bool isActive = index <= currentIndex;
-
-                          final matchingEntry = statusHistory.firstWhere(
-                            (entry) =>
-                                entry.status == statuses[index]['status'],
-                            orElse: () => OrderStatusEntry(
-                              status: '',
-                              timestamp: DateTime(2000),
-                            ),
-                          );
-
-                          final updatedText = matchingEntry.status.isNotEmpty
-                              ? formatDate(matchingEntry.timestamp.toLocal())
-                              //  formatDate(matchingEntry.timestamp)
-                              : '—';
-                          final status = statuses[index]['status'] ?? '';
-
+                      Row(
+                        children: statuses.map((s) {
+                          final entry = getEntry(s['status']);
                           return Expanded(
                             child: Column(
                               children: [
                                 Text(
-                                  status,
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: isActive
-                                        ? Colors.black
-                                        : Colors.grey,
+                                  s['status'],
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  "Updated: $updatedText",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                    color: Colors.grey.shade600,
+                                const SizedBox(height: 6),
+                                AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 400),
+                                  child: Text(
+                                    entry != null
+                                        ? formatDate(entry.timestamp)
+                                        : 'Pending',
+                                    key: ValueKey(entry?.timestamp ?? 'x'),
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade600,
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
                           );
-                        } else {
-                          return const Expanded(child: SizedBox());
-                        }
-                      }),
-                    ),
-                  ],
-                )
-              : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: List.generate(statuses.length, (index) {
-                    bool isActive = index <= currentIndex;
-                    bool isCancelled =
-                        currentStatus == 'Cancelled' && index == currentIndex;
-                    bool isFailed =
-                        currentStatus == 'Failed' && index == currentIndex;
-
-                    // final OrderStatusEntry? matchingEntry = statusHistory
-                    //     .firstWhereOrNull(
-                    //       (entry) => entry.status == statuses[index]['status'],
-                    //     );
-                    final OrderStatusEntry? matchingEntry =
-                        statusHistory.isNotEmpty
-                        ? statusHistory.firstWhere(
-                            (entry) =>
-                                entry.status == statuses[index]['status'],
-                            orElse: () => OrderStatusEntry(
-                              status: '',
-                              timestamp: DateTime(2000),
-                            ),
-                          )
-                        : null;
-
-                    Text(
-                      "Updated: ${matchingEntry != null ? formatDate(matchingEntry.timestamp) : '—'}",
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey.shade600,
+                        }).toList(),
                       ),
-                    );
+                    ],
+                  )
+                /// ================= MOBILE =================
+                : Column(
+                    children: List.generate(statuses.length, (i) {
+                      final isActive = i <= currentIndex;
+                      final entry = getEntry(statuses[i]['status']);
 
-                    final icon = statuses[index]['icon'] ?? '';
-                    final status = statuses[index]['status'] ?? '';
-
-                    return AnimatedContainer(
-                      duration: Duration(milliseconds: 300 + (index * 100)),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              AnimatedContainer(
-                                duration: Duration(milliseconds: 500),
-                                width: 30,
-                                height: 30,
-                                alignment: Alignment.center,
-                                decoration: BoxDecoration(
-                                  color: (isCancelled || isFailed)
-                                      ? const Color.fromARGB(255, 249, 149, 142)
-                                      : (isActive
-                                            ? mythemecolor
-                                            : Colors.grey.shade300),
-                                  shape: BoxShape.circle,
-                                  boxShadow: isActive
-                                      ? [
-                                          BoxShadow(
-                                            color: mythemecolor,
-                                            blurRadius: 8,
-                                          ),
-                                        ]
-                                      : [],
-                                ),
-                                child: Text(
-                                  icon,
-                                  style: const TextStyle(fontSize: 18),
-                                ),
-                              ),
-                              if (index != statuses.length - 1)
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Row(
+                          children: [
+                            Column(
+                              children: [
                                 AnimatedContainer(
-                                  duration: Duration(milliseconds: 800),
-                                  width: 5,
-                                  height: 50,
+                                  duration: const Duration(milliseconds: 600),
+                                  curve: Curves.easeOutBack,
+                                  height: 34,
+                                  width: 34,
                                   decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      colors: index < currentIndex
-                                          ? [
+                                    shape: BoxShape.circle,
+                                    gradient: isActive
+                                        ? LinearGradient(
+                                            colors: [
                                               mythemecolor,
-                                              mythemecolor,
-                                            ]
-                                          : [
-                                              Colors.grey.shade300,
-                                              Colors.grey.shade400,
+                                              const Color.fromARGB(
+                                                255,
+                                                112,
+                                                93,
+                                                126,
+                                              ).withOpacity(0.85),
                                             ],
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
+                                          )
+                                        : null,
+                                    color: isActive
+                                        ? null
+                                        : const Color.fromARGB(
+                                            255,
+                                            112,
+                                            110,
+                                            110,
+                                          ),
+                                    boxShadow: isActive
+                                        ? [
+                                            BoxShadow(
+                                              blurRadius: 10,
+                                              color: mythemecolor.withOpacity(
+                                                0.35,
+                                              ),
+                                            ),
+                                          ]
+                                        : [],
+                                  ),
+                                  child: Icon(
+                                    statuses[i]['icon'],
+                                    size: 18,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                if (i != statuses.length - 1)
+                                  Container(
+                                    height: 36,
+                                    width: 3,
+                                    margin: const EdgeInsets.only(top: 4),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(8),
+                                      color: isActive
+                                          ? mythemecolor1
+                                          : const Color.fromARGB(
+                                              255,
+                                              116,
+                                              115,
+                                              115,
+                                            ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(width: 14),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  statuses[i]['status'],
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                AnimatedSwitcher(
+                                  duration: const Duration(milliseconds: 400),
+                                  child: Text(
+                                    entry != null
+                                        ? formatDate(entry.timestamp)
+                                        : '',
+                                    key: ValueKey(entry?.timestamp ?? 'x'),
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
                                     ),
                                   ),
                                 ),
-                            ],
-                          ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 8.0,
-                              ),
-                              child: AnimatedOpacity(
-                                duration: Duration(milliseconds: 500),
-                                opacity: isActive ? 1.0 : 0.6,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      status,
-                                      style: TextStyle(
-                                        color: isActive
-                                            ? Colors.black
-                                            : Colors.grey,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      "Updated: ${matchingEntry != null ? formatDate(matchingEntry.timestamp) : '—'}",
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                ),
+                          ],
+                        ),
+                      );
+                    }),
+                  ),
+          ),
         );
       },
     );
@@ -696,6 +695,154 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget premiumCard({required Widget child}) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        gradient: const LinearGradient(
+          colors: [Color(0xFFF9FAFB), Color(0xFFF1F3F6)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+            color: Colors.black.withOpacity(0.08),
+          ),
+        ],
+      ),
+      child: child,
+    );
+  }
+
+  Widget shippingAddressCard(BuildContext context, Order order) {
+    return premiumCard(
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.location_on_rounded, color: mythemecolor, size: 18),
+                const SizedBox(width: 8),
+                const Text(
+                  'Shipping Address',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: mythemecolor,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Divider(color: Colors.grey.shade300),
+            const SizedBox(height: 12),
+
+            _infoRow(Icons.person, order.dealername),
+            const SizedBox(height: 8),
+            _infoRow(Icons.phone, order.phoneNo),
+            const SizedBox(height: 8),
+            _infoRow(
+              Icons.home_rounded,
+              '${order.houseNo}, ${order.streetName},\n'
+              '${order.city}, ${order.state} - ${order.pinCode}',
+              maxLines: 3,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _infoRow(IconData icon, String text, {int maxLines = 1}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, color: mythemecolor, size: 14),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            text,
+            maxLines: maxLines,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.black
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget orderStatusCard(Order order) {
+    return premiumCard(
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.local_shipping_rounded,
+                  color: mythemecolor,
+                  size: 22,
+                ),
+                const SizedBox(width: 8),
+                const Text(
+                  'Order Status',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: mythemecolor,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Divider(color: const Color.fromARGB(255, 102, 100, 100)),
+            const SizedBox(height: 12),
+
+            _statusRow('Status', order.status),
+            const SizedBox(height: 6),
+            _statusRow('Ordered On', formatDate(order.orderDate)),
+            const SizedBox(height: 6),
+            _statusRow('Payment', order.paymentMethod),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _statusRow(String label, String value) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.black,
+            ),
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(
+              fontSize: 12,
+              color: Colors.black,
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -745,12 +892,9 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
             return RefreshIndicator(
               onRefresh: () async {
                 fetchOfferPrices();
-                _animationController = AnimationController(
-                  vsync: this,
-                  duration: const Duration(seconds: 2),
-                );
-                _animationController.forward();
+                _animationController.forward(from: 0);
               },
+
               color: mythemecolor,
               backgroundColor: const Color.fromARGB(255, 245, 240, 242),
               displacement: 40,
@@ -784,382 +928,26 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                       ),
                       isTablet
                           ? Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 5, 20, 20),
+                              padding: const EdgeInsets.all(20),
                               child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(
-                                    width: 600,
-                                    child: Card(
-                                      color: const Color.fromARGB(
-                                        255,
-                                        244,
-                                        245,
-                                        245,
-                                      ),
-                                      elevation: 10,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      margin: const EdgeInsets.all(8),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text(" 📍 "),
-                                                const SizedBox(width: 8),
-                                                Text(
-                                                  "Shipping Address",
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color.fromARGB(
-                                                      255,
-                                                      6,
-                                                      40,
-                                                      100,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const Divider(
-                                              height: 24,
-                                              color: Color.fromARGB(
-                                                255,
-                                                28,
-                                                117,
-                                                20,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-
-                                            Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.person,
-                                                  color: mythemecolor,
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Text(
-                                                  order.username,
-                                                  style: const TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black87,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Row(
-                                              children: [
-                                                Icon(
-                                                  Icons.phone,
-                                                  color: mythemecolor,
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Text(
-                                                  order.phoneNo,
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.grey[800],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 6),
-
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Icon(
-                                                  Icons.home,
-                                                  color: mythemecolor,
-                                                ),
-                                                const SizedBox(width: 8),
-                                                Expanded(
-                                                  child: Text(
-                                                    '${order.houseNo}, ${order.streetName}, ${order.city}, ${order.state} - ${order.pinCode}',
-                                                    maxLines: 5,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 18,
-                                                      color: Colors.grey[800],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
+                                  Expanded(
+                                    child: shippingAddressCard(context, order),
                                   ),
-                                  SizedBox(
-                                    width: 600,
-                                    child: Card(
-                                      color: const Color.fromARGB(
-                                        255,
-                                        244,
-                                        245,
-                                        245,
-                                      ),
-                                      elevation: 10,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      margin: const EdgeInsets.all(8),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text("🚚"),
-                                                const SizedBox(width: 8),
-                                                Text(
-                                                  "Order Status",
-                                                  style: TextStyle(
-                                                    fontSize: 20,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color.fromARGB(
-                                                      255,
-                                                      6,
-                                                      40,
-                                                      100,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const Divider(
-                                              thickness: 1,
-                                              color: Colors.grey,
-                                            ),
-                                            const SizedBox(height: 10),
-                                            Text(
-                                              'Status of the Order  : ${order.status}',
-                                              style: const TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Text(
-                                              'Date of the Order     : ${formatDate(order.orderDate)}',
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Text(
-                                              'Payment Method     : ${order.paymentMethod}',
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                  const SizedBox(width: 20),
+                                  Expanded(child: orderStatusCard(order)),
                                 ],
                               ),
                             )
-                          : SingleChildScrollView(
-                              child: Padding(
-                                padding: const EdgeInsets.all(2),
-                                child: Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    SizedBox(
-                                      width:
-                                          MediaQuery.of(context).size.width -
-                                          20,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-
-                                          children: [
-                                            Row(
-                                              children: [
-                                                const Text(" 📍 "),
-                                                const SizedBox(width: 8),
-                                                Text(
-                                                  "Shipping Address",
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black87,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const Divider(
-                                              height: 20,
-                                              color: Color.fromARGB(
-                                                255,
-                                                232,
-                                                231,
-                                                231,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Row(
-                                              children: [
-                                                const Icon(
-                                                  Icons.person,
-                                                  color: Colors.black87,
-                                                  size: 12,
-                                                ),
-                                                const SizedBox(width: 6),
-                                                Expanded(
-                                                  child: Text(
-                                                    order.username,
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black87,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Row(
-                                              children: [
-                                                const Icon(
-                                                  Icons.phone,
-                                                  color: Colors.black87,
-                                                  size: 12,
-                                                ),
-                                                const SizedBox(width: 6),
-                                                Expanded(
-                                                  child: Text(
-                                                    order.phoneNo,
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.grey[800],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 4),
-                                            Row(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const Icon(
-                                                  Icons.location_on,
-                                                  color: Colors.black87,
-                                                  size: 12,
-                                                ),
-                                                const SizedBox(width: 6),
-                                                Expanded(
-                                                  child: Text(
-                                                    '${order.houseNo}, ${order.streetName}, ${order.city},\n ${order.state} - ${order.pinCode}',
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.grey[800],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    const Divider(
-                                      height: 20,
-                                      color: Color.fromARGB(255, 232, 231, 231),
-                                    ),
-                                    SizedBox(
-                                      width: 600,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Text("🚚"),
-                                                const SizedBox(width: 8),
-                                                Text(
-                                                  "Status of Order",
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black87,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const Divider(
-                                              thickness: 1,
-                                              color: Colors.grey,
-                                            ),
-                                            const SizedBox(height: 10),
-                                            Text(
-                                              'Status of Order      : ${order.status}',
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Text(
-                                              'Date of the Order   : ${formatDate(order.orderDate)}',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 6),
-                                            Text(
-                                              'Payment Method   : ${order.paymentMethod}',
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black87,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                          : Padding(
+                              padding: const EdgeInsets.all(14),
+                              child: Column(
+                                children: [
+                                  shippingAddressCard(context, order),
+                                  const SizedBox(height: 16),
+                                  orderStatusCard(order),
+                                ],
                               ),
                             ),
                       const SizedBox(height: 8),

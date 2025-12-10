@@ -58,15 +58,21 @@ static Future<Map<String, dynamic>> getDealerStatus() async {
 
   final response = await http.get(uri);
 
-  print('🔹 Dealer status check: ${response.statusCode}');
-  print('🔹 Dealer status response: ${response.body}');
+  print('🔹 Dealer status check api: ${response.statusCode}');
+  print('🔹 Dealer status response body: ${response.body}');
 
-  if (response.statusCode == 200) {
-    return jsonDecode(response.body);
+   if (response.statusCode != 200) {
+      throw Exception("Failed to fetch dealer status");
+    }
+
+    final decoded = jsonDecode(response.body);
+
+    if (decoded is! Map<String, dynamic> || decoded["data"] == null) {
+      throw Exception("Invalid dealer status response");
+    }
+
+    return decoded;
   }
-
-  throw Exception("Failed to fetch dealer status");
-}
 
 
   static Future<Map<String, dynamic>> selfregisterDealer({

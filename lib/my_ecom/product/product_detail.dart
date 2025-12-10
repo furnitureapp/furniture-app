@@ -11,8 +11,12 @@ import 'package:furniture_ecom_app/my_ecom/orders/order_confirmationpage.dart';
 import 'package:furniture_ecom_app/my_ecom/product/reuasble_related_card.dart';
 
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+
+const double _mobileCardWidth = 190;
+const double _tabletCardWidth = 300;
+const double _listHeight = 250;
+const EdgeInsets _horizontalPadding = EdgeInsets.symmetric(horizontal: 12);
 
 class ProductDetailPagep extends StatefulWidget {
   final Product? product;
@@ -65,187 +69,6 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
     cartProvider ??= Provider.of<CartProvider>(context, listen: false);
   }
 
-  void _showLoginPrompt(BuildContext context) async {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final bool isTablet = screenWidth >= 600;
-
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setString('redirectRoute', '/product/:productId');
-    await prefs.setString('productId', widget.product?.id ?? '');
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
-      backgroundColor: Colors.white,
-      builder: (context) {
-        return AnimatedPadding(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Container(
-            width: isTablet ? screenWidth * 0.6 : double.infinity,
-            padding: EdgeInsets.symmetric(
-              horizontal: isTablet ? 40 : 20,
-              vertical: isTablet ? 40 : 25,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 50,
-                  height: 6,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                ),
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: const LinearGradient(
-                      colors: [mythemecolor1, mythemecolor],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                  child: const Icon(
-                    Icons.lock_outline,
-                    size: 40,
-                    color: Colors.white,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  "Login Required",
-                  style: TextStyle(
-                    fontSize: isTablet ? 26 : 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  "Please log in to continue adding items to your cart or wishlist.",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: isTablet ? 18 : 12,
-                    color: Colors.black54,
-                  ),
-                ),
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.transparent,
-                    shadowColor: Colors.transparent,
-                    padding: EdgeInsets.zero,
-                  ),
-                  onPressed: () {
-                    Navigator.pop(context);
-                    Navigator.pushNamed(context, '/login');
-                  },
-                  child: Ink(
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [mythemecolor1, mythemecolor],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.blueAccent.withOpacity(0.3),
-                          blurRadius: 10,
-                          offset: const Offset(0, 6),
-                        ),
-                      ],
-                    ),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isTablet ? 50 : 30,
-                        vertical: isTablet ? 16 : 12,
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        "Login Now",
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                SafeArea(
-                  bottom: true,
-                  child: TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text(
-                      "Maybe later",
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  // Future<void> addToCartItem(Product product, BuildContext context) async {
-  //   if (isAddedToCart) return;
-
-  //   setState(() {
-  //     isAddedToCart = true;
-  //   });
-
-  //   try {
-  //     final response = await ApiService.addToCart(product, context);
-
-  //     if (response.containsKey('error') && response['error'] != null) {
-  //       if (!mounted) return;
-  //       if (response['error'] == 'Please Ensure Login') {
-  //         _showLoginPrompt(context);
-  //       } else {
-  //         showTopSnackBar(context, response['error']);
-  //       }
-
-  //       setState(() {
-  //         isAddedToCart = false;
-  //       });
-  //     } else {
-  //       await cartProvider?.fetchCartCount();
-  //       showTopSnackBar(
-  //         context,
-  //         response['message'] ?? "Product Added to Cart!!",
-  //       );
-  //     }
-  //   } catch (e) {
-  //     if (!mounted) return;
-  //     setState(() {
-  //       isAddedToCart = false;
-  //     });
-  //     showTopSnackBar(
-  //       context,
-  //       "Failed to add product to cart. Please try again.",
-  //     );
-  //   }
-  // }
-
   Future<bool> addToCartItem(Product product, BuildContext context) async {
     if (isAddedToCart) return true; // Already added, treat as success
 
@@ -255,25 +78,14 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
       if (response.containsKey('error') && response['error'] != null) {
         if (!mounted) return false;
 
-        if (response['error'] == 'Please Ensure Login') {
-          _showLoginPrompt(context);
-        } else {
-          //   ScaffoldMessenger.of(context).showSnackBar(
-          //   SnackBar(
-          //     content: Text(response['error']),
-          //   ),
-          // );
+        if (response['error']) {
           showTopSnackBar(context, response['error']);
         }
 
         return false;
       } else {
         await cartProvider?.fetchCartCount();
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   SnackBar(
-        //     content: Text( response['message'] ?? "Product Added to Cart!!"),
-        //   ),
-        // );
+
         showTopSnackBar(
           context,
           response['message'] ?? "Product Added to Cart!!",
@@ -283,11 +95,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
       }
     } catch (e) {
       if (!mounted) return false;
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //           SnackBar(
-      //             content: Text("Failed to add product to cart. Please try again.",),
-      //           ),
-      //         );
+
       showTopSnackBar(
         context,
         "Failed to add product to cart. Please try again.",
@@ -298,14 +106,6 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
   }
 
   void handleBuyNow(Product product, BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? token = prefs.getString('auth_token');
-
-    if (token == null || token.isEmpty) {
-      _showLoginPrompt(context);
-      return;
-    }
-
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -630,148 +430,107 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
     );
   }
 
-  // Widget _buildPriceSection(Product product) {
-  //   final screenWidth = MediaQuery.of(context).size.width;
-  //   final bool isTablet = screenWidth > 600;
-  //   return Row(
-  //     children: [
-  //       Text(
-  //         'Offer Price : ₹${product.offerPrice.round()}',
-  //         style: TextStyle(
-  //           color: const Color.fromARGB(255, 70, 56, 83),
-  //           fontWeight: FontWeight.bold,
-  //           fontSize: isTablet ? 22 : 14,
-  //         ),
-  //       ),
-  //       const SizedBox(width: 20),
-  //       Text(
-  //         ' ₹${product.price.round()}',
-  //         style: TextStyle(
-  //           color: const Color.fromARGB(255, 94, 90, 90),
-  //           fontSize: isTablet ? 22 : 14,
-  //           fontWeight: FontWeight.bold,
-  //           decoration: TextDecoration.lineThrough,
-  //           decorationColor: Colors.black,
-  //         ),
-  //       ),
-  //       const SizedBox(width: 10),
-  //       _discountTag(
-  //         'SAVE ! ${(((product.price - product.offerPrice) / product.price) * 100).round()}%',
-  //         mythemecolor,
-  //       ),
-  //       const SizedBox(width: 10),
-
-  //       _discountTag(
-  //         '₹${(product.price - product.offerPrice).round()} Saved',
-  //         mythemecolor1,
-  //       ),
-  //     ],
-  //   );
-  // }
-
   Widget _buildPriceSection(Product product) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  final bool isTablet = screenWidth > 600;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isTablet = screenWidth > 600;
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      // OFFER PRICE
-      Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              "₹${product.offerPrice.round()}",
+              style: TextStyle(
+                fontSize: isTablet ? 28 : 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: mythemecolor1,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                "${(((product.price - product.offerPrice) / product.price) * 100).round()}% OFF",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: isTablet ? 14 : 11,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 4),
+
+        // ORIGINAL PRICE + SAVE AMOUNT
+        Row(
+          children: [
+            Text(
+              "MRP: ₹${product.price.round()}",
+              style: TextStyle(
+                fontSize: isTablet ? 16 : 13,
+                color: Colors.grey[600],
+                decoration: TextDecoration.lineThrough,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              "You Save ₹${(product.price - product.offerPrice).round()}",
+              style: TextStyle(
+                fontSize: isTablet ? 16 : 13,
+                fontWeight: FontWeight.w600,
+                color: Colors.green.shade700,
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 10),
+
+        // PREMIUM TAGS
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _premiumTag(Icons.local_offer, "Best Price"),
+           
+            _premiumTag(Icons.shield, "100% Genuine"),
+            _premiumTag(Icons.workspace_premium, "Premium Quality"),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _premiumTag(IconData icon, String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Row(
         children: [
+          Icon(icon, size: 12, color: Colors.black87),
+          const SizedBox(width: 4),
           Text(
-            "₹${product.offerPrice.round()}",
-            style: TextStyle(
-              fontSize: isTablet ? 28 : 22,
-              fontWeight: FontWeight.bold,
+            text,
+            style: const TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),
           ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: mythemecolor1,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              "${(((product.price - product.offerPrice) / product.price) * 100).round()}% OFF",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: isTablet ? 14 : 11,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
         ],
       ),
-
-      const SizedBox(height: 4),
-
-      // ORIGINAL PRICE + SAVE AMOUNT
-      Row(
-        children: [
-          Text(
-            "MRP: ₹${product.price.round()}",
-            style: TextStyle(
-              fontSize: isTablet ? 16 : 13,
-              color: Colors.grey[600],
-              decoration: TextDecoration.lineThrough,
-            ),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            "You Save ₹${(product.price - product.offerPrice).round()}",
-            style: TextStyle(
-              fontSize: isTablet ? 16 : 13,
-              fontWeight: FontWeight.w600,
-              color: Colors.green.shade700,
-            ),
-          ),
-        ],
-      ),
-      
-      const SizedBox(height: 10),
-
-      // PREMIUM TAGS
-      Row(
-        children: [
-          _premiumTag(Icons.local_offer, "Best Price"),
-          const SizedBox(width: 8),
-          _premiumTag(Icons.shield, "100% Genuine"),
-          const SizedBox(width: 8),
-          _premiumTag(Icons.workspace_premium, "Premium Quality"),
-        ],
-      ),
-    ],
-  );
-}
-
-Widget _premiumTag(IconData icon, String text) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-    decoration: BoxDecoration(
-      color: Colors.grey.shade100,
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: Colors.grey.shade300),
-    ),
-    child: Row(
-      children: [
-        Icon(icon, size: 14, color: Colors.black87),
-        const SizedBox(width: 4),
-        Text(
-          text,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-      ],
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildAttributesSection(Product product) {
     return Column(
@@ -894,28 +653,158 @@ Widget _premiumTag(IconData icon, String text) {
     );
   }
 
-//   Widget _discountTag(String text, Color color) {
-//     return Container(
-//       padding: const EdgeInsets.all(5),
-//       decoration: BoxDecoration(
-//         color: color,
-//         borderRadius: BorderRadius.circular(8),
-//       ),
-//       child: Text(
-//         text,
-//         style: const TextStyle(
-//           color: Colors.white,
-//           fontSize: 12,
-//           fontWeight: FontWeight.bold,
-//         ),
-//       ),
-//     );
-//   }
-// }
+  // Widget _buildRelatedOfferProducts(BuildContext context) {
+  //   final screenWidth = MediaQuery.of(context).size.width;
+  //   final bool isTablet = screenWidth > 600;
+
+  //   return FutureBuilder<List<Offer>>(
+  //     future: OfferService.fetchOfferProductsAsOffers(),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return const Center(
+  //           child: CircularProgressIndicator(color: mythemecolor),
+  //         );
+  //       } else if (snapshot.hasError) {
+  //         return Center(
+  //           child: Text('Failed to load offers: ${snapshot.error}'),
+  //         );
+  //       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+  //         return const Center(child: Text('No offer products available.'));
+  //       }
+
+  //       final offers = snapshot.data!;
+
+  //       return SizedBox(
+  //         height: isTablet ? 250 : 250,
+  //         child: ListView.builder(
+  //           scrollDirection: Axis.horizontal,
+  //           padding: const EdgeInsets.symmetric(horizontal: 16),
+  //           itemCount: offers.length,
+  //           itemBuilder: (context, index) {
+  //             final offer = offers[index];
+  //             final discountPercentage =
+  //                 ((offer.actualPrice - offer.offerPrice) / offer.actualPrice) *
+  //                 100;
+
+  //             return GestureDetector(
+  //               onTap: () {
+  //                 Navigator.push(
+  //                   context,
+  //                   MaterialPageRoute(
+  //                     builder: (context) => ProductDetailPage(offer: offer),
+  //                   ),
+  //                 );
+  //               },
+  //               child: Container(
+  //                 width: isTablet ? 180 : 190,
+  //                 margin: const EdgeInsets.only(right: 12),
+  //                 decoration: BoxDecoration(
+  //                   borderRadius: BorderRadius.circular(12),
+  //                   color: const Color.fromARGB(255, 224, 234, 224),
+  //                   boxShadow: [
+  //                     BoxShadow(
+  //                       color: Colors.grey.withOpacity(0.2),
+  //                       blurRadius: 5,
+  //                       spreadRadius: 2,
+  //                       offset: const Offset(0, 2),
+  //                     ),
+  //                   ],
+  //                 ),
+  //                 child: Column(
+  //                   crossAxisAlignment: CrossAxisAlignment.start,
+  //                   children: [
+  //                     Stack(
+  //                       children: [
+  //                         ClipRRect(
+  //                           borderRadius: const BorderRadius.vertical(
+  //                             top: Radius.circular(12),
+  //                           ),
+  //                           child: Image.network(
+  //                             offer.images.isNotEmpty
+  //                                 ? offer.images.first
+  //                                 : 'https://via.placeholder.com/150',
+  //                             fit: BoxFit.cover,
+  //                             width: double.infinity,
+  //                             height: isTablet ? 140 : 160,
+  //                           ),
+  //                         ),
+  //                         if (offer.actualPrice > offer.offerPrice)
+  //                           Positioned(
+  //                             top: 8,
+  //                             right: 8,
+  //                             child: Container(
+  //                               padding: const EdgeInsets.symmetric(
+  //                                 horizontal: 8,
+  //                                 vertical: 4,
+  //                               ),
+  //                               decoration: BoxDecoration(
+  //                                 color: Colors.red.shade600,
+  //                                 borderRadius: BorderRadius.circular(6),
+  //                               ),
+  //                               child: Text(
+  //                                 '${discountPercentage.round()}% OFF',
+  //                                 style: const TextStyle(
+  //                                   color: Colors.white,
+  //                                   fontSize: 12,
+  //                                   fontWeight: FontWeight.bold,
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                           ),
+  //                       ],
+  //                     ),
+  //                     Padding(
+  //                       padding: const EdgeInsets.all(8.0),
+  //                       child: Column(
+  //                         crossAxisAlignment: CrossAxisAlignment.start,
+  //                         children: [
+  //                           Text(
+  //                             offer.title,
+  //                             style: const TextStyle(
+  //                               fontSize: 14,
+  //                               fontWeight: FontWeight.bold,
+  //                             ),
+  //                             maxLines: 1,
+  //                             overflow: TextOverflow.ellipsis,
+  //                           ),
+  //                           const SizedBox(height: 4),
+  //                           Row(
+  //                             children: [
+  //                               Text(
+  //                                 '₹${offer.offerPrice.round()}',
+  //                                 style: TextStyle(
+  //                                   fontSize: 16,
+  //                                   fontWeight: FontWeight.bold,
+  //                                   color: Colors.green.shade700,
+  //                                 ),
+  //                               ),
+  //                               const SizedBox(width: 6),
+  //                               Text(
+  //                                 '₹${offer.actualPrice.round()}',
+  //                                 style: const TextStyle(
+  //                                   fontSize: 12,
+  //                                   color: Colors.red,
+  //                                   decoration: TextDecoration.lineThrough,
+  //                                 ),
+  //                               ),
+  //                             ],
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             );
+  //           },
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
 Widget _buildRelatedOfferProducts(BuildContext context) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  final bool isTablet = screenWidth > 600;
+  final isTablet = MediaQuery.of(context).size.width > 600;
 
   return FutureBuilder<List<Offer>>(
     future: OfferService.fetchOfferProductsAsOffers(),
@@ -924,133 +813,139 @@ Widget _buildRelatedOfferProducts(BuildContext context) {
         return const Center(
           child: CircularProgressIndicator(color: mythemecolor),
         );
-      } else if (snapshot.hasError) {
-        return Center(child: Text('Failed to load offers: ${snapshot.error}'));
-      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+      }
+
+      if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
         return const Center(child: Text('No offer products available.'));
       }
 
       final offers = snapshot.data!;
 
       return SizedBox(
-        height: isTablet ? 250 : 250,
-        child: ListView.builder(
+        height: _listHeight,
+        child: ListView.separated(
           scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: _horizontalPadding,
           itemCount: offers.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 12),
           itemBuilder: (context, index) {
             final offer = offers[index];
-            final discountPercentage =
-                ((offer.actualPrice - offer.offerPrice) / offer.actualPrice) *
-                100;
 
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => ProductDetailPage(offer: offer),
+            final discountPercentage =
+                ((offer.actualPrice - offer.offerPrice) /
+                        offer.actualPrice) *
+                    100;
+
+            return SizedBox(
+              width: isTablet ? _tabletCardWidth : _mobileCardWidth,
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ProductDetailPage(offer: offer),
+                    ),
+                  );
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: const Color.fromARGB(255, 224, 234, 224),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.2),
+                        blurRadius: 5,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
                   ),
-                );
-              },
-              child: Container(
-                width: isTablet ? 180 : 190,
-                margin: const EdgeInsets.only(right: 12),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: const Color.fromARGB(255, 224, 234, 224),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      blurRadius: 5,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(12),
-                          ),
-                          child: Image.network(
-                            offer.images.isNotEmpty
-                                ? offer.images.first
-                                : 'https://via.placeholder.com/150',
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            height: isTablet ? 140 : 160,
-                          ),
-                        ),
-                        if (offer.actualPrice > offer.offerPrice)
-                          Positioned(
-                            top: 8,
-                            right: 8,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.red.shade600,
-                                borderRadius: BorderRadius.circular(6),
-                              ),
-                              child: Text(
-                                '${discountPercentage.round()}% OFF',
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // IMAGE + DISCOUNT
+                      Stack(
                         children: [
-                          Text(
-                            offer.title,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
+                          ClipRRect(
+                            borderRadius: const BorderRadius.vertical(
+                              top: Radius.circular(12),
                             ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                            child: Image.network(
+                              offer.images.isNotEmpty
+                                  ? offer.images.first
+                                  : 'https://via.placeholder.com/150',
+                              width: double.infinity,
+                              height: isTablet ? 150 : 160,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                          const SizedBox(height: 4),
-                          Row(
-                            children: [
-                              Text(
-                                '₹${offer.offerPrice.round()}',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.green.shade700,
-                                ),
-                              ),
-                              const SizedBox(width: 6),
-                              Text(
-                                '₹${offer.actualPrice.round()}',
-                                style: const TextStyle(
-                                  fontSize: 12,
+                          if (offer.actualPrice > offer.offerPrice)
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
                                   color: Colors.red,
-                                  decoration: TextDecoration.lineThrough,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  '${discountPercentage.round()}% OFF',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
                         ],
                       ),
-                    ),
-                  ],
+
+                      // DETAILS
+                      Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              offer.title,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                Text(
+                                  '₹${offer.offerPrice.round()}',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.green.shade700,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Text(
+                                  '₹${offer.actualPrice.round()}',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.red,
+                                    decoration:
+                                        TextDecoration.lineThrough,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );
@@ -1061,75 +956,197 @@ Widget _buildRelatedOfferProducts(BuildContext context) {
   );
 }
 
-Widget _buildNoResultsUI(BuildContext context) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  final bool isTablet = screenWidth >= 600;
+  Widget _buildNoResultsUI(BuildContext context) {
+  final isTablet = MediaQuery.of(context).size.width >= 600;
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      FutureBuilder<List<Product>>(
-        future: ProductService.fetchAllProducts(),
-        builder: (context, relatedSnapshot) {
-          if (relatedSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(color: mythemecolor),
+  return FutureBuilder<List<Product>>(
+    future: ProductService.fetchAllProducts(),
+    builder: (context, relatedSnapshot) {
+      if (relatedSnapshot.connectionState == ConnectionState.waiting) {
+        return const Center(
+          child: CircularProgressIndicator(color: mythemecolor),
+        );
+      }
+
+      if (relatedSnapshot.hasError) {
+        return Center(
+          child: Text('Failed to load products: ${relatedSnapshot.error}'),
+        );
+      }
+
+      if (!relatedSnapshot.hasData || relatedSnapshot.data!.isEmpty) {
+        return const Center(child: Text('No products available.'));
+      }
+
+      final relatedProducts = relatedSnapshot.data!;
+
+      return SizedBox(
+        height: _listHeight,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          padding: _horizontalPadding,
+          itemCount: relatedProducts.length,
+          separatorBuilder: (_, __) => const SizedBox(width: 12),
+          itemBuilder: (context, index) {
+            final product = relatedProducts[index];
+
+            return SizedBox(
+              width: isTablet ? _tabletCardWidth : _mobileCardWidth,
+              child: MyrelatedproductWidget(
+                product: product,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          ProductDetailPagep(product: product),
+                    ),
+                  );
+                },
+              ),
             );
-          } else if (relatedSnapshot.hasError) {
-            return Center(
-              child: Text('Failed to load products: ${relatedSnapshot.error}'),
-            );
-          } else if (!relatedSnapshot.hasData ||
-              relatedSnapshot.data!.isEmpty) {
-            return const Center(child: Text('No products available.'));
-          }
-
-          final relatedProducts = relatedSnapshot.data!;
-
-          return SizedBox(
-            height: isTablet ? 420 : 220, // match card height
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              itemCount: relatedProducts.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
-              itemBuilder: (context, index) {
-                final product = relatedProducts[index];
-
-                return SizedBox(
-                  width: isTablet ? 320 : 190, // fixed card width
-                  child: MyrelatedproductWidget(
-                    product: product,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              ProductDetailPagep(product: product),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-          );
-        },
-      ),
-    ],
+          },
+        ),
+      );
+    },
   );
 }
 
+
+  // Widget _buildNoResultsUI(BuildContext context) {
+  //   final screenWidth = MediaQuery.of(context).size.width;
+  //   final bool isTablet = screenWidth >= 600;
+
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       FutureBuilder<List<Product>>(
+  //         future: ProductService.fetchAllProducts(),
+  //         builder: (context, relatedSnapshot) {
+  //           if (relatedSnapshot.connectionState == ConnectionState.waiting) {
+  //             return const Center(
+  //               child: CircularProgressIndicator(color: mythemecolor),
+  //             );
+  //           } else if (relatedSnapshot.hasError) {
+  //             return Center(
+  //               child: Text(
+  //                 'Failed to load products: ${relatedSnapshot.error}',
+  //               ),
+  //             );
+  //           } else if (!relatedSnapshot.hasData ||
+  //               relatedSnapshot.data!.isEmpty) {
+  //             return const Center(child: Text('No products available.'));
+  //           }
+
+  //           final relatedProducts = relatedSnapshot.data!;
+
+  //           return SizedBox(
+  //             height: isTablet ? 420 : 220, // match card height
+  //             child: ListView.separated(
+  //               scrollDirection: Axis.horizontal,
+  //               padding: const EdgeInsets.symmetric(horizontal: 8),
+  //               itemCount: relatedProducts.length,
+  //               separatorBuilder: (_, __) => const SizedBox(width: 12),
+  //               itemBuilder: (context, index) {
+  //                 final product = relatedProducts[index];
+
+  //                 return SizedBox(
+  //                   width: isTablet ? 320 : 190, // fixed card width
+  //                   child: MyrelatedproductWidget(
+  //                     product: product,
+  //                     onTap: () {
+  //                       Navigator.push(
+  //                         context,
+  //                         MaterialPageRoute(
+  //                           builder: (context) =>
+  //                               ProductDetailPagep(product: product),
+  //                         ),
+  //                       );
+  //                     },
+  //                   ),
+  //                 );
+  //               },
+  //             ),
+  //           );
+  //         },
+  //       ),
+  //     ],
+  //   );
+  // }
+
+//   Widget _buildRelatedProducts(Product product, BuildContext context) {
+//     final screenWidth = MediaQuery.of(context).size.width;
+//     final bool isTablet = screenWidth >= 600;
+
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: [
+//         const Text(
+//           'You Might Like These Products!',
+//           style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+//         ),
+//         const SizedBox(height: 16),
+//         FutureBuilder<List<Product>>(
+//           future: ProductService.getRelatedProducts(product.id),
+//           builder: (context, relatedSnapshot) {
+//             if (relatedSnapshot.connectionState == ConnectionState.waiting) {
+//               return const Center(
+//                 child: CircularProgressIndicator(color: mythemecolor),
+//               );
+//             } else if (relatedSnapshot.hasError) {
+//               return _buildRelatedOfferProducts(context);
+//             } else if (!relatedSnapshot.hasData ||
+//                 relatedSnapshot.data!.isEmpty) {
+//               return _buildNoResultsUI(context);
+//             }
+
+//             final relatedProducts = relatedSnapshot.data!;
+
+//             return SizedBox(
+//               height: isTablet ? 420 : 300, // enough height for full card
+//               child: ListView.separated(
+//                 scrollDirection: Axis.horizontal,
+//                 padding: const EdgeInsets.symmetric(horizontal: 8),
+//                 itemCount: relatedProducts.length,
+//                 separatorBuilder: (_, __) => const SizedBox(width: 12),
+//                 itemBuilder: (context, index) {
+//                   final relatedProduct = relatedProducts[index];
+
+//                   return SizedBox(
+//                     width: isTablet ? 320 : 190, // fixed width per card
+//                     child: MyrelatedproductWidget(
+//                       product: relatedProduct,
+//                       onTap: () {
+//                         Navigator.push(
+//                           context,
+//                           MaterialPageRoute(
+//                             builder: (context) =>
+//                                 ProductDetailPagep(product: relatedProduct),
+//                           ),
+//                         );
+//                       },
+//                     ),
+//                   );
+//                 },
+//               ),
+//             );
+//           },
+//         ),
+//       ],
+//     );
+//   }
 Widget _buildRelatedProducts(Product product, BuildContext context) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  final bool isTablet = screenWidth >= 600;
+  final isTablet = MediaQuery.of(context).size.width >= 600;
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const Text(
-        'You Might Like These Products!',
-        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+      const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 12),
+        child: Text(
+          'You Might Like These Products!',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
       ),
       const SizedBox(height: 16),
       FutureBuilder<List<Product>>(
@@ -1139,9 +1156,13 @@ Widget _buildRelatedProducts(Product product, BuildContext context) {
             return const Center(
               child: CircularProgressIndicator(color: mythemecolor),
             );
-          } else if (relatedSnapshot.hasError) {
+          }
+
+          if (relatedSnapshot.hasError) {
             return _buildRelatedOfferProducts(context);
-          } else if (!relatedSnapshot.hasData ||
+          }
+
+          if (!relatedSnapshot.hasData ||
               relatedSnapshot.data!.isEmpty) {
             return _buildNoResultsUI(context);
           }
@@ -1149,25 +1170,28 @@ Widget _buildRelatedProducts(Product product, BuildContext context) {
           final relatedProducts = relatedSnapshot.data!;
 
           return SizedBox(
-            height: isTablet ? 420 : 300, // enough height for full card
+            height: _listHeight,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 8),
+              padding: _horizontalPadding,
               itemCount: relatedProducts.length,
               separatorBuilder: (_, __) => const SizedBox(width: 12),
               itemBuilder: (context, index) {
                 final relatedProduct = relatedProducts[index];
 
                 return SizedBox(
-                  width: isTablet ? 320 : 190, // fixed width per card
+                  width:
+                      isTablet ? _tabletCardWidth : _mobileCardWidth,
                   child: MyrelatedproductWidget(
                     product: relatedProduct,
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              ProductDetailPagep(product: relatedProduct),
+                          builder: (_) =>
+                              ProductDetailPagep(
+                                product: relatedProduct,
+                              ),
                         ),
                       );
                     },
@@ -1181,4 +1205,5 @@ Widget _buildRelatedProducts(Product product, BuildContext context) {
     ],
   );
 }
+
 }

@@ -311,7 +311,7 @@ class _DealerRegistrationPageState extends State<DealerRegistrationPage> {
             title: Padding(
               padding: const EdgeInsets.only(top: 5),
               child: Text(
-                'REGISTER DEALERS',
+                'REGISTER DEALER',
                 style: GoogleFonts.poppins(
                   fontSize: isTablet ? 22 : 12,
                   fontWeight: FontWeight.w600,

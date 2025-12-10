@@ -22,7 +22,7 @@ static Future<List<Map<String, dynamic>>> mygetDeliveryDetails() async {
     debugPrint('Get Delivery Status: ${response.statusCode}');
     debugPrint('Get Delivery Body: ${response.body}');
 
-    // ✅ No deliveries
+    // ✅ Backend returns 404 when empty
     if (response.statusCode == 404) {
       return [];
     }
@@ -30,25 +30,24 @@ static Future<List<Map<String, dynamic>>> mygetDeliveryDetails() async {
     if (response.statusCode == 200) {
       final List<dynamic> deliveries = jsonDecode(response.body);
 
-      // Flatten all items from all deliveries
       final List<Map<String, dynamic>> allItems = [];
 
       for (final delivery in deliveries) {
-        if (delivery is Map<String, dynamic> &&
-            delivery.containsKey('items')) {
-          final List<dynamic> items = delivery['items'];
-          allItems.addAll(
-            List<Map<String, dynamic>>.from(items),
-          );
+        if (delivery is Map<String, dynamic>) {
+          final items = delivery['items'] as List<dynamic>? ?? [];
+
+          for (final item in items) {
+            if (item is Map<String, dynamic>) {
+              allItems.add(item);
+            }
+          }
         }
       }
 
       return allItems;
-    } else {
-      throw Exception(
-        'Failed to load delivery details',
-      );
     }
+
+    throw Exception('Failed to load delivery details');
   } catch (e) {
     debugPrint('mygetDeliveryDetails Error: $e');
     rethrow;
@@ -56,96 +55,7 @@ static Future<List<Map<String, dynamic>>> mygetDeliveryDetails() async {
 }
 
 
-  // static Future<List<Map<String, dynamic>>> mygetDeliveryDetails() async {
-  //   final token = await SecureStorage.getToken();
-
-  //   if (token == null || token.isEmpty) {
-  //     await SecureStorage.clear();
-  //     return [];
-  //   }
-
-  //   try {
-  //     final response = await ApiClient.get('/api/userget', auth: true);
-
-  //     if (response.statusCode == 200) {
-  //       final List<dynamic> data = jsonDecode(response.body);
-  //       debugPrint("Raw API Response: $data");
-
-  //       if (data.isNotEmpty &&
-  //           data[0] is Map<String, dynamic> &&
-  //           data[0].containsKey('items') &&
-  //           (data[0]['items'] as List).isNotEmpty) {
-  //         return List<Map<String, dynamic>>.from(data[0]['items']);
-  //       } else {
-  //         debugPrint("No delivery addresses found in API response.");
-  //         await SecureStorage.clear();
-  //         return [];
-  //       }
-  //     } else {
-  //       throw Exception(
-  //         'Failed to load delivery details: ${response.body}',
-  //       );
-  //     }
-  //   } catch (e) {
-  //     debugPrint('getDeliveryDetails Error: $e');
-  //     rethrow;
-  //   }
-  // }
-  
-  // static Future<Map<String, dynamic>> myupdateDelivery({
-  //   required String deliveryId,
-  //   required String dealername,
-  //   required String phoneNo,
-  //   required String houseNo,
-  //   required String streetName,
-  //   required String city,
-  //   required String state,
-  //   required String pinCode,
-  // }) async {
-  //   final token = await SecureStorage.getToken();
-  //   if (token == null || token.isEmpty) {
-  //     throw Exception('Authentication token is missing. Please log in again.');
-  //   }
-
-  //   try {
-  //     final response = await ApiClient.put(
-  //       '/api/delivery',
-  //       {
-  //         'deliveryId': deliveryId,
-  //         'dealername': dealername,
-  //         'phoneNo': phoneNo,
-  //         'houseNo': houseNo,
-  //         'streetName': streetName,
-  //         'city': city,
-  //         'state': state,
-  //         'pinCode': pinCode,
-  //       },
-  //       auth: true,
-  //     );
-
-  //     debugPrint('Response status: ${response.statusCode}');
-  //     debugPrint('Response body: ${response.body}');
-
-  //     final responseData = jsonDecode(response.body);
-
-  //     if (response.statusCode == 200) {
-  //       return responseData['delivery'] ?? {};
-  //     } else if (response.statusCode == 400) {
-  //       throw Exception(responseData['message'] ?? 'Invalid request data');
-  //     } else if (response.statusCode == 404) {
-  //       throw Exception(responseData['message'] ?? 'Delivery not found');
-  //     } else {
-  //       throw Exception(
-  //         'Failed to update delivery: ${responseData['message'] ?? response.body}',
-  //       );
-  //     }
-  //   } catch (e) {
-  //     debugPrint('updateDelivery Error: $e');
-  //     rethrow;
-  //   }
-  // }
-  static Future<Map<String, dynamic>> myupdateDelivery({
-  required String deliveryId,
+static Future<Map<String, dynamic>> createDelivery({
   required String dealername,
   required String phoneNo,
   required String houseNo,
@@ -157,7 +67,57 @@ static Future<List<Map<String, dynamic>>> mygetDeliveryDetails() async {
   final token = await SecureStorage.getToken();
 
   if (token == null || token.isEmpty) {
-    throw Exception('Authentication token is missing. Please log in again.');
+    throw Exception('Authentication token is missing.');
+  }
+
+  try {
+    final response = await ApiClient.post(
+      '/api/create',
+      {
+        'dealername': dealername,
+        'phoneNo': phoneNo,
+        'houseNo': houseNo,
+        'streetName': streetName,
+        'city': city,
+        'state': state,
+        'pinCode': pinCode,
+      },
+      auth: true,
+    );
+
+    debugPrint('Create Delivery Status: ${response.statusCode}');
+    debugPrint('Create Delivery Body: ${response.body}');
+
+    final Map<String, dynamic> decoded = jsonDecode(response.body);
+
+    if (response.statusCode == 201) {
+      return {
+        'message': decoded['message'],
+        'delivery': decoded['delivery'],
+      };
+    }
+
+    throw Exception(decoded['message'] ?? 'Failed to create delivery');
+  } catch (e) {
+    debugPrint('createDelivery Error: $e');
+    rethrow;
+  }
+}
+
+static Future<Map<String, dynamic>> myupdateDelivery({
+  required String deliveryId, // ✅ items[]. _id
+  required String dealername,
+  required String phoneNo,
+  required String houseNo,
+  required String streetName,
+  required String city,
+  required String state,
+  required String pinCode,
+}) async {
+  final token = await SecureStorage.getToken();
+
+  if (token == null || token.isEmpty) {
+    throw Exception('Authentication token is missing.');
   }
 
   try {
@@ -179,121 +139,21 @@ static Future<List<Map<String, dynamic>>> mygetDeliveryDetails() async {
     debugPrint('Update Delivery Status: ${response.statusCode}');
     debugPrint('Update Delivery Body: ${response.body}');
 
-    final Map<String, dynamic> data = jsonDecode(response.body);
+    final Map<String, dynamic> decoded = jsonDecode(response.body);
 
     if (response.statusCode == 200) {
-      return data; // contains message + delivery
+      return {
+        'message': decoded['message'],
+        'delivery': decoded['delivery'],
+      };
     }
 
-    if (response.statusCode == 400 || response.statusCode == 404) {
-      throw Exception(data['message'] ?? 'Request failed');
-    }
-
-    throw Exception(
-      'Failed to update delivery',
-    );
+    throw Exception(decoded['message'] ?? 'Failed to update delivery');
   } catch (e) {
     debugPrint('myupdateDelivery Error: $e');
     rethrow;
   }
 }
-
-
-  // static Future<Map<String, dynamic>> createDelivery({
-  //   required String username,
-  //   required String phoneNo,
-  //   required String houseNo,
-  //   required String streetName,
-  //   required String city,
-  //   required String state,
-  //   required String pinCode,
-  // }) async {
-  //   final token = await SecureStorage.getToken();
-  //   if (token == null || token.isEmpty) {
-  //     throw Exception('Authentication token is missing. Please log in again.');
-  //   }
-
-  //   try {
-  //     final response = await ApiClient.post(
-  //       '/api/create',
-  //       {
-  //         'username': username,
-  //         'phoneNo': phoneNo,
-  //         'houseNo': houseNo,
-  //         'streetName': streetName,
-  //         'city': city,
-  //         'state': state,
-  //         'pinCode': pinCode,
-  //       },
-  //       auth: true,
-  //     );
-
-  //     debugPrint('Response status: ${response.statusCode}');
-  //     debugPrint('Response body: ${response.body}');
-
-  //     if (response.statusCode == 201) {
-  //       return jsonDecode(response.body);
-  //     } else {
-  //       final errorResponse = jsonDecode(response.body);
-  //       throw Exception(
-  //         errorResponse['message'] ?? 'Failed to create delivery',
-  //       );
-  //     }
-  //   } catch (e) {
-  //     debugPrint('createDelivery Error: $e');
-  //     rethrow;
-  //   }
-  // }
-
-
-static Future<Map<String, dynamic>> createDelivery({
-  required String dealername,
-  required String phoneNo,
-  required String houseNo,
-  required String streetName,
-  required String city,
-  required String state,
-  required String pinCode,
-}) async {
-  final token = await SecureStorage.getToken();
-
-  if (token == null || token.isEmpty) {
-    throw Exception('Authentication token is missing. Please log in again.');
-  }
-
-  try {
-    final response = await ApiClient.post(
-      '/api/create',
-      {
-        'dealername': dealername,
-        'phoneNo': phoneNo,
-        'houseNo': houseNo,
-        'streetName': streetName,
-        'city': city,
-        'state': state,
-        'pinCode': pinCode,
-      },
-      auth: true, // ✅ required for req.user.id
-    );
-
-    debugPrint('Response status: ${response.statusCode}');
-    debugPrint('Response body: ${response.body}');
-
-    final decoded = jsonDecode(response.body);
-
-    if (response.statusCode == 201) {
-      return decoded; // contains message + delivery
-    } else {
-      throw Exception(
-        decoded['message'] ?? 'Failed to create delivery',
-      );
-    }
-  } catch (e) {
-    debugPrint('createDelivery Error: $e');
-    rethrow;
-  }
-}
-
 
   static Future<Map<String, dynamic>> editUserDetailsByEmail({
     required String email,
@@ -350,3 +210,158 @@ static Future<Map<String, dynamic>> createDelivery({
     }
   }
 }
+
+
+
+
+// static Future<List<Map<String, dynamic>>> mygetDeliveryDetails() async {
+//   final token = await SecureStorage.getToken();
+
+//   if (token == null || token.isEmpty) {
+//     return [];
+//   }
+
+//   try {
+//     final response = await ApiClient.get(
+//       '/api/dealerget',
+//       auth: true,
+//     );
+
+//     debugPrint('Get Delivery Status: ${response.statusCode}');
+//     debugPrint('Get Delivery Body: ${response.body}');
+
+//     // ✅ No deliveries
+//     if (response.statusCode == 404) {
+//       return [];
+//     }
+
+//     if (response.statusCode == 200) {
+//       final List<dynamic> deliveries = jsonDecode(response.body);
+
+//       // Flatten all items from all deliveries
+//       final List<Map<String, dynamic>> allItems = [];
+
+//       for (final delivery in deliveries) {
+//         if (delivery is Map<String, dynamic> &&
+//             delivery.containsKey('items')) {
+//           final List<dynamic> items = delivery['items'];
+//           allItems.addAll(
+//             List<Map<String, dynamic>>.from(items),
+//           );
+//         }
+//       }
+
+//       return allItems;
+//     } else {
+//       throw Exception(
+//         'Failed to load delivery details',
+//       );
+//     }
+//   } catch (e) {
+//     debugPrint('mygetDeliveryDetails Error: $e');
+//     rethrow;
+//   }
+// }
+
+//   static Future<Map<String, dynamic>> myupdateDelivery({
+//   required String deliveryId,
+//   required String dealername,
+//   required String phoneNo,
+//   required String houseNo,
+//   required String streetName,
+//   required String city,
+//   required String state,
+//   required String pinCode,
+// }) async {
+//   final token = await SecureStorage.getToken();
+
+//   if (token == null || token.isEmpty) {
+//     throw Exception('Authentication token is missing. Please log in again.');
+//   }
+
+//   try {
+//     final response = await ApiClient.put(
+//       '/api/delivery',
+//       {
+//         'deliveryId': deliveryId,
+//         'dealername': dealername,
+//         'phoneNo': phoneNo,
+//         'houseNo': houseNo,
+//         'streetName': streetName,
+//         'city': city,
+//         'state': state,
+//         'pinCode': pinCode,
+//       },
+//       auth: true,
+//     );
+
+//     debugPrint('Update Delivery Status: ${response.statusCode}');
+//     debugPrint('Update Delivery Body: ${response.body}');
+
+//     final Map<String, dynamic> data = jsonDecode(response.body);
+
+//     if (response.statusCode == 200) {
+//       return data; // contains message + delivery
+//     }
+
+//     if (response.statusCode == 400 || response.statusCode == 404) {
+//       throw Exception(data['message'] ?? 'Request failed');
+//     }
+
+//     throw Exception(
+//       'Failed to update delivery',
+//     );
+//   } catch (e) {
+//     debugPrint('myupdateDelivery Error: $e');
+//     rethrow;
+//   }
+// }
+
+// static Future<Map<String, dynamic>> createDelivery({
+//   required String dealername,
+//   required String phoneNo,
+//   required String houseNo,
+//   required String streetName,
+//   required String city,
+//   required String state,
+//   required String pinCode,
+// }) async {
+//   final token = await SecureStorage.getToken();
+
+//   if (token == null || token.isEmpty) {
+//     throw Exception('Authentication token is missing. Please log in again.');
+//   }
+
+//   try {
+//     final response = await ApiClient.post(
+//       '/api/create',
+//       {
+//         'dealername': dealername,
+//         'phoneNo': phoneNo,
+//         'houseNo': houseNo,
+//         'streetName': streetName,
+//         'city': city,
+//         'state': state,
+//         'pinCode': pinCode,
+//       },
+//       auth: true, // ✅ required for req.user.id
+//     );
+
+//     debugPrint('Response status: ${response.statusCode}');
+//     debugPrint('Response body: ${response.body}');
+
+//     final decoded = jsonDecode(response.body);
+
+//     if (response.statusCode == 201) {
+//       return decoded; // contains message + delivery
+//     } else {
+//       throw Exception(
+//         decoded['message'] ?? 'Failed to create delivery',
+//       );
+//     }
+//   } catch (e) {
+//     debugPrint('createDelivery Error: $e');
+//     rethrow;
+//   }
+// }
+

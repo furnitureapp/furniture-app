@@ -21,6 +21,8 @@ class InvoiceDetailsService {
       );
 
       debugPrint('Invoice Download Response Code: ${response.statusCode}');
+            debugPrint('Invoice Download Response Code: ${response.body}');
+
 
       if (response.statusCode == 200) {
         try {

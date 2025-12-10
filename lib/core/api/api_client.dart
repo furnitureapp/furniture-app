@@ -73,14 +73,20 @@ class ApiClient {
       body: jsonEncode(data),
     );
   }
+static Future<http.Response> delete(
+  String endpoint,
+  Map<String, String> map, {
+  bool auth = false,
+}) async {
+  final uri = Uri.parse('$baseUrl$endpoint');
 
-  static Future<http.Response> delete(
-    String endpoint, Map<String, String> map, {
-    bool auth = false,
-  }) async {
-    final uri = Uri.parse('$baseUrl$endpoint');
-    return http.delete(uri, headers: await _headers(withAuth: auth));
-  }
+  return http.delete(
+    uri,
+    headers: await _headers(withAuth: auth),
+    body: jsonEncode(map),
+  );
+}
+
 }
 
 

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
+import 'package:furniture_ecom_app/my_ecom/authentication/provider/del_address_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/provider/login_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/user_profile.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
@@ -44,6 +45,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (_) => LoginProvider()),
         ChangeNotifierProvider(create: (context) => CartProvider()),
         ChangeNotifierProvider(create: (context) => WishlistManager()),
+        ChangeNotifierProvider(create: (_) => SelectedAddressProvider()),
       ],
       child: const MyApp(),
     ),

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/api/api_service_auth.dart';
 import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -20,6 +21,8 @@ class _WaitForGSTApprovalPageState extends State<WaitForGSTApprovalPage> {
   bool _rejected = false;
   String _rejectionReason = "";
   Timer? _statusTimer;
+  bool _dialogShown = false;
+
   @override
   void initState() {
     super.initState();
@@ -33,23 +36,25 @@ class _WaitForGSTApprovalPageState extends State<WaitForGSTApprovalPage> {
 
   Future<void> _checkStatus() async {
     if (!mounted) return;
+
     setState(() => _loading = true);
 
     try {
       final response = await DealerApiService.getDealerStatus();
-      final data = response["data"];
+      final data = response["data"] as Map<String, dynamic>;
 
       final bool isApproved = data["isApproved"] == true;
       final bool isRejected = data["isRejected"] == true;
-      final String rejectionReason = data["rejection"]?["reason"] ?? "";
 
-      if (!mounted) return;
+      final rejectionMap = data["rejection"] as Map<String, dynamic>?;
+      final String rejectionReason = rejectionMap?["reason"] ?? "";
 
-      // ✅ STOP POLLING AS SOON AS FINAL RESULT COMES
       if (isApproved || isRejected) {
         _statusTimer?.cancel();
         _statusTimer = null;
       }
+
+      if (!mounted) return;
 
       setState(() {
         _rejected = isRejected;
@@ -57,14 +62,12 @@ class _WaitForGSTApprovalPageState extends State<WaitForGSTApprovalPage> {
         _loading = false;
       });
 
-      // ✅ APPROVED → GO TO LOGIN
       if (isApproved) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.remove("dealer_pending_approval");
 
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(content: Text("✅ GST Approved! Please login.")),
-        // );
+        if (!mounted) return;
+
         showTopSnackBar(context, "✅ GST Approved! Please login.");
 
         Navigator.pushReplacement(
@@ -73,8 +76,9 @@ class _WaitForGSTApprovalPageState extends State<WaitForGSTApprovalPage> {
         );
         return;
       }
-      // ✅ REJECTED → SHOW REASON (ONLY ONCE)
-      if (isRejected) {
+
+      if (isRejected && !_dialogShown) {
+        _dialogShown = true;
         _showRejectedDialog();
       }
     } catch (e) {
@@ -82,13 +86,7 @@ class _WaitForGSTApprovalPageState extends State<WaitForGSTApprovalPage> {
 
       setState(() => _loading = false);
 
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   const SnackBar(content: Text("❌ Failed to check GST status")),
-      // );
-              showTopSnackBar(context, "❌ Failed to check GST status");
-
-
-
+      showTopSnackBar(context, "⏳ GST Verification still pending");
     }
   }
 
@@ -148,7 +146,7 @@ class _WaitForGSTApprovalPageState extends State<WaitForGSTApprovalPage> {
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.all(24),
             children: [
-              const SizedBox(height: 80),
+              const SizedBox(height: 130),
 
               Icon(
                 Icons.hourglass_bottom_rounded,
@@ -156,7 +154,7 @@ class _WaitForGSTApprovalPageState extends State<WaitForGSTApprovalPage> {
                 color: mythemecolor,
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 40),
 
               Text(
                 _rejected
@@ -210,11 +208,18 @@ class _WaitForGSTApprovalPageState extends State<WaitForGSTApprovalPage> {
                     ),
                   ),
                 ),
+
               TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
+                onPressed: () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.remove("dealer_pending_approval");
+                  await prefs.remove("pending_email"); // optional but safe
+                  await ApiAuthService.clearAuthData();
+                  if (!mounted) return;
+                  Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (_) => const MyLoginScreen()),
+                    (route) => false,
                   );
                 },
                 child: Text(
@@ -233,3 +238,61 @@ class _WaitForGSTApprovalPageState extends State<WaitForGSTApprovalPage> {
     );
   }
 }
+
+
+
+
+  // Future<void> _checkStatus() async {
+  //   if (!mounted) return;
+  //   setState(() => _loading = true);
+
+  //   try {
+  //     final response = await DealerApiService.getDealerStatus();
+  //     final data = response["data"];
+
+  //     final bool isApproved = data["isApproved"] == true;
+  //     final bool isRejected = data["isRejected"] == true;
+  //     final String rejectionReason = data["rejection"]?["reason"] ?? "";
+
+  //     if (!mounted) return;
+
+  //     // ✅ STOP POLLING AS SOON AS FINAL RESULT COMES
+  //     if (isApproved || isRejected) {
+  //       _statusTimer?.cancel();
+  //       _statusTimer = null;
+  //     }
+
+  //     setState(() {
+  //       _rejected = isRejected;
+  //       _rejectionReason = rejectionReason;
+  //       _loading = false;
+  //     });
+
+  //     // ✅ APPROVED → GO TO LOGIN
+  //     if (isApproved) {
+  //       final prefs = await SharedPreferences.getInstance();
+  //       await prefs.remove("dealer_pending_approval");
+
+  //       // ScaffoldMessenger.of(context).showSnackBar(
+  //       //   const SnackBar(content: Text("✅ GST Approved! Please login.")),
+  //       // );
+  //       showTopSnackBar(context, "✅ GST Approved! Please login.");
+
+  //       Navigator.pushReplacement(
+  //         context,
+  //         MaterialPageRoute(builder: (_) => const MyLoginScreen()),
+  //       );
+  //       return;
+  //     }
+  //     // ✅ REJECTED → SHOW REASON (ONLY ONCE)
+  //     if (isRejected) {
+  //       _showRejectedDialog();
+  //     }
+  //   } catch (e) {
+  //     if (!mounted) return;
+
+  //     setState(() => _loading = false);
+
+  //     showTopSnackBar(context, "Your GST Verification is Still Pending");
+  //   }
+  // }

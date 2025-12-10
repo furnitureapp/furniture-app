@@ -87,7 +87,9 @@ class _CartScreenState extends State<CartScreen> {
       setState(() {
         _cartItems.removeWhere((item) => item.productId == productId);
         _totalAmount = _cartItems.fold(
-            0.0, (sum, item) => sum + item.offerPrice * item.quantity);
+          0.0,
+          (sum, item) => sum + item.offerPrice * item.quantity,
+        );
         Provider.of<CartProvider>(context, listen: false).fetchCartCount();
       });
       // ScaffoldMessenger.of(context).showSnackBar(
@@ -161,8 +163,9 @@ class _CartScreenState extends State<CartScreen> {
     } finally {
       if (mounted) {
         setState(() {
-          _cartItems[index] =
-              _cartItems[index].copyWith(isUpdating: false); // remove loader
+          _cartItems[index] = _cartItems[index].copyWith(
+            isUpdating: false,
+          ); // remove loader
         });
       }
     }
@@ -182,10 +185,7 @@ class _CartScreenState extends State<CartScreen> {
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  mythemecolor1,
-               mythemecolor,
-                ],
+                colors: [mythemecolor1, mythemecolor],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -205,7 +205,7 @@ class _CartScreenState extends State<CartScreen> {
             ),
           ),
         ),
-        body:  Center(child: AnimationPage1()),
+        body: Center(child: AnimationPage1()),
       );
     }
 
@@ -216,10 +216,7 @@ class _CartScreenState extends State<CartScreen> {
           child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  mythemecolor1,
-               mythemecolor,
-                ],
+                colors: [mythemecolor1, mythemecolor],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -243,7 +240,9 @@ class _CartScreenState extends State<CartScreen> {
           children: [
             Positioned.fill(
               child: Image.asset(
-                isTablet ? 'assets/images/theme.png' : 'assets/images/theme.png',
+                isTablet
+                    ? 'assets/images/theme.png'
+                    : 'assets/images/theme.png',
                 fit: BoxFit.fill,
               ),
             ),
@@ -259,7 +258,7 @@ class _CartScreenState extends State<CartScreen> {
                     padding: EdgeInsets.all(isTablet ? 30 : 20),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
-                      color:   mythemecolor1.withOpacity(0.5),
+                      color: mythemecolor1.withOpacity(0.5),
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -305,8 +304,9 @@ class _CartScreenState extends State<CartScreen> {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                isTablet ? Colors.white : mythemecolor,
+                            backgroundColor: isTablet
+                                ? Colors.white
+                                : mythemecolor,
                             padding: EdgeInsets.symmetric(
                               horizontal: isTablet ? 40 : 30,
                               vertical: isTablet ? 14 : 12,
@@ -315,8 +315,9 @@ class _CartScreenState extends State<CartScreen> {
                               fontSize: isTablet ? 18 : 14,
                               fontWeight: FontWeight.bold,
                             ),
-                            foregroundColor:
-                                isTablet ? mythemecolor : Colors.white,
+                            foregroundColor: isTablet
+                                ? mythemecolor
+                                : Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -340,10 +341,7 @@ class _CartScreenState extends State<CartScreen> {
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                  mythemecolor1,
-               mythemecolor,
-              ],
+              colors: [mythemecolor1, mythemecolor],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -386,7 +384,7 @@ class _CartScreenState extends State<CartScreen> {
                         padding: EdgeInsets.all(isTablet ? 30 : 20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          color:   mythemecolor1.withOpacity(0.5),
+                          color: mythemecolor1.withOpacity(0.5),
                         ),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
@@ -427,8 +425,9 @@ class _CartScreenState extends State<CartScreen> {
                                 (route) => false,
                               ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    isTablet ? Colors.white : mythemecolor,
+                                backgroundColor: isTablet
+                                    ? Colors.white
+                                    : mythemecolor,
                                 padding: EdgeInsets.symmetric(
                                   horizontal: isTablet ? 40 : 30,
                                   vertical: isTablet ? 14 : 12,
@@ -455,8 +454,8 @@ class _CartScreenState extends State<CartScreen> {
               ],
             )
           : isTablet
-              ? _buildCartUITablet()
-              : _buildCartUI(),
+          ? _buildCartUITablet()
+          : _buildCartUI(),
     );
   }
 
@@ -516,7 +515,9 @@ class _CartScreenState extends State<CartScreen> {
                                     right: 8,
                                     child: Container(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 4),
+                                        horizontal: 8,
+                                        vertical: 4,
+                                      ),
                                       decoration: BoxDecoration(
                                         color: mythemecolor,
                                         borderRadius: BorderRadius.circular(6),
@@ -550,17 +551,22 @@ class _CartScreenState extends State<CartScreen> {
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
                                           fontSize: 14,
-                                          color:
-                                              Color.fromARGB(255, 62, 61, 61),
+                                          color: Color.fromARGB(
+                                            255,
+                                            62,
+                                            61,
+                                            61,
+                                          ),
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
                                     ),
                                     IconButton(
-                                      icon: const Icon(Icons.delete_sweep,
-                                          size: 24,
-                                          color:
-                                              Color.fromARGB(255, 90, 89, 89)),
+                                      icon: const Icon(
+                                        Icons.delete_sweep,
+                                        size: 24,
+                                        color: Color.fromARGB(255, 90, 89, 89),
+                                      ),
                                       onPressed: () =>
                                           _removeItemFromCart(item.productId),
                                     ),
@@ -571,7 +577,7 @@ class _CartScreenState extends State<CartScreen> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Text(
-                                      'Original Price: ₹${item.offerPrice. round()}',
+                                      'Selling Price: ₹${item.offerPrice.round()}',
                                       style: const TextStyle(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
@@ -583,7 +589,7 @@ class _CartScreenState extends State<CartScreen> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  'Gst Percentage: ${item.gstPercentage. round()}%',
+                                  'Gst Percentage: ${item.gstPercentage.round()}%',
                                   style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -592,7 +598,7 @@ class _CartScreenState extends State<CartScreen> {
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
-                                  '₹${(item.offerPrice * item.quantity). round()} + ₹${item.gstAmount. round()} = ₹${item.totalWithGST. round()}',
+                                  '₹${(item.offerPrice * item.quantity).round()} + ₹${item.gstAmount.round()} = ₹${item.totalWithGST.round()}',
 
                                   // '₹${item.offerPrice. round()} + ₹${item.gstAmount. round()} = ₹${item.totalWithGST. round()}',
                                   style: const TextStyle(
@@ -603,7 +609,7 @@ class _CartScreenState extends State<CartScreen> {
                                 ),
                                 const SizedBox(height: 12),
                                 Text(
-                                  'Total Amount with Gst: ₹${item.totalWithGST. round()}',
+                                  'Total Amount with Gst: ₹${item.totalWithGST.round()}',
                                   style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
@@ -624,16 +630,19 @@ class _CartScreenState extends State<CartScreen> {
                                             children: [
                                               IconButton(
                                                 icon: const Icon(
-                                                    Icons.remove_circle,
-                                                    color: mythemecolor1,
-                                                    size: 30),
-                                                onPressed: item.isUpdating ||
+                                                  Icons.remove_circle,
+                                                  color: mythemecolor1,
+                                                  size: 30,
+                                                ),
+                                                onPressed:
+                                                    item.isUpdating ||
                                                         item.quantity <= 1
                                                     ? null
                                                     : () {
                                                         _updateQuantity(
-                                                            item.productId,
-                                                            item.quantity - 1);
+                                                          item.productId,
+                                                          item.quantity - 1,
+                                                        );
                                                       },
                                               ),
                                               const SizedBox(width: 10),
@@ -643,9 +652,9 @@ class _CartScreenState extends State<CartScreen> {
                                                       width: 24,
                                                       child:
                                                           CircularProgressIndicator(
-                                                        color: mythemecolor,
-                                                        strokeWidth: 2,
-                                                      ),
+                                                            color: mythemecolor,
+                                                            strokeWidth: 2,
+                                                          ),
                                                     )
                                                   : Text(
                                                       '${item.quantity}',
@@ -658,22 +667,24 @@ class _CartScreenState extends State<CartScreen> {
                                               const SizedBox(width: 10),
                                               IconButton(
                                                 icon: const Icon(
-                                                    Icons.add_circle,
-                                                    color: mythemecolor,
-                                                    size: 30),
+                                                  Icons.add_circle,
+                                                  color: mythemecolor,
+                                                  size: 30,
+                                                ),
                                                 onPressed: item.isUpdating
                                                     ? null
                                                     : () {
                                                         if (item.quantity >=
                                                             item.stock) {
                                                           showTopSnackBar(
-                                                              context,
-                                                              'Only ${item.stock} items are in stock.');
+                                                            context,
+                                                            'Only ${item.stock} items are in stock.',
+                                                          );
                                                         } else {
                                                           _updateQuantity(
-                                                              item.productId,
-                                                              item.quantity +
-                                                                  1);
+                                                            item.productId,
+                                                            item.quantity + 1,
+                                                          );
                                                         }
                                                       },
 
@@ -690,7 +701,7 @@ class _CartScreenState extends State<CartScreen> {
                                             ],
                                           ),
                                   ],
-                                )
+                                ),
                               ],
                             ),
                           ),
@@ -723,7 +734,7 @@ class _CartScreenState extends State<CartScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Total: ₹${_totalAmount. round()}',
+                      'Total: ₹${_totalAmount.round()}',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -735,11 +746,11 @@ class _CartScreenState extends State<CartScreen> {
                       onPressed: _hasOutOfStockItems()
                           ? null
                           : () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const OrderSummary(),
-                                ),
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const OrderSummary(),
                               ),
+                            ),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: mythemecolor,
                         padding: EdgeInsets.symmetric(
@@ -834,7 +845,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Original Price: ₹${item.offerPrice. round()}',
+                                    'Selling Price: ₹${item.offerPrice.round()}',
                                     style: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -843,7 +854,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Gst Percentage: ${item.gstPercentage. round()}%',
+                                    'Gst Percentage: ${item.gstPercentage.round()}%',
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
@@ -853,7 +864,7 @@ class _CartScreenState extends State<CartScreen> {
                                   const SizedBox(height: 8),
                                   const SizedBox(height: 8),
                                   Text(
-                                    '₹${(item.offerPrice * item.quantity). round()} + ₹${item.gstAmount. round()} = ₹${item.totalWithGST. round()}',
+                                    '₹${(item.offerPrice * item.quantity).round()} + ₹${item.gstAmount.round()} = ₹${item.totalWithGST.round()}',
 
                                     // '₹${item.offerPrice. round()} + ₹${item.gstAmount. round()} = ₹${item.totalWithGST. round()}',
                                     style: const TextStyle(
@@ -864,7 +875,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                   const SizedBox(height: 12),
                                   Text(
-                                    'Total Amount with Gst: ₹${item.totalWithGST. round()}',
+                                    'Total Amount with Gst: ₹${item.totalWithGST.round()}',
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
@@ -873,7 +884,7 @@ class _CartScreenState extends State<CartScreen> {
                                   ),
                                   const SizedBox(height: 6),
                                   Text(
-                                    'Save: ₹${item.savings. round()}',
+                                    'Save: ₹${item.savings.round()}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                       color: Colors.grey,
@@ -896,14 +907,19 @@ class _CartScreenState extends State<CartScreen> {
                                             Container(
                                               decoration: BoxDecoration(
                                                 color: const Color.fromARGB(
-                                                    255, 225, 115, 12),
+                                                  255,
+                                                  225,
+                                                  115,
+                                                  12,
+                                                ),
                                                 borderRadius:
                                                     BorderRadius.circular(25),
                                               ),
                                               padding:
                                                   const EdgeInsets.symmetric(
-                                                      vertical: 5,
-                                                      horizontal: 14),
+                                                    vertical: 5,
+                                                    horizontal: 14,
+                                                  ),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
@@ -911,14 +927,16 @@ class _CartScreenState extends State<CartScreen> {
                                                     onTap: () {
                                                       if (item.quantity > 1) {
                                                         _updateQuantity(
-                                                            item.productId,
-                                                            item.quantity - 1);
+                                                          item.productId,
+                                                          item.quantity - 1,
+                                                        );
                                                       }
                                                     },
                                                     child: const Icon(
-                                                        Icons.remove,
-                                                        color: Colors.white,
-                                                        size: 28),
+                                                      Icons.remove,
+                                                      color: Colors.white,
+                                                      size: 28,
+                                                    ),
                                                   ),
                                                   const SizedBox(width: 16),
                                                   Text(
@@ -934,12 +952,15 @@ class _CartScreenState extends State<CartScreen> {
                                                   GestureDetector(
                                                     onTap: () {
                                                       _updateQuantity(
-                                                          item.productId,
-                                                          item.quantity + 1);
+                                                        item.productId,
+                                                        item.quantity + 1,
+                                                      );
                                                     },
-                                                    child: const Icon(Icons.add,
-                                                        color: Colors.white,
-                                                        size: 28),
+                                                    child: const Icon(
+                                                      Icons.add,
+                                                      color: Colors.white,
+                                                      size: 28,
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -949,10 +970,16 @@ class _CartScreenState extends State<CartScreen> {
                                               Container(
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 6),
+                                                      horizontal: 10,
+                                                      vertical: 6,
+                                                    ),
                                                 decoration: BoxDecoration(
-                                                  color: const Color.fromARGB(255, 187, 109, 99),
+                                                  color: const Color.fromARGB(
+                                                    255,
+                                                    187,
+                                                    109,
+                                                    99,
+                                                  ),
                                                   borderRadius:
                                                       BorderRadius.circular(6),
                                                 ),
@@ -1012,7 +1039,7 @@ class _CartScreenState extends State<CartScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Total: ₹${_totalAmount. round()}',
+                      'Total: ₹${_totalAmount.round()}',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -1024,11 +1051,12 @@ class _CartScreenState extends State<CartScreen> {
                       onPressed: _hasOutOfStockItems()
                           ? null
                           : () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const OrderSummary(),
-                                ),
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const OrderSummary(),
                               ),
+                            ),
+
                       style: ElevatedButton.styleFrom(
                         backgroundColor: mythemecolor,
                         padding: EdgeInsets.symmetric(
@@ -1050,7 +1078,7 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ],
             ),
-          )
+          ),
         ],
       ),
     );
