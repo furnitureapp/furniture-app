@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/model/model_file.dart';
-import 'package:furniture_ecom_app/core/services/cart_service.dart';
-import 'package:furniture_ecom_app/core/services/offers_service.dart';
-import 'package:furniture_ecom_app/core/services/product_service.dart';
+import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
+import 'package:furniture_ecom_app/core/services_ecom/cart_service.dart';
+import 'package:furniture_ecom_app/core/services_ecom/offers_service.dart';
+import 'package:furniture_ecom_app/core/services_ecom/product_service.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
+import 'package:furniture_ecom_app/constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/offer/offer_detail.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_confirmationpage.dart';
 import 'package:furniture_ecom_app/my_ecom/product/reuasble_related_card.dart';
@@ -491,17 +491,17 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
           ],
         ),
 
-        const SizedBox(height: 10),
-
         // PREMIUM TAGS
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _premiumTag(Icons.local_offer, "Best Price"),
-           
-            _premiumTag(Icons.shield, "100% Genuine"),
-            _premiumTag(Icons.workspace_premium, "Premium Quality"),
-          ],
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _premiumTag(Icons.local_offer, "Best Price"),
+              _premiumTag(Icons.shield, "100% Genuine"),
+              _premiumTag(Icons.workspace_premium, "Top Quality"),
+            ],
+          ),
         ),
       ],
     );
@@ -517,12 +517,12 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
       ),
       child: Row(
         children: [
-          Icon(icon, size: 12, color: Colors.black87),
+          Icon(icon, size: 10, color: Colors.black87),
           const SizedBox(width: 4),
           Text(
             text,
             style: const TextStyle(
-              fontSize: 12,
+              fontSize: 10,
               fontWeight: FontWeight.w600,
               color: Colors.black87,
             ),

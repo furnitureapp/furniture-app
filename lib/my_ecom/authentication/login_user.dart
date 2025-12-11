@@ -1,11 +1,11 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/services/auth_service.dart';
+import 'package:furniture_ecom_app/core/services_ecom/auth_service.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/forgot_password.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/otp_screen.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/register_user.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
+import 'package:furniture_ecom_app/constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';

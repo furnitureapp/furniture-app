@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/api/api_service_auth.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
-import 'package:furniture_ecom_app/my_login_screen.dart';
+import 'package:furniture_ecom_app/core/api_management_service/api_service_auth.dart';
+import 'package:furniture_ecom_app/constants/snackbar.dart';
+import 'package:furniture_ecom_app/base/my_login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/core/api/dealers_api_service.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
+import 'package:furniture_ecom_app/core/api_management_service/dealers_api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class WaitForGSTApprovalPage extends StatefulWidget {

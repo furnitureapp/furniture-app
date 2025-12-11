@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/services/wishlist_service.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
+import 'package:furniture_ecom_app/core/services_ecom/wishlist_service.dart';
+import 'package:furniture_ecom_app/constants/snackbar.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 

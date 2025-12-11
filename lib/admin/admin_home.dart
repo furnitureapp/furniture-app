@@ -5,12 +5,12 @@ import 'package:furniture_ecom_app/admin/approval_pie_ad.dart';
 import 'package:furniture_ecom_app/admin/dealers_list.dart';
 import 'package:furniture_ecom_app/admin/order_management.dart';
 import 'package:furniture_ecom_app/admin/total_marketers.dart';
-import 'package:furniture_ecom_app/core/api/admin_api_service.dart';
-import 'package:furniture_ecom_app/core/services/user_service.dart';
+import 'package:furniture_ecom_app/core/api_management_service/admin_api_service.dart';
+import 'package:furniture_ecom_app/core/services_ecom/user_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
-import 'package:furniture_ecom_app/my_login_screen.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
+import 'package:furniture_ecom_app/constants/snackbar.dart';
+import 'package:furniture_ecom_app/base/my_login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

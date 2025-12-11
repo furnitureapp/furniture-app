@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/api/dealers_api_service.dart';
+import 'package:furniture_ecom_app/core/api_management_service/dealers_api_service.dart';
 import 'package:furniture_ecom_app/marketers/marketer_dashboard.dart';
 import 'package:furniture_ecom_app/marketers/pagination_widget.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 bool isSameDate(DateTime d1, DateTime d2) =>

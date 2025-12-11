@@ -852,10 +852,10 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/services/checkout_payment.dart';
+import 'package:furniture_ecom_app/core/services_ecom/checkout_payment.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
+import 'package:furniture_ecom_app/constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_success.dart';
 import 'package:furniture_ecom_app/my_ecom/payment/payment_screen.dart';
 import 'package:google_fonts/google_fonts.dart';

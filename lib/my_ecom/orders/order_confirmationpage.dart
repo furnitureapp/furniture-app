@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/provider/del_address_provider.dart';
 import 'package:provider/provider.dart';
 
-import 'package:furniture_ecom_app/core/model/model_file.dart';
-import 'package:furniture_ecom_app/core/services/settings_service.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
+import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
+import 'package:furniture_ecom_app/core/services_ecom/settings_service.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
+import 'package:furniture_ecom_app/constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/update_address.dart';
 import 'package:furniture_ecom_app/my_ecom/payment/payment_options.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';

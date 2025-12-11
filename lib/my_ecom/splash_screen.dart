@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:furniture_ecom_app/core/services/notif_maitence.dart';
+import 'package:furniture_ecom_app/core/services_ecom/notif_maitence.dart';
 import 'package:furniture_ecom_app/my_ecom/maintenence.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:google_fonts/google_fonts.dart';

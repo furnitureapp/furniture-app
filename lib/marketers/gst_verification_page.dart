@@ -4,7 +4,7 @@ import 'package:furniture_ecom_app/marketers/marketer_dashboard.dart';
 import 'package:furniture_ecom_app/marketers/models/activity.dart';
 import 'package:furniture_ecom_app/marketers/register_dealer_page.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 
 class GstVerificationPage extends StatefulWidget {
   const GstVerificationPage({super.key});

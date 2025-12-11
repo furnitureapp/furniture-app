@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/model/model_file.dart';
-import 'package:furniture_ecom_app/core/services/search_service.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
+import 'package:furniture_ecom_app/core/services_ecom/search_service.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/result_screen.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:furniture_ecom_app/core/model/model_file.dart';
-import 'package:furniture_ecom_app/core/services/notif_maitence.dart';
+import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
+import 'package:furniture_ecom_app/core/services_ecom/notif_maitence.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:intl/intl.dart';
 
@@ -56,13 +56,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   Future<void> _saveReadStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    final readIds =
-        _readStatus.keys.where((id) => _readStatus[id] == true).toList();
+    final readIds = _readStatus.keys
+        .where((id) => _readStatus[id] == true)
+        .toList();
     await prefs.setStringList('readNotifications', readIds);
   }
 
-  void handleNotificationTap(String? page, String? productId,
-      String notificationId, String? orderId, String? deliveryId) {
+  void handleNotificationTap(
+    String? page,
+    String? productId,
+    String notificationId,
+    String? orderId,
+    String? deliveryId,
+  ) {
     setState(() {
       _readStatus[notificationId] = true;
     });
@@ -71,8 +77,11 @@ class _NotificationScreenState extends State<NotificationScreen> {
     if (productId != null && productId.isNotEmpty) {
       Navigator.pushNamed(context, '/productdetailpagep', arguments: productId);
     } else if (orderId != null && orderId.isNotEmpty) {
-      Navigator.pushNamed(context, '/order-details',
-          arguments: {'orderId': orderId, 'deliveryId': deliveryId});
+      Navigator.pushNamed(
+        context,
+        '/order-details',
+        arguments: {'orderId': orderId, 'deliveryId': deliveryId},
+      );
     } else if (page == '/homeoffer') {
       Navigator.pushNamed(context, '/homeoffer');
     } else if (page != null && page.isNotEmpty) {
@@ -91,15 +100,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
     bool isTablet = MediaQuery.of(context).size.width > 600;
 
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 228, 215, 226),
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                  mythemecolor1,
-               mythemecolor,
-              ],
+              colors: [mythemecolor1, mythemecolor],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -123,14 +130,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
         color: Colors.transparent,
         child: Stack(
           children: [
-            Positioned.fill(
-              child: Image.asset(
-                isTablet ? 'assets/images/theme.png' : 'assets/images/theme.png',
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: double.infinity,
-              ),
-            ),
+            
             _isLoggedIn
                 ? FutureBuilder<List<Notifications>>(
                     future: _notificationHistory,
@@ -155,18 +155,17 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Widget _buildEmptyNotifications(bool isTablet) {
-    return
-     
-        Center(
+    
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(isTablet ? 40 : 20),
+        padding: EdgeInsets.all(isTablet ? 40 : 10),
         child: Card(
           elevation: 10,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
           child: Container(
-            padding: EdgeInsets.all(isTablet ? 30 : 20),
+            padding: EdgeInsets.all(isTablet ? 30 : 10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               color: const Color.fromARGB(255, 228, 215, 226),
@@ -205,7 +204,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   onPressed: () => Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const BottomNavBar()),
+                      builder: (context) => const BottomNavBar(),
+                    ),
                     (route) => false,
                   ),
                   style: ElevatedButton.styleFrom(
@@ -218,14 +218,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       fontSize: isTablet ? 18 : 14,
                       fontWeight: FontWeight.bold,
                     ),
-                    foregroundColor:
-                        isTablet ? mythemecolor : Colors.white,
+                    foregroundColor: isTablet ? mythemecolor : Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   child: const Text("Go To Shop"),
                 ),
+              
               ],
             ),
           ),
@@ -235,12 +235,15 @@ class _NotificationScreenState extends State<NotificationScreen> {
   }
 
   Widget _buildNotificationList(
-      List<Notifications> notifications, bool isTablet) {
+    List<Notifications> notifications,
+    bool isTablet,
+  ) {
     return isTablet
         ? RefreshIndicator(
             onRefresh: () async {
               setState(() {
-                _notificationHistory = NotifMaintenanceService.getNotifications();
+                _notificationHistory =
+                    NotifMaintenanceService.getNotifications();
               });
             },
             color: mythemecolor,
@@ -287,12 +290,16 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                         ),
                                         padding: const EdgeInsets.all(8.0),
                                         child: const Icon(
-                                            FontAwesomeIcons.check,
-                                            size: 25,
-                                            color: Colors.white),
+                                          FontAwesomeIcons.check,
+                                          size: 25,
+                                          color: Colors.white,
+                                        ),
                                       )
-                                    : const Icon(FontAwesomeIcons.bell,
-                                        size: 35, color: Colors.blue),
+                                    : const Icon(
+                                        FontAwesomeIcons.bell,
+                                        size: 35,
+                                        color: Colors.blue,
+                                      ),
                                 const SizedBox(width: 30),
                                 Expanded(
                                   child: Column(
@@ -302,29 +309,34 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                       Text(
                                         notification.title,
                                         style: const TextStyle(
-                                            fontSize: 20,
-                                            color:
-                                                Color.fromARGB(255, 7, 71, 9),
-                                            fontWeight: FontWeight.bold),
+                                          fontSize: 20,
+                                          color: Color.fromARGB(255, 7, 71, 9),
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                       Text(
                                         notification.body,
                                         style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w300),
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w300,
+                                        ),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
                                         formatDate(notification.date),
                                         style: const TextStyle(
-                                            fontSize: 14, color: Colors.grey),
+                                          fontSize: 14,
+                                          color: Colors.grey,
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
-                                const Icon(Icons.chevron_right,
-                                    size: 30,
-                                    color: Color.fromARGB(255, 2, 57, 4)),
+                                const Icon(
+                                  Icons.chevron_right,
+                                  size: 30,
+                                  color: Color.fromARGB(255, 2, 57, 4),
+                                ),
                               ],
                             ),
                           ),
@@ -339,7 +351,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
         : RefreshIndicator(
             onRefresh: () async {
               setState(() {
-                _notificationHistory = NotifMaintenanceService.getNotifications();
+                _notificationHistory =
+                    NotifMaintenanceService.getNotifications();
               });
             },
             color: mythemecolor,
@@ -353,10 +366,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   final notification = notifications[index];
                   final isRead = _readStatus[notification.id] ?? false;
                   return Padding(
-                    padding: const EdgeInsets.all(16.0),
+                    padding: const EdgeInsets.all(10.0),
                     child: Card(
-                      color: Colors.white,
-                      margin: const EdgeInsets.all(8),
+                      color: const Color.fromARGB(255, 225, 207, 222),
+                      margin: const EdgeInsets.all(2),
                       child: GestureDetector(
                         onTap: () {
                           handleNotificationTap(
@@ -368,21 +381,27 @@ class _NotificationScreenState extends State<NotificationScreen> {
                           );
                         },
                         child: Padding(
-                          padding: const EdgeInsets.all(16.0),
+                          padding: const EdgeInsets.all(10.0),
                           child: Row(
                             children: [
                               isRead
                                   ? Container(
                                       decoration: const BoxDecoration(
-                                        color: Colors.green,
+                                        color: mythemecolor,
                                         shape: BoxShape.circle,
                                       ),
                                       padding: const EdgeInsets.all(8.0),
-                                      child: const Icon(FontAwesomeIcons.check,
-                                          size: 15, color: Colors.white),
+                                      child: const Icon(
+                                        FontAwesomeIcons.check,
+                                        size: 14,
+                                        color: Colors.white,
+                                      ),
                                     )
-                                  : const Icon(FontAwesomeIcons.bell,
-                                      size: 25, color: Colors.blue),
+                                  : const Icon(
+                                      FontAwesomeIcons.bell,
+                                      size: 25,
+                                      color: mythemecolor1,
+                                    ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Column(
@@ -391,32 +410,35 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                     Text(
                                       notification.title,
                                       style: const TextStyle(
-                                          fontSize: 16,
-                                          color:
-                                              Color.fromARGB(255, 10, 78, 12),
-                                          fontWeight: FontWeight.bold),
+                                        fontSize: 14,
+                                        color: mythemecolor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
                                     ),
                                     Text(
                                       notification.body,
                                       style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400,
+                                      ),
                                     ),
                                     const SizedBox(height: 4),
                                     Text(
                                       formatDate(notification.date),
                                       style: const TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold,
-                                          color:
-                                              Color.fromARGB(255, 96, 95, 95)),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Color.fromARGB(255, 96, 95, 95),
+                                      ),
                                     ),
                                   ],
                                 ),
                               ),
-                              const Icon(Icons.chevron_right,
-                                  size: 25,
-                                  color: Color.fromARGB(255, 2, 57, 4)),
+                              const Icon(
+                                Icons.chevron_right,
+                                size: 25,
+                                color: mythemecolor
+                              ),
                             ],
                           ),
                         ),
@@ -426,29 +448,32 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 } else {
                   return Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(10),
                       child: ElevatedButton(
                         onPressed: () => Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const BottomNavBar()),
+                            builder: (context) => const BottomNavBar(),
+                          ),
                           (route) => false,
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                               mythemecolor,
+                          backgroundColor: mythemecolor,
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 40, vertical: 14),
+                            horizontal: 40,
+                            vertical: 14,
+                          ),
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(isTablet ? 12 : 10),
+                            borderRadius: BorderRadius.circular(
+                              isTablet ? 12 : 10,
+                            ),
                           ),
                         ),
                         child: Text(
                           "Return to Shop!",
                           style: TextStyle(
-                            color:  mythemecolor1,
-                            fontSize: isTablet ? 18 : 16,
+                            color: mythemecolor1,
+                            fontSize: isTablet ? 18 : 12,
                           ),
                         ),
                       ),
@@ -528,8 +553,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                       fontSize: isTablet ? 18 : 14,
                       fontWeight: FontWeight.bold,
                     ),
-                    foregroundColor:
-                        isTablet ? mythemecolor : Colors.white,
+                    foregroundColor: isTablet ? mythemecolor : Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -544,5 +568,3 @@ class _NotificationScreenState extends State<NotificationScreen> {
     );
   }
 }
-
-

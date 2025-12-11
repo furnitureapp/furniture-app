@@ -3,7 +3,7 @@ import 'package:furniture_ecom_app/my_ecom/authentication/provider/login_provide
 import 'package:furniture_ecom_app/my_ecom/authentication/user_profile.dart';
 import 'package:furniture_ecom_app/my_ecom/categories.dart';
 import 'package:furniture_ecom_app/my_ecom/homepage.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/favorites.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_list.dart';
 

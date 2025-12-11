@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:furniture_ecom_app/core/api/dealers_api_service.dart';
-import 'package:furniture_ecom_app/core/model/orders_model.dart';
+import 'package:furniture_ecom_app/core/api_management_service/dealers_api_service.dart';
+import 'package:furniture_ecom_app/core/models_ecom/orders_model.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 

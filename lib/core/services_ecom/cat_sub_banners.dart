@@ -1,6 +1,6 @@
 import 'dart:convert';
-import '../api/api_client.dart';
-import '../model/model_file.dart';
+import '../api_management_service/api_client.dart';
+import '../models_ecom/model_file.dart';
 
 class CatSubBannersService {
   static Future<List<BannerModel>> fetchBanners() async {

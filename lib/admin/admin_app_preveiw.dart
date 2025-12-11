@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/admin/admin_home.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 // import 'package:furniture_ecom_app/my_ecom/splash_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 

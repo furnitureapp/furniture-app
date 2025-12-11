@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/my_ecom/userprofile/dealer_gstverify.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:furniture_ecom_app/my_ecom/userprofile/wait_gst_approval.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:furniture_ecom_app/core/api/api_service_auth.dart';
+import 'package:furniture_ecom_app/core/api_management_service/api_service_auth.dart';
 import 'package:furniture_ecom_app/Manager/manager_home.dart';
 import 'package:furniture_ecom_app/admin/admin_home.dart';
 import 'package:furniture_ecom_app/marketers/marketer_dashboard.dart';

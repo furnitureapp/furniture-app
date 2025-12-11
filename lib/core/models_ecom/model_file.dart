@@ -1,4 +1,3 @@
-
 class Delivery {
   final String id;
   final String username;
@@ -146,7 +145,6 @@ class Product {
   }
 }
 
-
 class Categorys {
   final String id;
   final String title;
@@ -265,7 +263,6 @@ class Offer {
     );
   }
 }
-
 
 class SubCategory {
   final String id;
@@ -515,7 +512,8 @@ class Notifications {
       id: json['_id'], // Parse the _id from MongoDB
       title: json['title'],
       body: json['body'],
-      date: DateTime.parse(json['date']),
+      date: DateTime.parse(json['date'] ?? json['createdAt']),
+      // date: DateTime.parse(json['date']),
       page: json['page'],
       productId: json['productId'],
       orderId: json['orderId'],

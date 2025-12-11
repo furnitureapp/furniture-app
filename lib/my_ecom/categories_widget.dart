@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/model/model_file.dart';
-import 'package:furniture_ecom_app/core/services/cat_sub_banners.dart';
+import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
+import 'package:furniture_ecom_app/core/services_ecom/cat_sub_banners.dart';
 import 'package:furniture_ecom_app/my_ecom/categories.dart';
 import 'package:furniture_ecom_app/my_ecom/subc_screen.dart';
 
@@ -182,7 +182,7 @@ Widget _buildExploreSection(List<Categorys> categories) {
 
   Widget _buildMobilePlaceholder() {
     return SizedBox(
-      height: 120,
+      height: 140,
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: 8,
@@ -203,13 +203,13 @@ Widget _buildExploreSection(List<Categorys> categories) {
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Shimmer.fromColors(
                 baseColor: Colors.grey[300]!,
                 highlightColor: Colors.grey[100]!,
                 child: Container(
                   width: 50,
-                  height: 8,
+                  height: 14,
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
                     borderRadius: BorderRadius.circular(5),

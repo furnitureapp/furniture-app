@@ -1202,12 +1202,12 @@ import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/provider/del_address_provider.dart';
 import 'package:provider/provider.dart';
 
-import 'package:furniture_ecom_app/core/services/delivery_service.dart';
+import 'package:furniture_ecom_app/core/services_ecom/delivery_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/add_delivery_details.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/edituserdetails.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
+import 'package:furniture_ecom_app/constants/snackbar.dart';
 // import 'package:furniture_ecom_app/my_ecom/orders/order_confirmationpage.dart';
 // import 'package:furniture_ecom_app/my_ecom/orders/order_summary.dart';
 

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/model/model_file.dart';
-import 'package:furniture_ecom_app/core/services/offers_service.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
+import 'package:furniture_ecom_app/core/services_ecom/offers_service.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/offer/offer_detail.dart';
+import 'package:shimmer/shimmer.dart';
 
 class OfferGridWidget extends StatefulWidget {
   const OfferGridWidget({super.key});
@@ -59,6 +60,108 @@ class _OfferGridWidgetState extends State<OfferGridWidget> {
     );
   }
 
+  Widget offerCardShimmer(BuildContext context) {
+    return Card(
+      elevation: 4,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Shimmer.fromColors(
+              baseColor: const Color.fromARGB(255, 230, 226, 226),
+              highlightColor: Colors.grey[100]!,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(25),
+                  ),
+                ),
+              ),
+            ),
+          ),
+
+          // TEXT SHIMMER
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Title + Price Row
+                Row(
+                  children: [
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        width: 100,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Shimmer.fromColors(
+                      baseColor: Colors.grey[300]!,
+                      highlightColor: Colors.grey[100]!,
+                      child: Container(
+                        width: 50,
+                        height: 12,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 8),
+
+                // Description Line 1
+                Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                    width: double.infinity,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 6),
+
+                // Description Line 2
+                Shimmer.fromColors(
+                  baseColor: Colors.grey[300]!,
+                  highlightColor: Colors.grey[100]!,
+                  child: Container(
+                    width: 150,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[300],
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 6),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
@@ -83,18 +186,16 @@ class _OfferGridWidgetState extends State<OfferGridWidget> {
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     itemCount: 5,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: EdgeInsets.symmetric(
                           horizontal: _horizontalPadding,
+                          vertical: _verticalPadding,
                         ),
-                        child: Container(
+                        child: SizedBox(
                           width: _cardWidth,
-                          height: cardHeight,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade300,
-                            borderRadius: BorderRadius.circular(25),
-                          ),
+                          child: offerCardShimmer(context),
                         ),
                       );
                     },
@@ -111,7 +212,6 @@ class _OfferGridWidgetState extends State<OfferGridWidget> {
                         height: 200,
                         fit: BoxFit.fitWidth,
                       ),
-                     
                     ],
                   ),
                 );

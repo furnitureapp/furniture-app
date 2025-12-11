@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/services/user_service.dart';
+import 'package:furniture_ecom_app/core/services_ecom/user_service.dart';
 import 'package:furniture_ecom_app/marketers/approve_reject_dealer.dart';
-import 'package:furniture_ecom_app/core/api/dealers_api_service.dart';
+import 'package:furniture_ecom_app/core/api_management_service/dealers_api_service.dart';
 import 'package:furniture_ecom_app/marketers/gst_verification_page.dart';
 import 'package:furniture_ecom_app/marketers/marketer_activity.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/marketers/approval_piechar.dart';
 import 'package:furniture_ecom_app/marketers/marketer_users.dart';
 import 'package:furniture_ecom_app/marketers/marketers_app_preview.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
-import 'package:furniture_ecom_app/my_login_screen.dart';
+import 'package:furniture_ecom_app/constants/snackbar.dart';
+import 'package:furniture_ecom_app/base/my_login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/model/model_file.dart';
-import 'package:furniture_ecom_app/core/services/invoice_service.dart';
-import 'package:furniture_ecom_app/core/services/offers_service.dart';
-import 'package:furniture_ecom_app/core/services/orders_service.dart';
+import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
+import 'package:furniture_ecom_app/core/services_ecom/invoice_service.dart';
+import 'package:furniture_ecom_app/core/services_ecom/offers_service.dart';
+import 'package:furniture_ecom_app/core/services_ecom/orders_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
+import 'package:furniture_ecom_app/constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 import 'package:intl/intl.dart';
 
@@ -1129,7 +1129,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                                         .spaceBetween,
                                                 children: [
                                                   Text(
-                                                    'Original Price: ₹${order.items[index].offerPrice.round()}', // ✅ This is correct
+                                                    'Selling Price: ₹${order.items[index].offerPrice.round()}', // ✅ This is correct
                                                     style: const TextStyle(
                                                       fontSize: 18,
                                                       fontWeight:
@@ -1196,7 +1196,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                                               ),
                                               const SizedBox(height: 8),
                                               Text(
-                                                'Original Price: ₹${(offerPrices.length > index ? offerPrices[index] : 0.0).round()}',
+                                                'Selling Price: ₹${(offerPrices.length > index ? offerPrices[index] : 0.0).round()}',
                                                 style: const TextStyle(
                                                   fontSize: 10,
                                                   fontWeight: FontWeight.bold,

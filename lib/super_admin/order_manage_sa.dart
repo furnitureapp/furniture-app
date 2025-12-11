@@ -344,12 +344,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/super_admin/super_admin_home.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import '../../core/api/admin_api_service.dart';
-import '../../core/model/orders_model.dart';
+import '../core/api_management_service/admin_api_service.dart';
+import '../core/models_ecom/orders_model.dart';
 
 class OrdersPageSuperAdmin extends StatefulWidget {
   const OrdersPageSuperAdmin({super.key});

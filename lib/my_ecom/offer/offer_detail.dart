@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/model/model_file.dart';
-import 'package:furniture_ecom_app/core/services/cart_service.dart';
-import 'package:furniture_ecom_app/core/services/offers_service.dart';
+import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
+import 'package:furniture_ecom_app/core/services_ecom/cart_service.dart';
+import 'package:furniture_ecom_app/core/services_ecom/offers_service.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/snackbar.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
+import 'package:furniture_ecom_app/constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/offer/offer_reuable.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_confirmationpage.dart';
 
@@ -337,44 +337,45 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       
       const SizedBox(height: 10),
 
-      // PREMIUM TAGS
-      Row(
-        children: [
-          _premiumTag(Icons.local_offer, "Best Price"),
-          const SizedBox(width: 8),
-          _premiumTag(Icons.shield, "100% Genuine"),
-          const SizedBox(width: 8),
-          _premiumTag(Icons.workspace_premium, "Premium Quality"),
-        ],
-      ),
+       Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _premiumTag(Icons.local_offer, "Best Price"),
+              _premiumTag(Icons.shield, "100% Genuine"),
+              _premiumTag(Icons.workspace_premium, "Top Quality"),
+            ],
+          ),
+        ),
     ],
   );
 }
 
   Widget _premiumTag(IconData icon, String text) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-    decoration: BoxDecoration(
-      color: Colors.grey.shade100,
-      borderRadius: BorderRadius.circular(20),
-      border: Border.all(color: Colors.grey.shade300),
-    ),
-    child: Row(
-      children: [
-        Icon(icon, size: 14, color: Colors.black87),
-        const SizedBox(width: 4),
-        Text(
-          text,
-          style: const TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 10, color: Colors.black87),
+          const SizedBox(width: 4),
+          Text(
+            text,
+            style: const TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
 
   // Widget _buildPriceSection(Offer offer) {

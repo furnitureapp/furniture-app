@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'package:furniture_ecom_app/core/api/api_service_auth.dart';
+import 'package:furniture_ecom_app/core/api_management_service/api_service_auth.dart';
 import 'package:http/http.dart' as http;
 
-import '../api/api_client.dart';
+import '../api_management_service/api_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserService {

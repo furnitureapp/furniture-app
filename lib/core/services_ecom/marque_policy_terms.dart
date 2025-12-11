@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/api/api_client.dart';
-import 'package:furniture_ecom_app/core/model/model_file.dart';
+import 'package:furniture_ecom_app/core/api_management_service/api_client.dart';
+import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
 
 class MarqueePolicyTermsService {
   static Future<Marquees?> fetchMarquee() async {

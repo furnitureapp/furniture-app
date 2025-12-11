@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../api/api_client.dart';
+import '../api_management_service/api_client.dart';
 
 class InvoiceDetailsService {
   static Future<Map<String, dynamic>> downloadInvoice(String orderId) async {

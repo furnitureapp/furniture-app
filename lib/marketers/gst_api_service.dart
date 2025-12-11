@@ -23,15 +23,10 @@ static String get baseUrl {
 static Future<GstModel?> verifyGst(String gstNumber) async {
   try {
     final prefs = await SharedPreferences.getInstance();
-    // final authToken = prefs.getString('auth_token');
-
-    // if (authToken == null) return null;
-
     final response = await http.post(
       Uri.parse('$baseUrl/api/verify-gst'),
       headers: {
         'Content-Type': 'application/json',
-        // 'Authorization': 'Bearer $authToken',
       },
       body: jsonEncode({'gstNumber': gstNumber}),
     );
@@ -46,8 +41,6 @@ static Future<GstModel?> verifyGst(String gstNumber) async {
 
       final expiry = DateTime.now().add(const Duration(minutes: 10));
       prefs.setString('gst_token_expiry', expiry.toIso8601String());
-
-      // Save GST data locally
       prefs.setString('gst_cache', jsonEncode(data['data']));
 
       return GstModel.fromJson(data);

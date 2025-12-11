@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
-import 'package:furniture_ecom_app/core/services/marque_policy_terms.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/core/services_ecom/marque_policy_terms.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TermsPage extends StatefulWidget {

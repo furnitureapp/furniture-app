@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/Manager/manager_home.dart';
 import 'package:furniture_ecom_app/admin/admin_home.dart';
-import 'package:furniture_ecom_app/core/api/api_service_auth.dart';
+import 'package:furniture_ecom_app/core/api_management_service/api_service_auth.dart';
 import 'package:furniture_ecom_app/marketers/marketer_dashboard.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:furniture_ecom_app/my_ecom/userprofile/wait_gst_approval.dart';
-import 'package:furniture_ecom_app/my_login_screen.dart';
+import 'package:furniture_ecom_app/base/my_login_screen.dart';
 import 'package:furniture_ecom_app/super_admin/super_admin_home.dart';
 import 'package:video_player/video_player.dart';
-import 'package:furniture_ecom_app/core/services/notif_maitence.dart';
+import 'package:furniture_ecom_app/core/services_ecom/notif_maitence.dart';
 import 'package:furniture_ecom_app/my_ecom/maintenence.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';

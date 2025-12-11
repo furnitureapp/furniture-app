@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/services/auth_service.dart';
+import 'package:furniture_ecom_app/core/services_ecom/auth_service.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/provider/login_provider.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';

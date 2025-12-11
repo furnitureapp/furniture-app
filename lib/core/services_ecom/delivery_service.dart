@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import '../api/api_client.dart';
-import '../model/model_file.dart';
+import '../api_management_service/api_client.dart';
+import '../models_ecom/model_file.dart';
 import '../storage/secure_storage.dart';
 
 class DeliveryService {

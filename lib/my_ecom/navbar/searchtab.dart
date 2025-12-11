@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/model/model_file.dart';
-import 'package:furniture_ecom_app/core/services/search_service.dart';
+import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
+import 'package:furniture_ecom_app/core/services_ecom/search_service.dart';
 import 'dart:async';
 
 import 'package:furniture_ecom_app/my_ecom/navbar/result_screen.dart';

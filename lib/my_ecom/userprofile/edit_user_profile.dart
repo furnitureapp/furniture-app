@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/services/user_service.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/core/services_ecom/user_service.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class EditUserProfilePage extends StatefulWidget {

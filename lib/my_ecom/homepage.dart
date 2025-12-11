@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/model/model_file.dart';
-import 'package:furniture_ecom_app/core/services/marque_policy_terms.dart';
-import 'package:furniture_ecom_app/core/services/product_service.dart';
-import 'package:furniture_ecom_app/core/services/settings_service.dart';
+import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
+import 'package:furniture_ecom_app/core/services_ecom/marque_policy_terms.dart';
+import 'package:furniture_ecom_app/core/services_ecom/product_service.dart';
+import 'package:furniture_ecom_app/core/services_ecom/settings_service.dart';
 import 'package:furniture_ecom_app/my_ecom/banner_widget.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/categories_widget.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/drawer.dart';
@@ -21,6 +21,7 @@ import 'package:marquee/marquee.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shimmer/shimmer.dart';
 
 class Myhome extends StatefulWidget {
   const Myhome({super.key});
@@ -94,7 +95,7 @@ class _MyhomeState extends State<Myhome> {
             if (snapshot.connectionState == ConnectionState.waiting) {
               title = "KAI";
             } else if (snapshot.hasData && snapshot.data != null) {
-              title = snapshot.data!.name; 
+              title = snapshot.data!.name;
             }
             return MyAppbar(title: title);
           },
@@ -115,12 +116,30 @@ class _MyhomeState extends State<Myhome> {
               if (!isTablet) const SearchScreens(),
               const MyCategoriesWidget(),
               Padding(
-                padding: const EdgeInsets.all(8),
+                padding: const EdgeInsets.all(2),
                 child: FutureBuilder<Marquees?>(
                   future: _marqueeFuture,
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox(height: 30);
+                      return Container(
+                        height: 35,
+                        color: const Color.fromARGB(255, 233, 235, 233),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Container(
+                              height: 20,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
                     } else if (snapshot.hasData && snapshot.data != null) {
                       return Container(
                         height: 35,
@@ -169,8 +188,7 @@ class _MyhomeState extends State<Myhome> {
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
-                    color: mythemecolor
-                    
+                    color: mythemecolor,
                   ),
                 ),
               ),
@@ -180,9 +198,8 @@ class _MyhomeState extends State<Myhome> {
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
-                        child: CircularProgressIndicator(
-                      color: mythemecolor,
-                    ));
+                      child: CircularProgressIndicator(color: mythemecolor),
+                    );
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -212,9 +229,8 @@ class _MyhomeState extends State<Myhome> {
                         onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ProductDetailPagep(
-                              product: product,
-                            ),
+                            builder: (context) =>
+                                ProductDetailPagep(product: product),
                           ),
                         ),
                       );
@@ -229,26 +245,3 @@ class _MyhomeState extends State<Myhome> {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

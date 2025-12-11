@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/services/delivery_service.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/core/services_ecom/delivery_service.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 
 class AddDeliveryDetailsScreen extends StatefulWidget {
   const AddDeliveryDetailsScreen({super.key});

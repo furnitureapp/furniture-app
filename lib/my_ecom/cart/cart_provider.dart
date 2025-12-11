@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/services/cart_service.dart';
+import 'package:furniture_ecom_app/core/services_ecom/cart_service.dart';
 
 class CartProvider with ChangeNotifier {
     int _cartCount = 0;

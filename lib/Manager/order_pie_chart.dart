@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:furniture_ecom_app/core/api/dealers_api_service.dart';
+import 'package:furniture_ecom_app/core/api_management_service/dealers_api_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/my_constants/colors.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 
 class ManagerOrderStatusPieChart extends StatefulWidget {
   const ManagerOrderStatusPieChart({super.key});
