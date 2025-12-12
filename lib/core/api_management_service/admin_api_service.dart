@@ -269,6 +269,7 @@ class AdminApiService {
         "managercount": managercount,
         "totalrevenue": totalrevenue,
       };
+  
     } catch (e) {
       return {
         "success": false,

@@ -99,6 +99,7 @@ flutter:
   assets:
     - .env
     - assets/images/back.png
+    - assets/images/bab.png
     - assets/json/liv.json
     - assets/json/fur.json
     - assets/images/gro.jpg

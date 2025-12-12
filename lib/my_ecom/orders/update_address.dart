@@ -1349,6 +1349,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isTablet = MediaQuery.of(context).size.width > 600;
     final selectedAddress = context
         .watch<SelectedAddressProvider>()
         .selectedAddress;
@@ -1382,6 +1383,7 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
           ),
         ),
       ),
+      backgroundColor: const Color.fromARGB(255, 241, 224, 230),
       bottomNavigationBar: selectedAddress == null
           ? null
           : SafeArea(
@@ -1413,34 +1415,116 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
           ? const Center(child: AnimationPage1())
           : _deliveryAddresses.isEmpty
           ? Center(
-            child: SizedBox(
-                width: 150,
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final res = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => const AddDeliveryDetailsScreen(),
-                      ),
-                    );
-                    if (res == true) _fetchDeliveryAddresses();
-                  },
-                  style: ElevatedButton.styleFrom(
-                            backgroundColor: mythemecolor,
-                            padding: const EdgeInsets.all(10),
-                            textStyle: const TextStyle(
-                              fontSize: 12,
+              child: Padding(
+                padding: EdgeInsets.all(isTablet ? 40 : 20),
+                child: Card(
+                  elevation: 10,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.all(isTablet ? 30 : 20),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: mythemecolor1.withOpacity(0.5),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Image.asset(
+                          'assets/images/bab.png',
+                          height: 210,
+                          width: 190,
+                          fit: BoxFit.cover,
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          "Please Add Delivery Details!",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: isTablet ? 24 : 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        Text(
+                          "Right Product at Right Time for YOU!",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: isTablet ? 18 : 14,
+                            color: Colors.grey.shade700,
+                          ),
+                        ),
+                        const SizedBox(height: 25),
+                        ElevatedButton(
+                          onPressed: () async {
+                            final res = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    const AddDeliveryDetailsScreen(),
+                              ),
+                            );
+                            if (res == true) _fetchDeliveryAddresses();
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: isTablet
+                                ? Colors.white
+                                : mythemecolor,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isTablet ? 40 : 30,
+                              vertical: isTablet ? 14 : 12,
+                            ),
+                            textStyle: TextStyle(
+                              fontSize: isTablet ? 18 : 14,
                               fontWeight: FontWeight.bold,
                             ),
-                            foregroundColor: Colors.white,
+                            foregroundColor: isTablet
+                                ? mythemecolor
+                                : Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                  child: const Text("Add Delivery Address"),
+                          child: const Text("ADD ADDRESS DETAILS"),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-          )
+            )
+          // Center(
+          //   child: SizedBox(
+          //       width: 150,
+          //       child: ElevatedButton(
+          // onPressed: () async {
+          //   final res = await Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //       builder: (_) => const AddDeliveryDetailsScreen(),
+          //     ),
+          //   );
+          //   if (res == true) _fetchDeliveryAddresses();
+          // },
+          //         style: ElevatedButton.styleFrom(
+          //                   backgroundColor: mythemecolor,
+          //                   padding: const EdgeInsets.all(10),
+          //                   textStyle: const TextStyle(
+          //                     fontSize: 12,
+          //                     fontWeight: FontWeight.bold,
+          //                   ),
+          //                   foregroundColor: Colors.white,
+          //                   shape: RoundedRectangleBorder(
+          //                     borderRadius: BorderRadius.circular(10),
+          //                   ),
+          //                 ),
+          //         child: const Text("Add Delivery Address"),
+          //       ),
+          //     ),
+          // )
           : ListView.builder(
               padding: EdgeInsets.fromLTRB(12, 12, 12, bottomSpace),
               itemCount:
@@ -1468,17 +1552,17 @@ class _UpdateAddressScreenState extends State<UpdateAddressScreen> {
                           style: TextStyle(color: Colors.white),
                         ),
                         style: ElevatedButton.styleFrom(
-                            backgroundColor: mythemecolor,
-                            padding: const EdgeInsets.all(10),
-                            textStyle: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                          backgroundColor: mythemecolor,
+                          padding: const EdgeInsets.all(10),
+                          textStyle: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
                           ),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
                       ),
                     ),
                   );

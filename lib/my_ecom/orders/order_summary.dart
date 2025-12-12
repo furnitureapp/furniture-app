@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
 import 'package:furniture_ecom_app/core/services_ecom/cart_service.dart';
+import 'package:furniture_ecom_app/core/services_ecom/delivery_service.dart';
 import 'package:furniture_ecom_app/core/services_ecom/settings_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
@@ -33,11 +34,11 @@ class _OrderSummaryState extends State<OrderSummary> {
   String? selectedDeliveryId;
   String _userName = "";
   String _userPhone = "";
-  String _userHouseNo = "";
-  String _userStreetName = "";
-  String _userCity = "";
-  String _userState = "";
-  String _userPinCode = "";
+  String _houseNo = "";
+  String _streetName = "";
+  String _city = "";
+  String _state = "";
+  String _pinCode = "";
   int? _minOrderAmount;
 
   @override
@@ -45,7 +46,39 @@ class _OrderSummaryState extends State<OrderSummary> {
     super.initState();
     _fetchSettings();
     _fetchCartItems();
-    _syncAddressFromProvider(); // initialize UI from provider
+    _loadAddressFromProvider();
+    _validateAddressOnStart();
+  }
+
+  void _loadAddressFromProvider() {
+    final address = context.read<SelectedAddressProvider>().selectedAddress;
+
+    if (address == null) {
+      _clearAddress();
+      return;
+    }
+
+    setState(() {
+      selectedDeliveryId = address['id'];
+      _userName = address['dealername'] ?? "No Name";
+      _userPhone = address['phoneNo'] ?? "No Phone";
+      _houseNo = address['houseNo'] ?? "No HouseNo";
+      _streetName = address['streetName'] ?? "No StreetName";
+      _city = address['city'] ?? "No City";
+      _state = address['state'] ?? "No State";
+      _pinCode = address['pinCode'] ?? "No PinCode";
+    });
+  }
+
+  void _clearAddress() {
+    selectedDeliveryId = null;
+    _userName = "No Name";
+    _userPhone = "No Phone";
+    _houseNo = "No HouseNo";
+    _streetName = "No StreetName";
+    _city = "No City";
+    _state = "No State";
+    _pinCode = "No PinCode";
   }
 
   Future<void> _fetchSettings() async {
@@ -77,57 +110,37 @@ class _OrderSummaryState extends State<OrderSummary> {
     }
   }
 
-  // ---------- NEW: provider-based address sync ----------
-  // Reads currently selected address from SelectedAddressProvider and updates UI fields.
-  // Call this whenever you expect provider to have changed (e.g. after returning from UpdateAddressScreen).
-  Future<void> _syncAddressFromProvider() async {
-    final provider = context.read<SelectedAddressProvider>();
-    final addr = provider.selectedAddress;
-
-    if (addr == null) {
-      _clearAddressData();
-      return;
+  Future<bool> isDeliveryIdValid(String id) async {
+    try {
+      final list = await DeliveryService.mygetDeliveryDetails();
+      return list.any((item) => item['_id'] == id);
+    } catch (e) {
+      return false;
     }
-
-    setState(() {
-      selectedDeliveryId = provider.selectedAddressId;
-      _userName = addr['dealername']?.toString() ?? "No Name Available";
-      _userPhone = addr['phoneNo']?.toString() ?? "No Phone Available";
-      _userHouseNo = addr['houseNo']?.toString() ?? "";
-      _userStreetName = addr['streetName']?.toString() ?? "";
-      _userCity = addr['city']?.toString() ?? "";
-      _userState = addr['state']?.toString() ?? "";
-      _userPinCode = addr['pinCode']?.toString() ?? "";
-    });
   }
 
-  // Keep clearing function (UI-only)
-  void _clearAddressData() {
-    setState(() {
-      selectedDeliveryId = null;
-      _userName = "No Name Selected";
-      _userPhone = "No Phone Selected";
-      _userHouseNo = "";
-      _userStreetName = "";
-      _userCity = "";
-      _userState = "";
-      _userPinCode = "";
-    });
+  Future<void> _validateAddressOnStart() async {
+    final address = context.read<SelectedAddressProvider>().selectedAddress;
+
+    if (address == null) return; // nothing to validate
+
+    final id = address['id'];
+
+    final isValid = await isDeliveryIdValid(id);
+
+    if (!isValid) {
+      // clear provider
+      context.read<SelectedAddressProvider>().clear();
+
+      // update UI immediately
+      setState(() {
+        _clearAddress(); // your existing method
+      });
+    }
   }
 
-  // formatted address (unchanged)
   String get _formattedAddress {
-    return '$_userHouseNo, $_userStreetName, $_userCity, $_userState - $_userPinCode';
-  }
-
-  // address selected check now uses the local fields (keeps behaviour same)
-  bool get _isAddressSelected {
-    return selectedDeliveryId != null &&
-        _userHouseNo.isNotEmpty &&
-        _userStreetName.isNotEmpty &&
-        _userCity.isNotEmpty &&
-        _userState.isNotEmpty &&
-        _userPinCode.isNotEmpty;
+    return '$_houseNo, $_streetName, $_city, $_state - $_pinCode';
   }
 
   // store cart summary (unchanged)
@@ -143,16 +156,13 @@ class _OrderSummaryState extends State<OrderSummary> {
   }
 
   @override
-void dispose() {
-  super.dispose();
-}
-
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final isTablet = MediaQuery.of(context).size.width > 600;
-    // watch provider so UI can react if provider changes while this screen is visible
-    // but we still use our local fields for display - keep sync call when returning from UpdateAddress
     context.watch<SelectedAddressProvider>();
 
     return Scaffold(
@@ -189,15 +199,17 @@ void dispose() {
 
   // ---------------- Mobile view (kept same, only address flows use provider) ----------------
   Widget buildMobileView(BuildContext context) {
+    final isBelowMin =
+        _minOrderAmount != null && _totalAmount < _minOrderAmount!;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {
-              // keep behaviour: re-fetch address & cart
-              await _syncAddressFromProvider();
-              await _fetchCartItems();
+              _loadAddressFromProvider();
+              _fetchCartItems();
             },
             color: mythemecolor,
             backgroundColor: const Color.fromARGB(255, 245, 240, 242),
@@ -218,9 +230,7 @@ void dispose() {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-
-                    // If no address selected (based on local fields) show prompt
-                    if (!_isAddressSelected)
+                    if (_userName == "No Name" || selectedDeliveryId == null)
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16.0,
@@ -239,13 +249,13 @@ void dispose() {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(
+                                    const Icon(
                                       Icons.location_on,
                                       size: 20,
                                       color: mythemecolor,
                                     ),
                                     const SizedBox(width: 10),
-                                    Text(
+                                    const Text(
                                       "No Delivery Address Selected",
                                       style: TextStyle(
                                         fontSize: 12,
@@ -271,16 +281,19 @@ void dispose() {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            const UpdateAddressScreen(),
+                                            UpdateAddressScreen(),
                                       ),
                                     );
-                                    // after returning from update address screen, sync from provider
-                                    if (result == true) {
-                                      await _syncAddressFromProvider();
+
+                                    if (result == true && mounted) {
+                                      _loadAddressFromProvider();
+                                      setState(() {
+                                        _fetchCartItems();
+                                      });
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: mythemecolor1,
+                                    backgroundColor: mythemecolor,
                                     minimumSize: const Size(200, 40),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
@@ -293,7 +306,7 @@ void dispose() {
                                   label: const Text(
                                     "Add Delivery Details",
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 14,
                                       color: Colors.white,
                                     ),
                                   ),
@@ -303,6 +316,89 @@ void dispose() {
                           ),
                         ),
                       )
+                    // if (!_isAddressSelected)
+                    //   Padding(
+                    //     padding: const EdgeInsets.symmetric(
+                    //       horizontal: 16.0,
+                    //       vertical: 10.0,
+                    //     ),
+                    //     child: Card(
+                    //       color: Colors.white,
+                    //       elevation: 10,
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(12),
+                    //       ),
+                    //       child: Padding(
+                    //         padding: const EdgeInsets.all(16.0),
+                    //         child: Column(
+                    //           children: [
+                    //             Row(
+                    //               mainAxisAlignment: MainAxisAlignment.center,
+                    //               children: [
+                    //                 Icon(
+                    //                   Icons.location_on,
+                    //                   size: 20,
+                    //                   color: mythemecolor,
+                    //                 ),
+                    //                 const SizedBox(width: 10),
+                    //                 Text(
+                    //                   "No Delivery Address Selected",
+                    //                   style: TextStyle(
+                    //                     fontSize: 12,
+                    //                     fontWeight: FontWeight.bold,
+                    //                     color: Colors.black87,
+                    //                   ),
+                    //                 ),
+                    //               ],
+                    //             ),
+                    //             const SizedBox(height: 12),
+                    //             Text(
+                    //               "Please select a delivery address to proceed with your order.",
+                    //               style: TextStyle(
+                    //                 fontSize: 12,
+                    //                 color: Colors.grey[700],
+                    //               ),
+                    //               textAlign: TextAlign.center,
+                    //             ),
+                    //             const SizedBox(height: 16),
+                    //             ElevatedButton.icon(
+                    //               onPressed: () async {
+                    //                 final result = await Navigator.push(
+                    //                   context,
+                    //                   MaterialPageRoute(
+                    //                     builder: (context) =>
+                    //                         const UpdateAddressScreen(),
+                    //                   ),
+                    //                 );
+                    //                 // after returning from update address screen, sync from provider
+                    //                 if (result == true) {
+                    //                  _loadAddressFromProvider();
+                    //                 }
+                    //               },
+                    //               style: ElevatedButton.styleFrom(
+                    //                 backgroundColor: mythemecolor1,
+                    //                 minimumSize: const Size(200, 40),
+                    //                 shape: RoundedRectangleBorder(
+                    //                   borderRadius: BorderRadius.circular(8),
+                    //                 ),
+                    //               ),
+                    //               icon: const Icon(
+                    //                 Icons.edit_location_alt,
+                    //                 color: Colors.white,
+                    //               ),
+                    //               label: const Text(
+                    //                 "Add Delivery Details",
+                    //                 style: TextStyle(
+                    //                   fontSize: 12,
+                    //                   color: Colors.white,
+                    //                 ),
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   )
                     else
                       Center(
                         child: SizedBox(
@@ -331,16 +427,19 @@ void dispose() {
                                       ),
                                       ElevatedButton.icon(
                                         onPressed: () async {
-                                          bool? refresh = await Navigator.push(
+                                          final result = await Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  const UpdateAddressScreen(),
+                                                  UpdateAddressScreen(),
                                             ),
                                           );
-                                          if (refresh == true && mounted) {
-                                            // sync provider -> local UI
-                                            await _syncAddressFromProvider();
+
+                                          if (result == true && mounted) {
+                                            _loadAddressFromProvider();
+                                            setState(() {
+                                              _fetchCartItems();
+                                            });
                                           }
                                         },
                                         icon: const Icon(
@@ -357,6 +456,7 @@ void dispose() {
                                         ),
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: mythemecolor,
+
                                           minimumSize: const Size(50, 35),
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 15,
@@ -424,7 +524,7 @@ void dispose() {
                                       const SizedBox(width: 8),
                                       Expanded(
                                         child: Text(
-                                          "Address :   $_formattedAddress",
+                                          "Address :   $_houseNo, $_streetName,\n$_city, $_state - $_pinCode",
                                           style: const TextStyle(
                                             fontSize: 12,
                                             fontWeight: FontWeight.bold,
@@ -441,6 +541,144 @@ void dispose() {
                           ),
                         ),
                       ),
+                    // else
+                    //   Center(
+                    //     child: SizedBox(
+                    //       child: Card(
+                    //         color: Colors.white,
+                    //         elevation: 10,
+                    //         shape: RoundedRectangleBorder(
+                    //           borderRadius: BorderRadius.circular(10),
+                    //         ),
+                    //         child: Padding(
+                    //           padding: const EdgeInsets.all(15.0),
+                    //           child: Column(
+                    //             crossAxisAlignment: CrossAxisAlignment.start,
+                    //             children: [
+                    //               Row(
+                    //                 mainAxisAlignment:
+                    //                     MainAxisAlignment.spaceBetween,
+                    //                 children: [
+                    //                   const Text(
+                    //                     "Delivery Address",
+                    //                     style: TextStyle(
+                    //                       fontSize: 12,
+                    //                       fontWeight: FontWeight.bold,
+                    //                       color: mythemecolor,
+                    //                     ),
+                    //                   ),
+                    //                   ElevatedButton.icon(
+                    //                     onPressed: () async {
+                    //                       bool? refresh = await Navigator.push(
+                    //                         context,
+                    //                         MaterialPageRoute(
+                    //                           builder: (context) =>
+                    //                               const UpdateAddressScreen(),
+                    //                         ),
+                    //                       );
+                    //                       if (refresh == true && mounted) {
+                    //                         // sync provider -> local UI
+                    //                         _loadAddressFromProvider();
+                    //                       }
+                    //                     },
+                    //                     icon: const Icon(
+                    //                       Icons.edit_location_alt,
+                    //                       size: 12,
+                    //                       color: Colors.white,
+                    //                     ),
+                    //                     label: const Text(
+                    //                       "Change Address",
+                    //                       style: TextStyle(
+                    //                         fontSize: 12,
+                    //                         color: Colors.white,
+                    //                       ),
+                    //                     ),
+                    //                     style: ElevatedButton.styleFrom(
+                    //                       backgroundColor: mythemecolor,
+                    //                       minimumSize: const Size(50, 35),
+                    //                       padding: const EdgeInsets.symmetric(
+                    //                         horizontal: 15,
+                    //                         vertical: 10,
+                    //                       ),
+                    //                       shape: RoundedRectangleBorder(
+                    //                         borderRadius: BorderRadius.circular(
+                    //                           8,
+                    //                         ),
+                    //                       ),
+                    //                     ),
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //               const SizedBox(height: 10),
+                    //               Row(
+                    //                 children: [
+                    //                   const Icon(
+                    //                     Icons.person,
+                    //                     color: mythemecolor,
+                    //                     size: 18,
+                    //                   ),
+                    //                   const SizedBox(width: 8),
+                    //                   Expanded(
+                    //                     child: Text(
+                    //                       "Name     :   $_userName",
+                    //                       style: const TextStyle(
+                    //                         fontSize: 12,
+                    //                         fontWeight: FontWeight.bold,
+                    //                       ),
+                    //                     ),
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //               const SizedBox(height: 15),
+                    //               Row(
+                    //                 children: [
+                    //                   const Icon(
+                    //                     Icons.phone,
+                    //                     color: mythemecolor,
+                    //                     size: 18,
+                    //                   ),
+                    //                   const SizedBox(width: 8),
+                    //                   Expanded(
+                    //                     child: Text(
+                    //                       "Phone    :   $_userPhone",
+                    //                       style: const TextStyle(
+                    //                         fontSize: 12,
+                    //                         fontWeight: FontWeight.bold,
+                    //                       ),
+                    //                     ),
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //               const SizedBox(height: 15),
+                    //               Row(
+                    //                 crossAxisAlignment:
+                    //                     CrossAxisAlignment.start,
+                    //                 children: [
+                    //                   const Icon(
+                    //                     Icons.location_on,
+                    //                     color: mythemecolor,
+                    //                     size: 18,
+                    //                   ),
+                    //                   const SizedBox(width: 8),
+                    //                   Expanded(
+                    //                     child: Text(
+                    //                       "Address :   $_formattedAddress",
+                    //                       style: const TextStyle(
+                    //                         fontSize: 12,
+                    //                         fontWeight: FontWeight.bold,
+                    //                       ),
+                    //                       maxLines: 5,
+                    //                       overflow: TextOverflow.ellipsis,
+                    //                     ),
+                    //                   ),
+                    //                 ],
+                    //               ),
+                    //             ],
+                    //           ),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ),
                     const SizedBox(height: 20),
                     const Text(
                       "Items in Cart:",
@@ -551,7 +789,7 @@ void dispose() {
                                           'Quantity: ${item.quantity}',
                                           style: const TextStyle(
                                             fontSize: 12,
-                                            color: Colors.grey
+                                            color: Colors.grey,
                                           ),
                                         ),
                                       ],
@@ -600,32 +838,58 @@ void dispose() {
                     Text(
                       "Total: ₹${_totalAmount.round()}",
                       style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 12,
+                        color: mythemecolor,
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    // onPressed:
+                    //     (_minOrderAmount != null &&
+                    //         _totalAmount < _minOrderAmount!)
+                    //     ? null
+                    //     : () {
+                    //         if (!_isAddressSelected) {
+                    //           showTopSnackBar(
+                    //             context,
+                    //             "Please select a delivery address.",
+                    //           );
+                    //           return;
+                    //         }
                     ElevatedButton(
-                      onPressed:
-                          (_minOrderAmount != null && _totalAmount < _minOrderAmount!)
+                      onPressed: isBelowMin
                           ? null
-                          : () {
-                              if (!_isAddressSelected) {
+                          : () async {
+                              if (selectedDeliveryId == null) {
                                 showTopSnackBar(
                                   context,
                                   "Please select a delivery address.",
                                 );
                                 return;
                               }
+                              final isValid = await isDeliveryIdValid(
+                                selectedDeliveryId!,
+                              );
+                              if (!isValid) {
+                                showTopSnackBar(
+                                  context,
+                                  "Selected address no longer exists. Please select another!",
+                                );
+                                context.read<SelectedAddressProvider>().clear();
+                                setState(() {
+                                  _loadAddressFromProvider();
+                                });
+                                return;
+                              }
                               _storeCartSummaryForPayment();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => ExpansionTileControllers(
-                                    totalAmount: _totalAmount,
-                                    type: 'cartNow',
-                                    selectedDeliveryId: selectedDeliveryId,
-                                  ),
+                                  builder: (context) =>
+                                      ExpansionTileControllers(
+                                        totalAmount: _totalAmount,
+                                        type: 'cartNow',
+                                        selectedDeliveryId: selectedDeliveryId,
+                                      ),
                                 ),
                               );
                             },
@@ -658,14 +922,17 @@ void dispose() {
 
   // ---------------- Tablet view (kept same other than provider-based address) ----------------
   Widget buildTabletView(BuildContext context) {
+    final isBelowMin =
+        _minOrderAmount != null && _totalAmount < _minOrderAmount!;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Expanded(
           child: RefreshIndicator(
             onRefresh: () async {
-              await _syncAddressFromProvider();
-              await _fetchCartItems();
+              _loadAddressFromProvider();
+              _fetchCartItems();
             },
             color: mythemecolor,
             backgroundColor: const Color.fromARGB(255, 245, 240, 242),
@@ -686,7 +953,7 @@ void dispose() {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (!_isAddressSelected)
+                    if (_userName == "No Name" || selectedDeliveryId == null)
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16.0,
@@ -732,15 +999,19 @@ void dispose() {
                                 const SizedBox(height: 16),
                                 ElevatedButton.icon(
                                   onPressed: () async {
-                                    final result = await Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const UpdateAddressScreen(),
-                                      ),
-                                    );
-                                    if (result == true) {
-                                      await _syncAddressFromProvider();
+                                    final result =
+                                        await Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                const UpdateAddressScreen(),
+                                          ),
+                                        );
+                                   if (result == true && mounted) {
+                                      _loadAddressFromProvider();
+                                      setState(() {
+                                        _fetchCartItems();
+                                      });
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -797,15 +1068,19 @@ void dispose() {
                                       ),
                                       ElevatedButton.icon(
                                         onPressed: () async {
-                                          bool? refresh = await Navigator.pushReplacement(
+                                          final result = await Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) =>
-                                                  const UpdateAddressScreen(),
+                                                  UpdateAddressScreen(),
                                             ),
                                           );
-                                          if (refresh == true && mounted) {
-                                            await _syncAddressFromProvider();
+
+                                          if (result == true && mounted) {
+                                            _loadAddressFromProvider();
+                                            setState(() {
+                                              _fetchCartItems();
+                                            });
                                           }
                                         },
                                         icon: const Icon(
@@ -1021,7 +1296,7 @@ void dispose() {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              if (_minOrderAmount != null && _totalAmount < _minOrderAmount!)
+              if (isBelowMin)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 12.0),
                   child: Text(
@@ -1049,18 +1324,43 @@ void dispose() {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed:
-                        (_minOrderAmount != null && _totalAmount < _minOrderAmount!)
+                    // onPressed:
+                    //     (_minOrderAmount != null &&
+                    //         _totalAmount < _minOrderAmount!)
+                    //     ? null
+                    //     : () {
+                    //         if (!_isAddressSelected) {
+                    //           showTopSnackBar(
+                    //             context,
+                    //             "Please select a delivery address.",
+                    //           );
+                    //           return;
+                    //         }
+                    onPressed: isBelowMin
                         ? null
-                        : () {
-                            if (!_isAddressSelected) {
+                        : () async {
+                            if (selectedDeliveryId == null) {
                               showTopSnackBar(
                                 context,
                                 "Please select a delivery address.",
                               );
                               return;
                             }
-
+                            final isValid = await isDeliveryIdValid(
+                              selectedDeliveryId!,
+                            );
+                            if (!isValid) {
+                              showTopSnackBar(
+                                context,
+                                "Selected address no longer exists. Please select another!",
+                              );
+                              context.read<SelectedAddressProvider>().clear();
+                              setState(() {
+                                _loadAddressFromProvider();
+                              });
+                              return;
+                            }
+                            _storeCartSummaryForPayment();
                             Navigator.push(
                               context,
                               MaterialPageRoute(
@@ -1097,7 +1397,6 @@ void dispose() {
     );
   }
 }
-
 
 // import 'package:flutter/material.dart';
 // import 'package:furniture_ecom_app/core/model/model_file.dart';

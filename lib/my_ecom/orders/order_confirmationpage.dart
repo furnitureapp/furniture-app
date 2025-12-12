@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/services_ecom/delivery_service.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/provider/del_address_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -53,6 +53,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
     _fetchSettings();
     _loadAddressFromProvider();
     _storeBuyNowSummaryForPayment();
+    _validateAddressOnStart();
 
     _isLoading = false;
   }
@@ -81,7 +82,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
     }
   }
 
-  /// ✅ REPLACED SharedPrefs → Provider
+  
   void _loadAddressFromProvider() {
     final address = context.read<SelectedAddressProvider>().selectedAddress;
 
@@ -128,6 +129,35 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
       quantity = newQuantity;
       calculateTotalAmount();
     });
+  }
+
+  Future<void> _validateAddressOnStart() async {
+    final address = context.read<SelectedAddressProvider>().selectedAddress;
+
+    if (address == null) return; // nothing to validate
+
+    final id = address['id'];
+
+    final isValid = await isDeliveryIdValid(id);
+
+    if (!isValid) {
+      // clear provider
+      context.read<SelectedAddressProvider>().clear();
+
+      // update UI immediately
+      setState(() {
+        _clearAddress(); // your existing method
+      });
+    }
+  }
+
+  Future<bool> isDeliveryIdValid(String id) async {
+    try {
+      final list = await DeliveryService.mygetDeliveryDetails();
+      return list.any((item) => item['_id'] == id);
+    } catch (e) {
+      return false;
+    }
   }
 
   void calculateTotalAmount() {
@@ -223,19 +253,46 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                             onPressed: isBelowMin
                                 ? null
                                 : () async {
-                                    if (selectedDeliveryId == null ||
-                                        _houseNo == "No HouseNo") {
+                                    // 1. No provider address
+                                    if (selectedDeliveryId == null) {
                                       showTopSnackBar(
                                         context,
                                         "Please select a delivery address.",
                                       );
                                       return;
                                     }
+
+                                    // 2. Validate with DB
+                                    final isValid = await isDeliveryIdValid(
+                                      selectedDeliveryId!,
+                                    );
+
+                                    if (!isValid) {
+                                      showTopSnackBar(
+                                        context,
+                                        "Selected address no longer exists. Please select another!",
+                                      );
+
+                                      // Clear provider
+                                      context
+                                          .read<SelectedAddressProvider>()
+                                          .clear();
+
+                                      // 🚨 Very important: update UI immediately
+                                      setState(() {
+                                        _loadAddressFromProvider();
+                                      });
+
+                                      return;
+                                    }
+
+                                    // 3. If everything is valid → Go to payment
                                     await _storeBuyNowSummaryForPayment();
+
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) =>
+                                        builder: (_) =>
                                             ExpansionTileControllers(
                                               totalAmount: totalAmount,
                                               type: 'buyNow',
@@ -248,6 +305,33 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                       ),
                                     );
                                   },
+
+                            // : () async {
+                            //     if (selectedDeliveryId == null ||
+                            //        _userName  == "No Name") {
+                            //       showTopSnackBar(
+                            //         context,
+                            //         "Please select a delivery address.",
+                            //       );
+                            //       return;
+                            //     }
+                            //     await _storeBuyNowSummaryForPayment();
+                            //     Navigator.push(
+                            //       context,
+                            //       MaterialPageRoute(
+                            //         builder: (context) =>
+                            //             ExpansionTileControllers(
+                            //               totalAmount: totalAmount,
+                            //               type: 'buyNow',
+                            //               productId: widget.product.id,
+                            //               selectedDeliveryId:
+                            //                   selectedDeliveryId,
+                            //               quantity: quantity.toString(),
+                            //               offerId: widget.offerId,
+                            //             ),
+                            //       ),
+                            //     );
+                            //   },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: mythemecolor,
                               padding: const EdgeInsets.symmetric(
@@ -280,34 +364,88 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                           ),
                         ),
                         ElevatedButton(
+                          // onPressed: isBelowMin
+                          //     ? null
+                          //     : () async {
+                          //         if (selectedDeliveryId == null ||
+                          //             _houseNo == "No HouseNo") {
+                          //           showTopSnackBar(
+                          //             context,
+                          //             "Please select a delivery address.",
+                          //           );
+                          //           return;
+                          //         }
+                          //         await _storeBuyNowSummaryForPayment();
+                          //         Navigator.push(
+                          //           context,
+                          //           MaterialPageRoute(
+                          //             builder: (context) =>
+                          //                 ExpansionTileControllers(
+                          //                   totalAmount: totalAmount,
+                          //                   type: 'buyNow',
+                          //                   productId: widget.product.id,
+                          //                   selectedDeliveryId:
+                          //                       selectedDeliveryId,
+                          //                   quantity: quantity.toString(),
+                          //                   offerId: widget.offerId,
+                          //                 ),
+                          //           ),
+                          //         );
+                          //       },
                           onPressed: isBelowMin
                               ? null
                               : () async {
-                                  if (selectedDeliveryId == null ||
-                                      _houseNo == "No HouseNo") {
+                                  // 1. No provider address
+                                  if (selectedDeliveryId == null) {
                                     showTopSnackBar(
                                       context,
                                       "Please select a delivery address.",
                                     );
                                     return;
                                   }
+
+                                  // 2. Validate with DB
+                                  final isValid = await isDeliveryIdValid(
+                                    selectedDeliveryId!,
+                                  );
+
+                                  if (!isValid) {
+                                    showTopSnackBar(
+                                      context,
+                                      "Selected address no longer exists. Please select another!",
+                                    );
+
+                                    // Clear provider
+                                    context
+                                        .read<SelectedAddressProvider>()
+                                        .clear();
+
+                                    // 🚨 Very important: update UI immediately
+                                    setState(() {
+                                      _loadAddressFromProvider();
+                                    });
+
+                                    return;
+                                  }
+
+                                  // 3. If everything is valid → Go to payment
                                   await _storeBuyNowSummaryForPayment();
+
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) =>
-                                          ExpansionTileControllers(
-                                            totalAmount: totalAmount,
-                                            type: 'buyNow',
-                                            productId: widget.product.id,
-                                            selectedDeliveryId:
-                                                selectedDeliveryId,
-                                            quantity: quantity.toString(),
-                                            offerId: widget.offerId,
-                                          ),
+                                      builder: (_) => ExpansionTileControllers(
+                                        totalAmount: totalAmount,
+                                        type: 'buyNow',
+                                        productId: widget.product.id,
+                                        selectedDeliveryId: selectedDeliveryId,
+                                        quantity: quantity.toString(),
+                                        offerId: widget.offerId,
+                                      ),
                                     ),
                                   );
                                 },
+
                           style: ElevatedButton.styleFrom(
                             backgroundColor: mythemecolor,
                             padding: const EdgeInsets.all(10),
@@ -582,7 +720,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (_houseNo == "No HouseNo" || selectedDeliveryId == null)
+                    if (_userName == "No Name" || selectedDeliveryId == null)
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16.0,
@@ -1007,7 +1145,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    if (_houseNo == "No HouseNo" || selectedDeliveryId == null)
+                    if (_userName == "No Name" || selectedDeliveryId == null)
                       Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16.0,
@@ -1133,12 +1271,9 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                                   ),
                                             ),
                                           );
-                                          // if (result == true && mounted) {
-                                          //   _fetchSelectedAddress();
-                                          // }
+                                          
 
                                           if (result == true && mounted) {
-                                            // ✅ Load the updated address from Provider
                                             _loadAddressFromProvider();
                                             setState(() {
                                               calculateTotalAmount();
@@ -1254,7 +1389,6 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
     );
   }
 }
-
 
 // import 'package:flutter/material.dart';
 // import 'package:furniture_ecom_app/core/model/model_file.dart';

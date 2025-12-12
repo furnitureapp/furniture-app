@@ -252,7 +252,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
             strokeWidth: 2.5,
             child: Center(
               child: Card(
-                shadowColor: const Color.fromARGB(255, 34, 105, 37),
+                shadowColor: mythemecolor,
                 elevation: 5,
                 margin: const EdgeInsets.all(50),
                 child: Container(
@@ -285,7 +285,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                 isRead
                                     ? Container(
                                         decoration: const BoxDecoration(
-                                          color: Colors.green,
+                                          color: mythemecolor,
                                           shape: BoxShape.circle,
                                         ),
                                         padding: const EdgeInsets.all(8.0),
@@ -298,7 +298,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                     : const Icon(
                                         FontAwesomeIcons.bell,
                                         size: 35,
-                                        color: Colors.blue,
+                                        color: mythemecolor1,
                                       ),
                                 const SizedBox(width: 30),
                                 Expanded(
@@ -310,7 +310,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                         notification.title,
                                         style: const TextStyle(
                                           fontSize: 20,
-                                          color: Color.fromARGB(255, 7, 71, 9),
+                                          color: mythemecolor,
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
@@ -335,7 +335,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                 const Icon(
                                   Icons.chevron_right,
                                   size: 30,
-                                  color: Color.fromARGB(255, 2, 57, 4),
+                                  color: mythemecolor,
                                 ),
                               ],
                             ),
@@ -368,7 +368,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   return Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Card(
-                      color: const Color.fromARGB(255, 225, 207, 222),
+                      color: const Color.fromARGB(255, 225, 224, 225),
                       margin: const EdgeInsets.all(2),
                       child: GestureDetector(
                         onTap: () {
@@ -472,7 +472,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                         child: Text(
                           "Return to Shop!",
                           style: TextStyle(
-                            color: mythemecolor1,
+                            color: Colors.white,
                             fontSize: isTablet ? 18 : 12,
                           ),
                         ),
