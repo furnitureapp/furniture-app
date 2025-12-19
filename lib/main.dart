@@ -4,6 +4,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:furniture_ecom_app/app_preview/preview_mode_provider.dart';
+import 'package:furniture_ecom_app/core/storage/secure_storage.dart';
 import 'package:furniture_ecom_app/firebase_options.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/provider/del_address_provider.dart';
@@ -14,11 +16,13 @@ import 'package:furniture_ecom_app/my_ecom/cart/cart_screen.dart';
 import 'package:furniture_ecom_app/my_ecom/categories.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/favorites.dart';
-import 'package:furniture_ecom_app/my_ecom/navbar/notification_screen.dart';
+import 'package:furniture_ecom_app/my_ecom/navbar/privacy_contents/banking_info.dart';
+import 'package:furniture_ecom_app/my_ecom/notifications/notif_provider.dart';
+import 'package:furniture_ecom_app/my_ecom/notifications/notification_screen.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/privacy_contents/privacy_policy.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/privacy_contents/terms_conditions.dart';
 import 'package:furniture_ecom_app/my_ecom/notfound.dart';
-import 'package:furniture_ecom_app/my_ecom/notification.dart';
+import 'package:furniture_ecom_app/my_ecom/notifications/notification.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_detail.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_list.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
@@ -64,10 +68,27 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => CartProvider()),
         ChangeNotifierProvider(create: (context) => WishlistManager()),
         ChangeNotifierProvider(create: (_) => SelectedAddressProvider()),
-      ],
-      child: const MyApp(),
-    ),
-  );
+        ChangeNotifierProvider(create: (_) => AppModeProvider()),
+      ChangeNotifierProvider(
+        create: (context) {
+          final provider = NotificationProvider();
+
+          Future.microtask(() async {
+            final token = await SecureStorage.readToken();
+            final isLoggedIn = token != null && token.isNotEmpty;
+
+            if (isLoggedIn) {
+              await provider.loadInitialUnreadCount();
+            }
+          });
+
+          return provider;
+        },
+      ),
+    ],
+    child: const MyApp(),
+  ),
+);
 }
 
 //----------------------------------------------------------
@@ -125,6 +146,7 @@ class _MyAppState extends State<MyApp> {
         '/notification': (context) => const NotificationScreen(),
         '/privacy-policy': (context) => const PrivacyPolicyPage(),
         '/terms-and-conditions': (context) => const TermsPage(),
+        '/banking-information': (context) => const BankingInfoPage(),
         '/order-details': (context) {
           final args = ModalRoute.of(context)?.settings.arguments;
           if (args is Map<String, dynamic>) {

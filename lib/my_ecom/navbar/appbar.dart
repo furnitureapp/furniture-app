@@ -1,19 +1,21 @@
-
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_screen.dart';
 import 'package:furniture_ecom_app/constants/colors.dart';
+import 'package:furniture_ecom_app/my_ecom/homepage.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
-import 'package:furniture_ecom_app/my_ecom/navbar/notification_screen.dart';
+import 'package:furniture_ecom_app/my_ecom/notifications/notif_provider.dart';
+import 'package:furniture_ecom_app/my_ecom/notifications/notification_screen.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/searchtab.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart' as badges;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
-  final String title; // keep for compatibility with other pages
+  final String title;
+  final bool isPreview;
 
-  const MyAppbar({super.key, required this.title});
+  const MyAppbar({super.key, required this.title, this.isPreview = false});
 
   Future<bool> _isLoggedIn() async {
     final prefs = await SharedPreferences.getInstance();
@@ -76,16 +78,27 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        // Logo → Home
         Expanded(
           child: GestureDetector(
-            onTap: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const BottomNavBar()),
-                (route) => false,
-              );
-            },
+            onTap: isPreview
+                ? () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Myhome(isPreview: true),
+                      ),
+                      (route) => false,
+                    );
+                  }
+                : () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const BottomNavBar(),
+                      ),
+                      (route) => false,
+                    );
+                  },
             child: Image.asset(
               'assets/images/woodpecker_logo.png',
               height: 100,
@@ -97,24 +110,54 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
         Padding(
           padding: const EdgeInsets.only(right: 30),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildIconButton(
-                icon: Icons.notifications_active_outlined,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NotificationScreen(),
-                    ),
-                  );
-                },
-              ),
+              _buildNotificationBadge(context),
               const SizedBox(width: 20),
               _buildCartBadge(context, isLoggedIn),
             ],
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildNotificationBadge(BuildContext context) {
+    return Consumer<NotificationProvider>(
+      builder: (context, notifProvider, child) {
+        Widget icon = _buildIconButton(
+          icon: Icons.notifications_active_outlined,
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const NotificationScreen()),
+            );
+          },
+        );
+           if (isPreview) {
+          return icon;
+        }
+        if (notifProvider.unreadCount > 0) {
+          return badges.Badge(
+            position: badges.BadgePosition.topEnd(top: -5, end: -1),
+            badgeStyle: const badges.BadgeStyle(
+              badgeColor: Color.fromARGB(255, 63, 38, 84),
+              padding: EdgeInsets.all(4),
+            ),
+            badgeContent: Text(
+              "${notifProvider.unreadCount}",
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            child: icon,
+          );
+        }
+
+        return icon;
+      },
     );
   }
 
@@ -149,17 +192,8 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
 
           Row(
             children: [
-              _buildIconButton(
-                icon: Icons.notifications_active_outlined,
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NotificationScreen(),
-                    ),
-                  );
-                },
-              ),
+              _buildNotificationBadge(context),
+
               const SizedBox(width: 10),
               _buildCartBadge(context, isLoggedIn),
             ],
@@ -169,10 +203,9 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 
-  // 🔹 Reusable Icon Button
   Widget _buildIconButton({
     required IconData icon,
-    required VoidCallback onPressed,
+    VoidCallback? onPressed, // <- make it nullable
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -181,26 +214,33 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
       ),
       child: IconButton(
         icon: Icon(icon, color: mythemecolor, size: 23),
-        onPressed: onPressed,
+        onPressed: onPressed, // nullable is allowed
       ),
     );
   }
 
-  // 🔹 Cart Badge
   Widget _buildCartBadge(BuildContext context, bool isLoggedIn) {
     return Consumer<CartProvider>(
       builder: (context, cartProvider, child) {
         Widget cartIcon = _buildIconButton(
           icon: Icons.shopping_cart_outlined,
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const CartScreen()),
-            ).then((_) {
-              Provider.of<CartProvider>(context, listen: false).fetchCartCount();
-            });
-          },
+          onPressed: isPreview
+              ? null
+              : () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CartScreen()),
+                  ).then((_) {
+                    Provider.of<CartProvider>(
+                      context,
+                      listen: false,
+                    ).fetchCartCount();
+                  });
+                },
         );
+        if (isPreview) {
+          return cartIcon;
+        }
 
         if (isLoggedIn && cartProvider.cartCount > 0) {
           return badges.Badge(
@@ -211,7 +251,11 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
             ),
             badgeContent: Text(
               "${cartProvider.cartCount}",
-              style: const TextStyle(color: Colors.white, fontSize: 11),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             child: cartIcon,
           );
@@ -223,9 +267,97 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(90);
+  Size get preferredSize => const Size.fromHeight(70);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ // _buildIconButton(
+              //   icon: Icons.notifications_active_outlined,
+              //   onPressed: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => const NotificationScreen(),
+              //       ),
+              //     );
+              //   },
+              // ),
+
+
+
+  // Widget _buildIconButton({
+  //   required IconData icon,
+  //   required VoidCallback onPressed,
+  // }) {
+  //   return Container(
+  //     decoration: BoxDecoration(
+  //       color: mythemecolor1.withOpacity(0.15),
+  //       shape: BoxShape.circle,
+  //     ),
+  //     child: IconButton(
+  //       icon: Icon(icon, color: mythemecolor, size: 23),
+  //       onPressed: onPressed,
+  //     ),
+  //   );
+  // }
+
+  // Widget _buildCartBadge(BuildContext context, bool isLoggedIn) {
+  //   return Consumer<CartProvider>(
+  //     builder: (context, cartProvider, child) {
+  //       Widget cartIcon = _buildIconButton(
+  //         icon: Icons.shopping_cart_outlined,
+  //         onPressed: () {
+  //           Navigator.push(
+  //             context,
+  //             MaterialPageRoute(builder: (context) => const CartScreen()),
+  //           ).then((_) {
+  //             Provider.of<CartProvider>(context, listen: false).fetchCartCount();
+  //           });
+  //         },
+  //       );
+
+  //       if (isLoggedIn && cartProvider.cartCount > 0) {
+  //         return badges.Badge(
+  //           position: badges.BadgePosition.topEnd(top: -5, end: -1),
+  //           badgeStyle: const badges.BadgeStyle(
+  //             badgeColor: Color.fromARGB(255, 63, 38, 84),
+  //             padding: EdgeInsets.all(4),
+  //           ),
+  //           badgeContent: Text(
+  //             "${cartProvider.cartCount}",
+  //             style: const TextStyle(color: Colors.white, fontSize: 11),
+  //           ),
+  //           child: cartIcon,
+  //         );
+  //       } else {
+  //         return cartIcon;
+  //       }
+  //     },
+  //   );
+  // }
 
 
 // Color(0xFF461066), Color(0xFF69309E)

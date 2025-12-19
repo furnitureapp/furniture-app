@@ -1,6 +1,6 @@
 class OrderResponse {
   final int totalOrders;
-  final int overallDealerOrderAmount;
+  final double overallDealerOrderAmount;
   final int page;
   final int limit;
   final List<OrderModel> orders;
@@ -16,7 +16,8 @@ class OrderResponse {
   factory OrderResponse.fromJson(Map<String, dynamic> json) {
     return OrderResponse(
       totalOrders: json['totalOrders'] ?? 0,
-      overallDealerOrderAmount: json['overallDealerOrderAmount'] ?? 0,
+      overallDealerOrderAmount: (json['overallDealerOrderAmount'] ?? 0)
+          .toDouble(),
       page: json['page'] ?? 1,
       limit: json['limit'] ?? 50,
       orders: (json['orders'] as List? ?? [])
@@ -32,7 +33,7 @@ class OrderModel {
   final List<OrderItem> items;
   final int totalProducts;
   final DateTime orderDate;
-  final int overallTotal;
+final double overallTotal;
   final String paymentMethod;
   final String status;
 
@@ -51,12 +52,10 @@ class OrderModel {
     return OrderModel(
       orderId: json['orderId'],
       dealer: DealerModel.fromJson(json['dealer']),
-      items: (json['items'] as List)
-          .map((e) => OrderItem.fromJson(e))
-          .toList(),
+      items: (json['items'] as List).map((e) => OrderItem.fromJson(e)).toList(),
       totalProducts: json['totalProducts'] ?? 0,
       orderDate: DateTime.parse(json['orderDate']),
-      overallTotal: json['overallTotal'] ?? 0,
+overallTotal: (json['overallTotal'] ?? 0).toDouble(),
       paymentMethod: json['paymentMethod'] ?? '',
       status: json['status'] ?? '',
     );

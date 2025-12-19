@@ -9,7 +9,7 @@ import 'package:furniture_ecom_app/constants/snackbar.dart';
 import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/favorites.dart';
-import 'package:furniture_ecom_app/my_ecom/navbar/notification_screen.dart';
+import 'package:furniture_ecom_app/my_ecom/notifications/notification_screen.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_list.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -297,7 +297,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       child: ExpansionTile(
         leading: const Icon(Icons.person, color: Colors.black),
-        title: const Text('Personal Info', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+        title: const Text('Personal Info', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         children: [
           _buildInfoRow("Username", userName),
           _buildInfoRow("Email", userEmail),
@@ -314,7 +314,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("$label:", style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black)),
+          Text("$label:", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black)),
           Expanded(
             child: Text(value ?? "N/A", textAlign: TextAlign.right, maxLines: null, style: const TextStyle(fontSize: 12, color: Colors.black)),
           ),
@@ -338,7 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: [
             Icon(icon, color: Colors.black),
             const SizedBox(width: 16),
-            Expanded(child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+            Expanded(child: Text(title, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
             const Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
           ],
         ),
@@ -361,7 +361,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           children: const [
             Icon(Icons.logout, color: Colors.black),
             SizedBox(width: 16),
-            Expanded(child: Text("Logout", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+            Expanded(child: Text("Logout", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold))),
             Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
           ],
         ),

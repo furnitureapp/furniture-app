@@ -3,13 +3,20 @@ import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
 import 'package:furniture_ecom_app/core/services_ecom/product_service.dart';
 import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/constants/snackbar.dart';
+import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/offer/offer.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 import 'package:furniture_ecom_app/my_ecom/product/resuable_product.dart';
 
-
 class OfferPage extends StatefulWidget {
-  const OfferPage({super.key});
+  final bool enableWishlist;
+  final bool isPreview;
+
+  const OfferPage({
+    super.key,
+    this.enableWishlist = true,
+    this.isPreview = false,
+  });
 
   @override
   _OfferPageState createState() => _OfferPageState();
@@ -57,35 +64,15 @@ class _OfferPageState extends State<OfferPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [mythemecolor1, mythemecolor],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            title: Text(
-              "Top Deals for You!",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            centerTitle: true,
-          ),
+        child: MyAppbar(
+          title: "offers for you!",
+          isPreview: widget.isPreview,
         ),
       ),
+
       body: RefreshIndicator(
         onRefresh: () async {
-          setState(() {
-            OfferGridWidget();
-            fetchOffers();
-          });
+          await fetchOffers();
         },
         color: mythemecolor,
         backgroundColor: const Color.fromARGB(255, 245, 240, 242),
@@ -101,7 +88,7 @@ class _OfferPageState extends State<OfferPage> {
               const SizedBox(height: 10),
               _buildSubtitle("Check out the latest deals"),
               const SizedBox(height: 20),
-              const Center(child: OfferGridWidget()),
+              Center(child: OfferGridWidget(isPreview: widget.isPreview)),
               const SizedBox(height: 20),
               const Padding(
                 padding: EdgeInsets.all(16.0),
@@ -150,11 +137,14 @@ class _OfferPageState extends State<OfferPage> {
 
                         return MyProductWidget(
                           product: product,
+                          enableWishlist: !widget.isPreview,
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  ProductDetailPagep(product: product),
+                              builder: (context) => ProductDetailPagep(
+                                product: product,
+                                isPreview: widget.isPreview,
+                              ),
                             ),
                           ),
                         );

@@ -6,8 +6,9 @@ import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/constants/snackbar.dart';
+import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/drawer.dart';
-import 'package:furniture_ecom_app/my_ecom/navbar/new_appbar.dart';
+// import 'package:furniture_ecom_app/my_ecom/navbar/new_appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_confirmationpage.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 import 'package:furniture_ecom_app/my_ecom/wishlist/wishlist_manager.dart';
@@ -40,7 +41,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     return Scaffold(
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: NewAppbar(title: 'My Favorites'),
+        child: MyAppbar(title: "My Favos"),
       ),
       drawer: const CustomDrawer(),
 
@@ -55,7 +56,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
             //     fit: BoxFit.cover,
             //   ),
             // ),
-
             isTablet ? const MyTabView() : const MyMobileView(),
           ],
         ),
@@ -72,11 +72,8 @@ class MyMobileView extends StatelessWidget {
       final response = await CartService.addToCart(product, context);
       await Provider.of<CartProvider>(context, listen: false).fetchCartCount();
       if (response.containsKey('error')) {
-       
         showTopSnackBar(context, response['error']);
       } else {
-       
-
         showTopSnackBar(context, "Product Added to Cart!!");
       }
     } catch (e) {
@@ -158,30 +155,6 @@ class MyMobileView extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: 25),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.pushReplacementNamed(
-                                  context,
-                                  '/myhome',
-                                );
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: mythemecolor,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 30,
-                                  vertical: 12,
-                                ),
-                                textStyle: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: const Text("Go To Shop"),
-                            ),
                           ],
                         ),
                       ),
@@ -434,213 +407,247 @@ class MyMobileView extends StatelessWidget {
               //   },
               // );
               return ListView.builder(
-  padding: const EdgeInsets.all(10),
-  itemCount: wishlistItems.length,
-  itemBuilder: (context, index) {
-    final product = wishlistItems[index];
+                padding: const EdgeInsets.all(10),
+                itemCount: wishlistItems.length,
+                itemBuilder: (context, index) {
+                  final product = wishlistItems[index];
 
-    final productId = product['_id'] ?? '';
-    if (productId.isEmpty) {
-      return const Center(child: Text('Invalid Product Data'));
-    }
+                  final productId = product['_id'] ?? '';
+                  if (productId.isEmpty) {
+                    return const Center(child: Text('Invalid Product Data'));
+                  }
 
-    final productObj = Product(
-      id: product['_id'] ?? '',
-      title: product['title'] ?? '',
-      price: (product['price'] ?? 0).toDouble(),
-      offerPrice: (product['offerPrice'] ?? 0).toDouble(),
-      description: product['description'] ?? '',
-      images: List<String>.from(product['images'] ?? []),
-      gstPercentage: (product['gstPercentage'] ?? 0).toDouble(),
-      stock: product['stock'] != null ? product['stock'] as int : 0,
-      measurement: product['measurement'] ?? '',
-      size: product['size'] ?? '',
-      weight: product['weight'] ?? '',
-    );
+                  final productObj = Product(
+                    id: product['_id'] ?? '',
+                    title: product['title'] ?? '',
+                    price: (product['price'] ?? 0).toDouble(),
+                    offerPrice: (product['offerPrice'] ?? 0).toDouble(),
+                    description: product['description'] ?? '',
+                    images: List<String>.from(product['images'] ?? []),
+                    gstPercentage: (product['gstPercentage'] ?? 0).toDouble(),
+                    stock: product['stock'] != null
+                        ? product['stock'] as int
+                        : 0,
+                    measurement: product['measurement'] ?? '',
+                    size: product['size'] ?? '',
+                    weight: product['weight'] ?? '',
+                  );
 
-    return GestureDetector(
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => ProductDetailPagep(product: productObj),
-        ),
-      ),
-      child: Card(
-        elevation: 8,
-        shadowColor: Colors.green.shade100,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 5),
-        child: Padding(
-          padding: const EdgeInsets.all(15),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Product Image
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  productObj.images.isNotEmpty
-                      ? productObj.images[0]
-                      : 'https://yourbackupimage.com/placeholder.png',
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Image.asset(
-                      'assets/images/fav.png',
-                      width: 100,
-                      height: 100,
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 12),
-              // Product Details
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      productObj.title,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: mythemecolor,
+                  return GestureDetector(
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ProductDetailPagep(product: productObj),
                       ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: [
-                        Text(
-                          '₹${productObj.offerPrice.round()}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: mythemecolor,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        if (productObj.price > productObj.offerPrice)
-                          Text(
-                            '₹${productObj.price.round()}',
-                            style: const TextStyle(
-                              fontSize: 10,
-                              color: mythemecolor1,
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.lineThrough,
-                            ),
-                          ),
-                        const SizedBox(width: 6),
-                        if (productObj.price > productObj.offerPrice)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: mythemecolor1,
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Text(
-                              '${(((productObj.price - productObj.offerPrice) / productObj.price) * 100).round()}% OFF',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
+                    child: Card(
+                      elevation: 8,
+                      shadowColor: Colors.green.shade100,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 10,
+                        horizontal: 5,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(15),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Product Image
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.network(
+                                productObj.images.isNotEmpty
+                                    ? productObj.images[0]
+                                    : 'https://yourbackupimage.com/placeholder.png',
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    'assets/images/fav.png',
+                                    width: 100,
+                                    height: 100,
+                                  );
+                                },
                               ),
                             ),
-                          ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: wishlistManager.isInWishlist(productId)
-                                ? Colors.red.shade50
-                                : mythemecolor1.withOpacity(0.15),
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            icon: wishlistManager.isInWishlist(productId)
-                                ? const Icon(
-                                    Icons.favorite,
-                                    color: Color.fromARGB(255, 204, 112, 106),
-                                    size: 18,
-                                  )
-                                : const Icon(
-                                    Icons.favorite_border,
-                                    color: Colors.black54,
-                                    size: 18,
-                                  ),
-                            onPressed: () {
-                              wishlistManager.toggleWishlist(productId, context);
-                            },
-                          ),
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: productObj.stock > 0
-                                ? mythemecolor1.withOpacity(0.15)
-                                : Colors.grey.shade300,
-                            shape: BoxShape.circle,
-                          ),
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.shopping_cart_outlined,
-                              color: productObj.stock > 0
-                                  ? mythemecolor
-                                  : Colors.grey,
-                              size: 18,
-                            ),
-                            onPressed: productObj.stock > 0
-                                ? () => addToCartItem(productObj, context)
-                                : null,
-                          ),
-                        ),
-                        ElevatedButton(
-                          onPressed: productObj.stock > 0
-                              ? () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          OrderConfirmationPage(
-                                        product: productObj,
-                                      ),
+                            const SizedBox(width: 12),
+                            // Product Details
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    productObj.title,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                      color: mythemecolor,
                                     ),
-                                  )
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: mythemecolor,
-                            padding: EdgeInsets.all(0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        '₹${productObj.offerPrice.round()}',
+                                        style: const TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: mythemecolor,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      if (productObj.price >
+                                          productObj.offerPrice)
+                                        Text(
+                                          '₹${productObj.price.round()}',
+                                          style: const TextStyle(
+                                            fontSize: 10,
+                                            color: mythemecolor1,
+                                            fontWeight: FontWeight.bold,
+                                            decoration:
+                                                TextDecoration.lineThrough,
+                                          ),
+                                        ),
+                                      const SizedBox(width: 6),
+                                      if (productObj.price >
+                                          productObj.offerPrice)
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 6,
+                                            vertical: 2,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: mythemecolor1,
+                                            borderRadius: BorderRadius.circular(
+                                              5,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            '${(((productObj.price - productObj.offerPrice) / productObj.price) * 100).round()}% OFF',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 9,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 12),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color:
+                                              wishlistManager.isInWishlist(
+                                                productId,
+                                              )
+                                              ? Colors.red.shade50
+                                              : mythemecolor1.withOpacity(0.15),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: IconButton(
+                                          icon:
+                                              wishlistManager.isInWishlist(
+                                                productId,
+                                              )
+                                              ? const Icon(
+                                                  Icons.favorite,
+                                                  color: Color.fromARGB(
+                                                    255,
+                                                    204,
+                                                    112,
+                                                    106,
+                                                  ),
+                                                  size: 18,
+                                                )
+                                              : const Icon(
+                                                  Icons.favorite_border,
+                                                  color: Colors.black54,
+                                                  size: 18,
+                                                ),
+                                          onPressed: () {
+                                            wishlistManager.toggleWishlist(
+                                              productId,
+                                              context,
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: productObj.stock > 0
+                                              ? mythemecolor1.withOpacity(0.15)
+                                              : Colors.grey.shade300,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: IconButton(
+                                          icon: Icon(
+                                            Icons.shopping_cart_outlined,
+                                            color: productObj.stock > 0
+                                                ? mythemecolor
+                                                : Colors.grey,
+                                            size: 18,
+                                          ),
+                                          onPressed: productObj.stock > 0
+                                              ? () => addToCartItem(
+                                                  productObj,
+                                                  context,
+                                                )
+                                              : null,
+                                        ),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: productObj.stock > 0
+                                            ? () => Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      OrderConfirmationPage(
+                                                        product: productObj,
+                                                      ),
+                                                ),
+                                              )
+                                            : null,
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: mythemecolor,
+                                          padding: EdgeInsets.all(0),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                          ),
+                                        ),
+                                        child: const Text(
+                                          "BUY NOW",
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                          child: const Text(
-                            "BUY NOW",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                          ],
                         ),
-                      ],
-                    )
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  },
-);
-
+                      ),
+                    ),
+                  );
+                },
+              );
             },
           ),
         );

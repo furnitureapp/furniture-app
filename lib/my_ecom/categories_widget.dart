@@ -7,7 +7,9 @@ import 'package:furniture_ecom_app/my_ecom/subc_screen.dart';
 import 'package:shimmer/shimmer.dart';
 
 class MyCategoriesWidget extends StatefulWidget {
-  const MyCategoriesWidget({super.key});
+    final bool isPreview;
+
+  const MyCategoriesWidget({super.key,  this.isPreview = false, });
 
   @override
   _MyCategoriesWidgetState createState() => _MyCategoriesWidgetState();
@@ -84,7 +86,7 @@ Widget _buildExploreSection(List<Categorys> categories) {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CategoriesScreen()),
+                  MaterialPageRoute(builder: (context) => CategoriesScreen(isPreview: widget.isPreview,)),
                 );
               },
               child: Row(
@@ -143,6 +145,7 @@ Widget _buildExploreSection(List<Categorys> categories) {
             categoryId: category.id,
             wishlist: _wishlist,
             toggleWishlist: _toggleWishlist,
+            isPreview: widget.isPreview,
           ),
         ),
       );

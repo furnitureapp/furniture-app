@@ -196,7 +196,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                         child: const Text(
                           "NO",
                           style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: mythemecolor,
                           ),
@@ -215,8 +215,8 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                               },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: isButtonDisabled
-                              ? Colors.grey
-                              : Colors.red,
+                              ? const Color.fromARGB(255, 111, 109, 109)
+                              :mythemecolor1,
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 8,
@@ -228,7 +228,7 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen>
                         child: Text(
                           isButtonDisabled ? "CANCELLING..." : "YES, CANCEL",
                           style: const TextStyle(
-                            fontSize: 18,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
                             color: Colors.white,
                           ),

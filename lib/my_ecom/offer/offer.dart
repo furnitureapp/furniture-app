@@ -6,7 +6,9 @@ import 'package:furniture_ecom_app/my_ecom/offer/offer_detail.dart';
 import 'package:shimmer/shimmer.dart';
 
 class OfferGridWidget extends StatefulWidget {
-  const OfferGridWidget({super.key});
+    final bool isPreview;
+
+  const OfferGridWidget({super.key, this.isPreview = false, });
 
   @override
   State<OfferGridWidget> createState() => _OfferGridWidgetState();
@@ -243,7 +245,7 @@ class _OfferGridWidgetState extends State<OfferGridWidget> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        ProductDetailPage(offer: offer),
+                                        ProductDetailPage(offer: offer,isPreview: widget.isPreview),
                                   ),
                                 );
                               },

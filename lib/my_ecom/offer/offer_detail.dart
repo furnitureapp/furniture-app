@@ -5,6 +5,7 @@ import 'package:furniture_ecom_app/core/services_ecom/offers_service.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/constants/snackbar.dart';
+import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/offer/offer_reuable.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_confirmationpage.dart';
 
@@ -13,7 +14,13 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final Offer offer;
-  const ProductDetailPage({super.key, required this.offer});
+  final bool isPreview;
+
+  const ProductDetailPage({
+    super.key,
+    required this.offer,
+    this.isPreview = false,
+  });
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();
@@ -140,29 +147,12 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [mythemecolor1, mythemecolor],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            title: Text(
-              widget.offer.title,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            centerTitle: true,
-          ),
+        child: MyAppbar(
+          title: widget.offer.title,
+          isPreview: widget.isPreview, // ✅
         ),
       ),
+
       body: FutureBuilder<Offer>(
         future: _offersFuture,
         builder: (context, snapshot) {
@@ -257,10 +247,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
 
                   const Text(
                     'DESCRIPTION:',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, ),
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
-                  Text(offer.description, style: const TextStyle(fontSize: 12,)),
+                  Text(offer.description, style: const TextStyle(fontSize: 12)),
                   const SizedBox(height: 20),
                   _buildRelatedProducts(context, widget.offer.product.id),
                 ],
@@ -268,76 +258,77 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             ),
           ),
         ),
-        SafeArea(bottom: true, child: _buildActionButtons(offer)),
+        if (!widget.isPreview)
+          SafeArea(bottom: true, child: _buildActionButtons(offer)),
       ],
     );
   }
 
   Widget _buildPriceSection(Offer offer) {
-  final screenWidth = MediaQuery.of(context).size.width;
-  final bool isTablet = screenWidth > 600;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isTablet = screenWidth > 600;
 
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      // OFFER PRICE
-      Row(
-        children: [
-          Text(
-            "₹${offer.offerPrice.round()}",
-            style: TextStyle(
-              fontSize: isTablet ? 28 : 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(width: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-            decoration: BoxDecoration(
-              color: mythemecolor1,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Text(
-              "${(((offer.actualPrice - offer.offerPrice) / offer.actualPrice) * 100).round()}% OFF",
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // OFFER PRICE
+        Row(
+          children: [
+            Text(
+              "₹${offer.offerPrice.round()}",
               style: TextStyle(
-                color: Colors.white,
-                fontSize: isTablet ? 14 : 11,
+                fontSize: isTablet ? 28 : 22,
                 fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
             ),
-          ),
-        ],
-      ),
-
-      const SizedBox(height: 4),
-
-      // ORIGINAL PRICE + SAVE AMOUNT
-      Row(
-        children: [
-          Text(
-            "MRP: ₹${offer.actualPrice.round()}",
-            style: TextStyle(
-              fontSize: isTablet ? 16 : 13,
-              color: Colors.grey[600],
-              decoration: TextDecoration.lineThrough,
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: mythemecolor1,
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                "${(((offer.actualPrice - offer.offerPrice) / offer.actualPrice) * 100).round()}% OFF",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: isTablet ? 14 : 11,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          ),
-          const SizedBox(width: 10),
-          Text(
-            "You Save ₹${(offer.actualPrice - offer.offerPrice).round()}",
-            style: TextStyle(
-              fontSize: isTablet ? 16 : 13,
-              fontWeight: FontWeight.w600,
-              color: Colors.green.shade700,
-            ),
-          ),
-        ],
-      ),
-      
-      const SizedBox(height: 10),
+          ],
+        ),
 
-       Padding(
+        const SizedBox(height: 4),
+
+        // ORIGINAL PRICE + SAVE AMOUNT
+        Row(
+          children: [
+            Text(
+              "MRP: ₹${offer.actualPrice.round()}",
+              style: TextStyle(
+                fontSize: isTablet ? 16 : 13,
+                color: Colors.grey[600],
+                decoration: TextDecoration.lineThrough,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Text(
+              "You Save ₹${(offer.actualPrice - offer.offerPrice).round()}",
+              style: TextStyle(
+                fontSize: isTablet ? 16 : 13,
+                fontWeight: FontWeight.w600,
+                color: Colors.green.shade700,
+              ),
+            ),
+          ],
+        ),
+
+        const SizedBox(height: 10),
+
+        Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -348,9 +339,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             ],
           ),
         ),
-    ],
-  );
-}
+      ],
+    );
+  }
 
   Widget _premiumTag(IconData icon, String text) {
     return Container(
@@ -376,64 +367,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       ),
     );
   }
-
-
-  // Widget _buildPriceSection(Offer offer) {
-  //   final screenWidth = MediaQuery.of(context).size.width;
-  //   final bool isTablet = screenWidth > 600;
-  //   return Row(
-  //     children: [
-  //       Text(
-  //         'Offer Price : ₹${offer.offerPrice.round()}',
-  //         style: TextStyle(
-  //           color: const Color.fromARGB(255, 70, 56, 83),
-  //           fontWeight: FontWeight.bold,
-  //           fontSize: isTablet ? 22 : 14,
-  //         ),
-  //       ),
-  //       const SizedBox(width: 20),
-  //       Text(
-  //         ' ₹${offer.actualPrice.round()}',
-  //         style: TextStyle(
-  //           color: const Color.fromARGB(255, 94, 90, 90),
-  //           fontSize: isTablet ? 22 : 14,
-  //           fontWeight: FontWeight.bold,
-  //           decoration: TextDecoration.lineThrough,
-  //           decorationColor: Colors.black,
-  //         ),
-  //       ),
-  //       const SizedBox(width: 10),
-  //         _discountTag(
-  //         'SAVE ! ${(((offer.actualPrice - offer.offerPrice) / offer.actualPrice) * 100).round()}%',
-  //         mythemecolor,
-  //       ),
-  //       const SizedBox(width: 10),
-  //       _discountTag(
-  //         '₹${(offer.actualPrice - offer.offerPrice).round()} Saved',
-  //         mythemecolor1,
-  //       ),
-  //     ],
-  //   );
-  // }
-
-
-  // Widget _discountTag(String text, Color color) {
-  //   return Container(
-  //     padding: const EdgeInsets.all(5),
-  //     decoration: BoxDecoration(
-  //       color: color,
-  //       borderRadius: BorderRadius.circular(8),
-  //     ),
-  //     child: Text(
-  //       text,
-  //       style: const TextStyle(
-  //         color: Colors.white,
-  //         fontSize: 12,
-  //         fontWeight: FontWeight.bold,
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _buildAttributesSection(Offer offer) {
     return Column(
@@ -522,7 +455,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 ? 'ADD TO CART'
                                 : 'OUT OF STOCK'),
                       style: const TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
@@ -537,14 +470,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: offer.product.stock > 0
-                    ? mythemecolor
+                    ? adminPrimaryColor
                     : Colors.grey,
                 padding: const EdgeInsets.all(14),
               ),
               child: const Text(
                 'BUY NOW',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
@@ -611,8 +544,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ProductDetailPage(offer: relatedOffer),
+                            builder: (context) => ProductDetailPage(
+                              offer: relatedOffer,
+                              isPreview: widget.isPreview,
+                            ),
                           ),
                         );
                       },
@@ -715,10 +650,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 const SizedBox(height: 10),
                                 Text(
                                   offer.description,
-                                  style: const TextStyle(fontSize: 20, color:  Colors.grey),
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.grey,
+                                  ),
                                 ),
                                 const SizedBox(height: 20),
-                                _buildActionButtons(offer),
+                                if (!widget.isPreview)
+                                  _buildActionButtons(offer),
                               ],
                             ),
                           ),
@@ -783,7 +722,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             style: const TextStyle(fontSize: 20),
                           ),
                           const SizedBox(height: 20),
-                          _buildActionButtons(offer),
+                          if (!widget.isPreview) _buildActionButtons(offer),
                         ],
                       );
               },

@@ -21,10 +21,15 @@ const EdgeInsets _horizontalPadding = EdgeInsets.symmetric(horizontal: 12);
 class ProductDetailPagep extends StatefulWidget {
   final Product? product;
   final String? productId;
+  final bool isPreview;
 
-  // final Offer? offer;
 
-  const ProductDetailPagep({super.key, this.product, this.productId});
+  const ProductDetailPagep({
+    super.key,
+    this.product,
+    this.productId,
+    this.isPreview = false,
+  });
 
   @override
   State<ProductDetailPagep> createState() => _ProductDetailPagepState();
@@ -256,7 +261,8 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
             ),
           ),
         ),
-        SafeArea(bottom: true, child: _buildActionButtons(product)),
+        if (!widget.isPreview)
+          SafeArea(bottom: true, child: _buildActionButtons(product)),
       ],
     );
   }
@@ -417,7 +423,8 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                             style: const TextStyle(fontSize: 20),
                           ),
                           const SizedBox(height: 20),
-                          _buildActionButtons(product),
+                          if (!widget.isPreview)
+                            _buildActionButtons(product),
                         ],
                       );
               },
@@ -621,7 +628,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                                 ? 'ADD TO CART'
                                 : 'OUT OF STOCK'),
                       style: const TextStyle(
-                        fontSize: 14,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
                         color: mythemecolor,
                       ),
@@ -635,13 +642,13 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                   ? () => handleBuyNow(product, context)
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: product.stock > 0 ? mythemecolor : Colors.grey,
+                backgroundColor: product.stock > 0 ? adminPrimaryColor : Colors.grey,
                 padding: const EdgeInsets.all(8),
               ),
               child: const Text(
                 'BUY NOW',
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
                 ),
@@ -803,203 +810,270 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
   //   );
   // }
 
-Widget _buildRelatedOfferProducts(BuildContext context) {
-  final isTablet = MediaQuery.of(context).size.width > 600;
+  Widget _buildRelatedOfferProducts(BuildContext context) {
+    final isTablet = MediaQuery.of(context).size.width > 600;
 
-  return FutureBuilder<List<Offer>>(
-    future: OfferService.fetchOfferProductsAsOffers(),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(
-          child: CircularProgressIndicator(color: mythemecolor),
-        );
-      }
+    return FutureBuilder<List<Offer>>(
+      future: OfferService.fetchOfferProductsAsOffers(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(color: mythemecolor),
+          );
+        }
 
-      if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-        return const Center(child: Text('No offer products available.'));
-      }
+        if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No offer products available.'));
+        }
 
-      final offers = snapshot.data!;
+        final offers = snapshot.data!;
 
-      return SizedBox(
-        height: _listHeight,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          padding: _horizontalPadding,
-          itemCount: offers.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 12),
-          itemBuilder: (context, index) {
-            final offer = offers[index];
+        return SizedBox(
+          height: _listHeight,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: _horizontalPadding,
+            itemCount: offers.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final offer = offers[index];
 
-            final discountPercentage =
-                ((offer.actualPrice - offer.offerPrice) /
-                        offer.actualPrice) *
-                    100;
+              final discountPercentage =
+                  ((offer.actualPrice - offer.offerPrice) / offer.actualPrice) *
+                  100;
 
-            return SizedBox(
-              width: isTablet ? _tabletCardWidth : _mobileCardWidth,
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ProductDetailPage(offer: offer),
+              return SizedBox(
+                width: isTablet ? _tabletCardWidth : _mobileCardWidth,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProductDetailPage(offer: offer, isPreview: widget.isPreview),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: const Color.fromARGB(255, 224, 234, 224),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          blurRadius: 5,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                  );
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: const Color.fromARGB(255, 224, 234, 224),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        blurRadius: 5,
-                        spreadRadius: 2,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // IMAGE + DISCOUNT
-                      Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(12),
-                            ),
-                            child: Image.network(
-                              offer.images.isNotEmpty
-                                  ? offer.images.first
-                                  : 'https://via.placeholder.com/150',
-                              width: double.infinity,
-                              height: isTablet ? 150 : 160,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          if (offer.actualPrice > offer.offerPrice)
-                            Positioned(
-                              top: 8,
-                              right: 8,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  '${discountPercentage.round()}% OFF',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-
-                      // DETAILS
-                      Padding(
-                        padding: const EdgeInsets.all(8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // IMAGE + DISCOUNT
+                        Stack(
                           children: [
-                            Text(
-                              offer.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
+                            ClipRRect(
+                              borderRadius: const BorderRadius.vertical(
+                                top: Radius.circular(12),
+                              ),
+                              child: Image.network(
+                                offer.images.isNotEmpty
+                                    ? offer.images.first
+                                    : 'https://via.placeholder.com/150',
+                                width: double.infinity,
+                                height: isTablet ? 150 : 160,
+                                fit: BoxFit.contain,
                               ),
                             ),
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                Text(
-                                  '₹${offer.offerPrice.round()}',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green.shade700,
+                            if (offer.actualPrice > offer.offerPrice)
+                              Positioned(
+                                top: 8,
+                                right: 8,
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 4,
                                   ),
-                                ),
-                                const SizedBox(width: 6),
-                                Text(
-                                  '₹${offer.actualPrice.round()}',
-                                  style: const TextStyle(
-                                    fontSize: 12,
+                                  decoration: BoxDecoration(
                                     color: Colors.red,
-                                    decoration:
-                                        TextDecoration.lineThrough,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  child: Text(
+                                    '${discountPercentage.round()}% OFF',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
                           ],
                         ),
-                      ),
-                    ],
+
+                        // DETAILS
+                        Padding(
+                          padding: const EdgeInsets.all(8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                offer.title,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  Text(
+                                    '₹${offer.offerPrice.round()}',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.green.shade700,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    '₹${offer.actualPrice.round()}',
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.red,
+                                      decoration: TextDecoration.lineThrough,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-        ),
-      );
-    },
-  );
-}
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
 
   Widget _buildNoResultsUI(BuildContext context) {
-  final isTablet = MediaQuery.of(context).size.width >= 600;
+    final isTablet = MediaQuery.of(context).size.width >= 600;
 
-  return FutureBuilder<List<Product>>(
-    future: ProductService.fetchAllProducts(),
-    builder: (context, relatedSnapshot) {
-      if (relatedSnapshot.connectionState == ConnectionState.waiting) {
-        return const Center(
-          child: CircularProgressIndicator(color: mythemecolor),
+    return FutureBuilder<List<Product>>(
+      future: ProductService.fetchAllProducts(),
+      builder: (context, relatedSnapshot) {
+        if (relatedSnapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(color: mythemecolor),
+          );
+        }
+
+        if (relatedSnapshot.hasError) {
+          return Center(
+            child: Text('Failed to load products: ${relatedSnapshot.error}'),
+          );
+        }
+
+        if (!relatedSnapshot.hasData || relatedSnapshot.data!.isEmpty) {
+          return const Center(child: Text('No products available.'));
+        }
+
+        final relatedProducts = relatedSnapshot.data!;
+
+        return SizedBox(
+          height: _listHeight,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: _horizontalPadding,
+            itemCount: relatedProducts.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final product = relatedProducts[index];
+
+              return SizedBox(
+                width: isTablet ? _tabletCardWidth : _mobileCardWidth,
+                child: MyrelatedproductWidget(
+                  product: product,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProductDetailPagep(product: product, isPreview: widget.isPreview),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
         );
-      }
+      },
+    );
+  }
 
-      if (relatedSnapshot.hasError) {
-        return Center(
-          child: Text('Failed to load products: ${relatedSnapshot.error}'),
-        );
-      }
+  Widget _buildRelatedProducts(Product product, BuildContext context) {
+    final isTablet = MediaQuery.of(context).size.width >= 600;
 
-      if (!relatedSnapshot.hasData || relatedSnapshot.data!.isEmpty) {
-        return const Center(child: Text('No products available.'));
-      }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            'You Might Like These Products!',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+        const SizedBox(height: 16),
+        FutureBuilder<List<Product>>(
+          future: ProductService.getRelatedProducts(product.id),
+          builder: (context, relatedSnapshot) {
+            if (relatedSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(color: mythemecolor),
+              );
+            }
 
-      final relatedProducts = relatedSnapshot.data!;
+            if (relatedSnapshot.hasError) {
+              return _buildRelatedOfferProducts(context);
+            }
 
-      return SizedBox(
-        height: _listHeight,
-        child: ListView.separated(
-          scrollDirection: Axis.horizontal,
-          padding: _horizontalPadding,
-          itemCount: relatedProducts.length,
-          separatorBuilder: (_, __) => const SizedBox(width: 12),
-          itemBuilder: (context, index) {
-            final product = relatedProducts[index];
+            if (!relatedSnapshot.hasData || relatedSnapshot.data!.isEmpty) {
+              return _buildNoResultsUI(context);
+            }
+
+            final relatedProducts = relatedSnapshot.data!;
 
             return SizedBox(
-              width: isTablet ? _tabletCardWidth : _mobileCardWidth,
-              child: MyrelatedproductWidget(
-                product: product,
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          ProductDetailPagep(product: product),
+              height: _listHeight,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: _horizontalPadding,
+                itemCount: relatedProducts.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  final relatedProduct = relatedProducts[index];
+
+                  return SizedBox(
+                    width: isTablet ? _tabletCardWidth : _mobileCardWidth,
+                    child: MyrelatedproductWidget(
+                      product: relatedProduct,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                ProductDetailPagep(product: relatedProduct, isPreview: widget.isPreview,),
+                          ),
+                        );
+                      },
                     ),
                   );
                 },
@@ -1007,81 +1081,7 @@ Widget _buildRelatedOfferProducts(BuildContext context) {
             );
           },
         ),
-      );
-    },
-  );
-}
-
-
-Widget _buildRelatedProducts(Product product, BuildContext context) {
-  final isTablet = MediaQuery.of(context).size.width >= 600;
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 12),
-        child: Text(
-          'You Might Like These Products!',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-        ),
-      ),
-      const SizedBox(height: 16),
-      FutureBuilder<List<Product>>(
-        future: ProductService.getRelatedProducts(product.id),
-        builder: (context, relatedSnapshot) {
-          if (relatedSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(color: mythemecolor),
-            );
-          }
-
-          if (relatedSnapshot.hasError) {
-            return _buildRelatedOfferProducts(context);
-          }
-
-          if (!relatedSnapshot.hasData ||
-              relatedSnapshot.data!.isEmpty) {
-            return _buildNoResultsUI(context);
-          }
-
-          final relatedProducts = relatedSnapshot.data!;
-
-          return SizedBox(
-            height: _listHeight,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              padding: _horizontalPadding,
-              itemCount: relatedProducts.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 12),
-              itemBuilder: (context, index) {
-                final relatedProduct = relatedProducts[index];
-
-                return SizedBox(
-                  width:
-                      isTablet ? _tabletCardWidth : _mobileCardWidth,
-                  child: MyrelatedproductWidget(
-                    product: relatedProduct,
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              ProductDetailPagep(
-                                product: relatedProduct,
-                              ),
-                        ),
-                      );
-                    },
-                  ),
-                );
-              },
-            ),
-          );
-        },
-      ),
-    ],
-  );
-}
-
+      ],
+    );
+  }
 }

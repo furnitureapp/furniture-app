@@ -146,6 +146,20 @@ class CustomDrawer extends StatelessWidget {
                         Navigator.pushNamed(context, '/terms-and-conditions');
                       },
                     ),
+                    const Divider(),
+                    ListTile(
+                      leading: const Icon(
+                        Icons.account_balance,
+                        color: mythemecolor,
+                      ),
+                      title: Text(
+                        "Banking Information",
+                        style: TextStyle(fontSize: isTablet ? 19 : 14),
+                      ),
+                      onTap: () {
+                        Navigator.pushNamed(context, '/banking-information');
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -167,7 +181,7 @@ class CustomDrawer extends StatelessWidget {
                         errorBuilder: (context, error, stackTrace) =>
                             const Icon(Icons.broken_image, size: 40),
                       ),
-                      onTap: () => _launchUrl(settings.link),
+                      onTap: () => _launchUrl(settings.poweredByLink),
                     ),
                     const SizedBox(height: 5),
                     Text(

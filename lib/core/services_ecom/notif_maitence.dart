@@ -6,7 +6,9 @@ import '../storage/secure_storage.dart';
 
 class NotifMaintenanceService {
 
-  static Future<List<Notifications>> getNotifications() async {
+
+
+static Future<List<Notifications>> getNotifications() async {
   final token = await SecureStorage.getToken();
 
   if (token == null || token.isEmpty) {
@@ -14,67 +16,65 @@ class NotifMaintenanceService {
   }
 
   try {
-    final response = await ApiClient.get('/api/notifications', auth: true);
-    final Map<String, dynamic> responseData = json.decode(response.body);
-      debugPrint('🧾 notification get response body: $responseData');
-      debugPrint('🧾 notification get response body: ${response.body}');
-            debugPrint('🧾 notification get response body: ${response.statusCode}');
+    final response = await ApiClient.get(
+      '/api/notifications',
+      auth: true,
+    );
 
+    debugPrint('🧾 Status Code: ${response.statusCode}');
+    debugPrint('🧾 Response Body: ${response.body}');
 
-    if (response.statusCode == 200 && responseData['success'] == true) {
-      List<dynamic> body = responseData['data'];
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData =
+          json.decode(response.body);
 
-      if (body.isEmpty) return [];
+      if (responseData['success'] == true) {
+        final List<dynamic> notificationList =
+            responseData['notifications'] ?? [];
 
-      return body.map((item) => Notifications.fromJson(item)).toList();
-    } 
-    else if (responseData['message'] == 'No notifications found for this dealer') {
-      return [];
-    } 
-    else {
-      debugPrint('Error: ${response.body}');
-      throw Exception(
-        responseData['error'] ?? 'Failed to load notifications',
-      );
+        return notificationList
+            .map((item) => Notifications.fromJson(item))
+            .toList();
+      } else {
+        throw Exception(responseData['message'] ?? 'Failed to load notifications');
+      }
+    } else {
+      throw Exception('Server error: ${response.statusCode}');
     }
   } catch (e) {
-    debugPrint('Error fetching notifications: $e');
-    throw Exception('Something went wrong. Please try again.');
+    debugPrint('❌ Error fetching notifications: $e');
+    rethrow;
   }
 }
 
+static Future<bool> markNotificationAsRead(String notificationId) async {
+  final token = await SecureStorage.getToken();
 
-  // static Future<List<Notifications>> getNotifications() async {
-  //   final token = await SecureStorage.getToken();
+  if (token == null || token.isEmpty) {
+    throw Exception('Authentication token missing');
+  }
 
-  //   if (token == null || token.isEmpty) {
-  //     throw Exception('Authentication token is missing. Please log in again.');
-  //   }
+  try {
+    final response = await ApiClient.post(
+      '/api/notificationread/$notificationId',{},
+      auth: true,
+    );
 
-  //   try {
-  //     final response = await ApiClient.get('/api/notifications', auth: true);
-  //     final Map<String, dynamic> responseData = json.decode(response.body);
+    debugPrint('🧾 Read API Response of notification read: ${response.body}');
 
-  //     if (response.statusCode == 200 && responseData['success'] == true) {
-  //       List<dynamic> body = responseData['data'];
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData =
+          json.decode(response.body);
 
-  //       if (body.isEmpty) return [];
-
-  //       return body.map((item) => Notifications.fromJson(item)).toList();
-  //     } else if (responseData['message'] ==
-  //         'No notifications found for this user') {
-  //       return [];
-  //     } else {
-  //       debugPrint('Error: ${response.body}');
-  //       throw Exception(
-  //         responseData['error'] ?? 'Failed to load notifications',
-  //       );
-  //     }
-  //   } catch (e) {
-  //     debugPrint('Error fetching notifications: $e');
-  //     throw Exception('Something went wrong. Please try again.');
-  //   }
-  // }
+      return responseData['success'] == true;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    debugPrint('❌ Error marking notification as read: $e');
+    return false;
+  }
+}
 
   static Future<Map<String, dynamic>> fetchMaintenanceStatus() async {
     try {
@@ -90,3 +90,4 @@ class NotifMaintenanceService {
     }
   }
 }
+

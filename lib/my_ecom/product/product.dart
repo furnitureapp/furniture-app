@@ -10,10 +10,14 @@ import 'package:provider/provider.dart';
 
 class ProductPage extends StatefulWidget {
   final String subCategoryId;
+  final bool isPreview;
+  final bool enableWishlist;
 
   const ProductPage({
     super.key,
     required this.subCategoryId,
+    this.isPreview = false,
+    this.enableWishlist = true,
   });
 
   @override
@@ -29,7 +33,6 @@ class _ProductPageState extends State<ProductPage> {
     _productsFuture = ProductService.fetchProducts(widget.subCategoryId);
   }
 
-
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -38,9 +41,12 @@ class _ProductPageState extends State<ProductPage> {
     return Consumer<WishlistManager>(
       builder: (context, wishlistManager, child) {
         return Scaffold(
-          appBar: const PreferredSize(
+          appBar: PreferredSize(
             preferredSize: Size.fromHeight(60),
-            child: MyAppbar(title: 'Products'),
+            child: MyAppbar(
+              title: 'Products',
+              isPreview: widget.isPreview, 
+            ),
           ),
           body: FutureBuilder<List<Product>>(
             future: _productsFuture,
@@ -74,24 +80,36 @@ class _ProductPageState extends State<ProductPage> {
                     crossAxisCount: isTablet ? 4 : 2,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio:
-                        isTablet ? 0.7 : 0.72, // Adjusted to reduce empty space
+                    childAspectRatio: isTablet
+                        ? 0.7
+                        : 0.72, // Adjusted to reduce empty space
                   ),
                   itemCount: products.length,
                   itemBuilder: (context, index) {
                     final product = products[index];
 
+                    // return MyProductWidget(
+                    //   product: product,
+                    //   onTap: () => Navigator.push(
+                    //     context,
+                    //     MaterialPageRoute(
+                    //       builder: (context) =>
+                    //           ProductDetailPagep(product: product),
+                    //     ),
+                    //   ),
+                    // );
                     return MyProductWidget(
                       product: product,
+                      enableWishlist: !widget.isPreview, 
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => ProductDetailPagep(
                             product: product,
+                            isPreview: widget.isPreview,
                           ),
                         ),
                       ),
-                    
                     );
                   },
                 ),
@@ -103,6 +121,3 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 }
-
-
-

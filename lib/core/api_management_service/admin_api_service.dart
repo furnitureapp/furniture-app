@@ -245,7 +245,7 @@ class AdminApiService {
       }
 
       final int totalOrders = ordersResponse.totalOrders;
-      final int totalrevenue = ordersResponse.overallDealerOrderAmount;
+      final double totalrevenue = ordersResponse.overallDealerOrderAmount;
       final adminsResponse = await AdminApiService.fetchAdmins();
       final int adminCount = adminsResponse['count'] ?? 0;
       final marketersResponse = await AdminApiService.fetchMarketers();

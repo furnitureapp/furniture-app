@@ -18,50 +18,48 @@ class DealerApiService {
     }
   }
 
-// static Future<Map<String, dynamic>> getDealerStatus() async {
-//   final prefs = await SharedPreferences.getInstance();
-//   final email = prefs.getString("dealer_email");
-//   final username = prefs.getString("dealer_username");
+  // static Future<Map<String, dynamic>> getDealerStatus() async {
+  //   final prefs = await SharedPreferences.getInstance();
+  //   final email = prefs.getString("dealer_email");
+  //   final username = prefs.getString("dealer_username");
 
-//   if (email == null && username == null) {
-//     throw Exception("Dealer identity not found");
-//   }
+  //   if (email == null && username == null) {
+  //     throw Exception("Dealer identity not found");
+  //   }
 
-//   final uri = Uri.parse(
-//     email != null
-//         ? "$baseUrl/api/users/dealerstatus?email=$email"
-//         : "$baseUrl/api/users/dealerstatus?username=$username",
-//   );
+  //   final uri = Uri.parse(
+  //     email != null
+  //         ? "$baseUrl/api/users/dealerstatus?email=$email"
+  //         : "$baseUrl/api/users/dealerstatus?username=$username",
+  //   );
 
-//   final response = await http.get(uri);
-//    print('🔹 Dealers API status check: ${response.statusCode}');
-//       print('🔹 Response of status check: ${response.body}');
+  //   final response = await http.get(uri);
+  //    print('🔹 Dealers API status check: ${response.statusCode}');
+  //       print('🔹 Response of status check: ${response.body}');
 
-//   if (response.statusCode == 200) {
-//     return jsonDecode(response.body);
-//   } else {
-//     throw Exception("Failed to fetch dealer status");
-//   }
-// }
+  //   if (response.statusCode == 200) {
+  //     return jsonDecode(response.body);
+  //   } else {
+  //     throw Exception("Failed to fetch dealer status");
+  //   }
+  // }
 
-static Future<Map<String, dynamic>> getDealerStatus() async {
-  final prefs = await SharedPreferences.getInstance();
-final email = prefs.getString("dealer_email");
+  static Future<Map<String, dynamic>> getDealerStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString("dealer_email");
 
-  if (email == null) {
-    throw Exception("Pending dealer email not found");
-  }
+    if (email == null) {
+      throw Exception("Pending dealer email not found");
+    }
 
-  final uri = Uri.parse(
-    "$baseUrl/api/users/dealerstatus?email=$email",
-  );
+    final uri = Uri.parse("$baseUrl/api/users/dealerstatus?email=$email");
 
-  final response = await http.get(uri);
+    final response = await http.get(uri);
 
-  print('🔹 Dealer status check api: ${response.statusCode}');
-  print('🔹 Dealer status response body: ${response.body}');
+    print('🔹 Dealer status check api: ${response.statusCode}');
+    print('🔹 Dealer status response body: ${response.body}');
 
-   if (response.statusCode != 200) {
+    if (response.statusCode != 200) {
       throw Exception("Failed to fetch dealer status");
     }
 
@@ -74,7 +72,6 @@ final email = prefs.getString("dealer_email");
     return decoded;
   }
 
-
   static Future<Map<String, dynamic>> selfregisterDealer({
     required String companyName,
     required String phoneNumber,
@@ -85,7 +82,6 @@ final email = prefs.getString("dealer_email");
     required String password,
   }) async {
     try {
-      
       final prefs = await SharedPreferences.getInstance();
       // final authToken = prefs.getString('auth_token') ?? '';
       final gstToken = prefs.getString('gst_verification_token') ?? '';
@@ -146,7 +142,6 @@ final email = prefs.getString("dealer_email");
       return {'success': false, 'message': 'Error registering dealer: $e'};
     }
   }
-
 
   static Future<Map<String, dynamic>> registerDealerbyMarketer({
     required String companyName,
@@ -419,68 +414,70 @@ final email = prefs.getString("dealer_email");
     }
   }
 
+  static Future<Map<String, dynamic>> fetchActivities({
+    String? role,
+    String? actionType,
+    String? startDate,
+    String? endDate,
+    // int page = 1,
+    // int limit = 20,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final authToken = prefs.getString('auth_token');
 
-static Future<Map<String, dynamic>> fetchActivities({
-  String? role,
-  String? actionType,
-  String? startDate,
-  String? endDate,
-  int page = 1,
-  int limit = 20,
-}) async {
-  try {
-    final prefs = await SharedPreferences.getInstance();
-    final authToken = prefs.getString('auth_token');
+      if (authToken == null) {
+        return {
+          'success': false,
+          'message': 'Unauthorized. Please login again.',
+        };
+      }
 
-    if (authToken == null) {
-      return {
-        'success': false,
-        'message': 'Unauthorized. Please login again.',
+      final Map<String, String> queryParams = {
+        // 'page': page.toString(),
+        // 'limit': limit.toString(),
       };
+
+      if (role != null && role != 'All') queryParams['role'] = role;
+      if (actionType != null && actionType != 'All') {
+        queryParams['actionType'] = actionType;
+      }
+      if (startDate != null) queryParams['startDate'] = startDate;
+      if (endDate != null) queryParams['endDate'] = endDate;
+
+      final uri = Uri.parse(
+        '$baseUrl/api/activity-logs',
+      ).replace(queryParameters: queryParams);
+
+      final response = await http.get(
+        uri,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $authToken',
+        },
+      );
+
+      final jsonBody = jsonDecode(response.body);
+      print("📌 Activity Logs Response: $uri");
+      print("📌 Activity Logs Response: ${response.statusCode}");
+      print(jsonBody);
+
+      if (response.statusCode == 200) {
+        return {
+          'success': true,
+          'data': jsonBody['data'],
+          'pagination': jsonBody['pagination'],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': jsonBody['message'] ?? 'Failed to load activities',
+        };
+      }
+    } catch (err) {
+      return {'success': false, 'message': 'Server error: $err'};
     }
-
-    final Map<String, String> queryParams = {
-      'page': page.toString(),
-      'limit': limit.toString(),
-    };
-
-    if (role != null && role != 'All') queryParams['role'] = role;
-    if (actionType != null && actionType != 'All') queryParams['actionType'] = actionType;
-    if (startDate != null) queryParams['startDate'] = startDate;
-    if (endDate != null) queryParams['endDate'] = endDate;
-
-    final uri = Uri.parse('$baseUrl/api/activity-logs')
-        .replace(queryParameters: queryParams);
-
-    final response = await http.get(
-      uri,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $authToken',
-      },
-    );
-
-    final jsonBody = jsonDecode(response.body);
-
-    print("📌 Activity Logs Response: ${response.statusCode}");
-    print(jsonBody);
-
-    if (response.statusCode == 200) {
-      return {
-        'success': true,
-        'data': jsonBody['data'],
-        'pagination': jsonBody['pagination'],
-      };
-    } else {
-      return {
-        'success': false,
-        'message': jsonBody['message'] ?? 'Failed to load activities',
-      };
-    }
-  } catch (err) {
-    return {'success': false, 'message': 'Server error: $err'};
   }
-}
 
   static Future<Map<String, dynamic>> fetchDealersManagers({
     String? search,

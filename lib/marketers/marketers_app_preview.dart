@@ -1,21 +1,33 @@
+
+
 import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/marketers/marketer_dashboard.dart';
+import 'package:furniture_ecom_app/administration_app/marketer_app/marketer_dashboard.dart';
 import 'package:furniture_ecom_app/constants/colors.dart';
-// import 'package:furniture_ecom_app/my_ecom/splash_screen.dart';
+import 'package:furniture_ecom_app/my_ecom/homepage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MarketersAppPreview extends StatelessWidget {
   const MarketersAppPreview({super.key});
 
+  void _open(BuildContext context, int type) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => Myhome(isPreview: true, typeOfProduct: type),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final bool isTablet = MediaQuery.of(context).size.width >= 600;
+
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey.shade100,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80.0),
         child: Container(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
                 Color.fromARGB(255, 221, 197, 251),
@@ -25,6 +37,7 @@ class MarketersAppPreview extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
+            color: mythemecolor,
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(50),
               bottomRight: Radius.circular(50),
@@ -33,11 +46,11 @@ class MarketersAppPreview extends StatelessWidget {
           child: AppBar(
             iconTheme: const IconThemeData(color: mythemecolor),
             title: Padding(
-              padding: const EdgeInsets.only(top: 5),
+              padding: EdgeInsets.only(top: 5),
               child: Text(
-                'DEALERS APP PREVIEW',
+                'APP PREVIEW',
                 style: GoogleFonts.poppins(
-                  fontSize: isTablet(context)? 22: 12,
+                  fontSize: isTablet ? 22 : 12,
                   fontWeight: FontWeight.w600,
                   color: mythemecolor,
                 ),
@@ -50,27 +63,53 @@ class MarketersAppPreview extends StatelessWidget {
         ),
       ),
       drawer: const MarketerDrawer(currentPage: "App Preview"),
-      body: Center(
-        child: ElevatedButton(
-          onPressed:(){
-            //  Navigator.push(
-            //             context,
-            //             MaterialPageRoute(
-            //               builder: (context) => const SplashScreen(),
-            //             ),
-            //           );
-          } ,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: mythemecolor,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+      body: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Preview Dealer App',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-          ),
-          child:  Text(
-            "Open App Preview",
-            style: TextStyle(fontSize:  isTablet(context) ? 22 : 12, fontWeight: FontWeight.w600, color: Colors.white),
-          ),
+            const SizedBox(height: 30),
+
+            Center(
+              child: SizedBox(
+                width: 150,
+                child: ElevatedButton(
+                  onPressed: () => _open(context, 1),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: mythemecolor1,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  child: const Text(
+                    'Type 1 Home',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            SizedBox(
+              width: 150,
+              child: ElevatedButton(
+                onPressed: () => _open(context, 2),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: mythemecolor,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  minimumSize: const Size(double.infinity, 50),
+                ),
+                child: const Text(
+                  'Type 2 Home',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

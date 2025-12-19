@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
 import 'package:furniture_ecom_app/core/services_ecom/orders_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/constants/colors.dart';
+import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/drawer.dart';
-import 'package:furniture_ecom_app/my_ecom/navbar/new_appbar.dart';
+// import 'package:furniture_ecom_app/my_ecom/navbar/new_appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_detail.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
@@ -62,7 +62,7 @@ class _OrderListPageState extends State<OrderListPage> {
       return const Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(60),
-          child: NewAppbar(title: 'My Orders'),
+          child: MyAppbar(title: "categories"),
         ),
         drawer:  CustomDrawer(),
 
@@ -70,117 +70,11 @@ class _OrderListPageState extends State<OrderListPage> {
       );
     }
 
-    if (!_isLoggedIn) {
-      return Scaffold(
-        appBar: const PreferredSize(
-          preferredSize: Size.fromHeight(60),
-          child: NewAppbar(title: 'My Orders'),
-        ),
-        drawer: const CustomDrawer(),
-
-        body: SizedBox.expand(
-          child: Stack(
-            children: [
-              Positioned.fill(
-                child: Image.asset(
-                  isTablet
-                      ? 'assets/images/theme.png'
-                      : 'assets/images/theme.png',
-                  fit: BoxFit.cover,
-                ),
-              ),
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.all(isTablet ? 40 : 20),
-                  child: Card(
-                    elevation: 10,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Container(
-                      padding: EdgeInsets.all(isTablet ? 30 : 20),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: mythemecolor1,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Lottie.asset(
-                            'assets/json/em.json',
-                            width: 130,
-                            height: 130,
-                            fit: BoxFit.contain,
-                          ),
-                          if (!isTablet) const SizedBox(height: 5),
-                          Text(
-                            "You are not logged in!",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: isTablet ? 24 : 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Text(
-                            "Stay Logged to See Your Orders!",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: isTablet ? 18 : 14,
-                              color: Colors.grey.shade700,
-                            ),
-                          ),
-                          const SizedBox(height: 25),
-                          ElevatedButton(
-                            onPressed: () async {
-                              SharedPreferences prefs =
-                                  await SharedPreferences.getInstance();
-                              await prefs.setString(
-                                'redirectRoute',
-                                '/myorders',
-                              );
-
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const LoginScreen(),
-                                ),
-                              );
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: mythemecolor,
-                              padding: EdgeInsets.symmetric(
-                                horizontal: isTablet ? 40 : 30,
-                                vertical: isTablet ? 14 : 12,
-                              ),
-                              textStyle: TextStyle(
-                                fontSize: isTablet ? 18 : 14,
-                                fontWeight: FontWeight.bold,
-                              ),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                            ),
-                            child: const Text("Go To Login"),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+   
     return Scaffold(
       appBar: const PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: NewAppbar(title: 'My Orders'),
+        child: MyAppbar(title: "My Orders"),
       ),
       drawer: const CustomDrawer(),
 
@@ -495,12 +389,7 @@ class _OrderListPageState extends State<OrderListPage> {
     return SizedBox.expand(
       child: Stack(
         children: [
-          Positioned.fill(
-            child: Image.asset(
-              isTablet ? 'assets/images/theme.png' : 'assets/images/theme.png',
-              fit: BoxFit.cover,
-            ),
-          ),
+         
           Center(
             child: Padding(
               padding: EdgeInsets.all(isTablet ? 40 : 20),
@@ -513,7 +402,7 @@ class _OrderListPageState extends State<OrderListPage> {
                   padding: EdgeInsets.all(isTablet ? 30 : 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
-                    color: mythemecolor1,
+                    color: mythemecolor1.withOpacity(0.5),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -545,31 +434,7 @@ class _OrderListPageState extends State<OrderListPage> {
                         ),
                       ),
                       const SizedBox(height: 25),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushReplacementNamed(context, '/myhome');
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: isTablet
-                              ? Colors.white
-                              : mythemecolor,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isTablet ? 40 : 30,
-                            vertical: isTablet ? 14 : 12,
-                          ),
-                          textStyle: TextStyle(
-                            fontSize: isTablet ? 18 : 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          foregroundColor: isTablet
-                              ? mythemecolor
-                              : Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text("Go To Shop"),
-                      ),
+                     
                     ],
                   ),
                 ),

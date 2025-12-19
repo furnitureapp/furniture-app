@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
 import 'package:furniture_ecom_app/core/services_ecom/cart_service.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/constants/snackbar.dart';
-import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_summary.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 
@@ -209,131 +207,6 @@ class _CartScreenState extends State<CartScreen> {
       );
     }
 
-    if (!_isLoggedIn) {
-      return Scaffold(
-        appBar: PreferredSize(
-          preferredSize: Size.fromHeight(kToolbarHeight),
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [mythemecolor1, mythemecolor],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              title: Text(
-                "My Cart",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              centerTitle: true,
-            ),
-          ),
-        ),
-        body: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.asset(
-                isTablet
-                    ? 'assets/images/theme.png'
-                    : 'assets/images/theme.png',
-                fit: BoxFit.fill,
-              ),
-            ),
-            Center(
-              child: Padding(
-                padding: EdgeInsets.all(isTablet ? 40 : 20),
-                child: Card(
-                  elevation: 10,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.all(isTablet ? 30 : 20),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: mythemecolor1.withOpacity(0.5),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        if (!isTablet) const SizedBox(height: 5),
-                        Image.asset(
-                          'assets/images/emcart.png',
-                          height: isTablet ? 210 : 150,
-                          width: isTablet ? 190 : 130,
-                          fit: BoxFit.cover,
-                        ),
-                        Text(
-                          "You are not logged in!",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: isTablet ? 24 : 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        Text(
-                          "Stay Logged to see your Cart Items!",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: isTablet ? 18 : 14,
-                            color: Colors.grey.shade700,
-                          ),
-                        ),
-                        const SizedBox(height: 25),
-                        ElevatedButton(
-                          onPressed: () async {
-                            SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
-                            await prefs.setString('redirectRoute', '/cart');
-
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const LoginScreen(),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: isTablet
-                                ? Colors.white
-                                : mythemecolor,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isTablet ? 40 : 30,
-                              vertical: isTablet ? 14 : 12,
-                            ),
-                            textStyle: TextStyle(
-                              fontSize: isTablet ? 18 : 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            foregroundColor: isTablet
-                                ? mythemecolor
-                                : Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: const Text("Go To Login"),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      );
-    }
 
     return Scaffold(
       appBar: PreferredSize(
@@ -364,14 +237,7 @@ class _CartScreenState extends State<CartScreen> {
       body: _cartItems.isEmpty
           ? Stack(
               children: [
-                Positioned.fill(
-                  child: Image.asset(
-                    isTablet
-                        ? 'assets/images/theme.png'
-                        : 'assets/images/theme.png',
-                    fit: BoxFit.fill,
-                  ),
-                ),
+                
                 Center(
                   child: Padding(
                     padding: EdgeInsets.all(isTablet ? 40 : 20),
@@ -416,35 +282,7 @@ class _CartScreenState extends State<CartScreen> {
                               ),
                             ),
                             const SizedBox(height: 25),
-                            ElevatedButton(
-                              onPressed: () => Navigator.pushAndRemoveUntil(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const BottomNavBar(),
-                                ),
-                                (route) => false,
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: isTablet
-                                    ? Colors.white
-                                    : mythemecolor,
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: isTablet ? 40 : 30,
-                                  vertical: isTablet ? 14 : 12,
-                                ),
-                                textStyle: TextStyle(
-                                  fontSize: isTablet ? 18 : 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                foregroundColor: isTablet
-                                    ? mythemecolor
-                                    : Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              child: const Text("Go To Shop"),
-                            ),
+                          
                           ],
                         ),
                       ),

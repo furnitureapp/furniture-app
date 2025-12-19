@@ -486,12 +486,65 @@ class OrderStatusEntry {
   }
 }
 
+// class Notifications {
+//   final String id;
+//   final String title;
+//   final String body;
+//   final DateTime date;
+//   final bool isRead;
+//   final String? page;
+//   final String? productId;
+//   final String? orderId;
+//   final String? deliveryId;
+
+//   Notifications({
+//     required this.id,
+//     required this.title,
+//     required this.body,
+//     required this.date,
+//     required this.isRead,
+//     this.page,
+//     this.productId,
+//     this.orderId,
+//     this.deliveryId,
+//   });
+
+//   factory Notifications.fromJson(Map<String, dynamic> json) {
+//     return Notifications(
+//       id: json['_id'],
+//       title: json['title'] ?? '',
+//       body: json['body'] ?? '',
+//       date: DateTime.parse(json['date']),
+//       isRead: json['isRead'] ?? false,
+//       page: json['page'],
+//       productId: json['productId'],
+//       orderId: json['orderId'],
+//       deliveryId: json['deliveryId'],
+//     );
+//   }
+
+//   Map<String, dynamic> toJson() {
+//     return {
+//       '_id': id,
+//       'title': title,
+//       'body': body,
+//       'date': date.toIso8601String(),
+//       'isRead': isRead,
+//       'page': page,
+//       'productId': productId,
+//       'orderId': orderId,
+//       'deliveryId': deliveryId,
+//     };
+//   }
+// }
+
 class Notifications {
   final String id;
   final String title;
   final String body;
   final DateTime date;
   final String? page;
+  final bool isRead;
   final String? productId;
   final String? orderId;
   final String? deliveryId;
@@ -501,6 +554,8 @@ class Notifications {
     required this.title,
     required this.body,
     required this.date,
+    required this.isRead,
+
     this.page,
     this.productId,
     this.orderId,
@@ -513,6 +568,7 @@ class Notifications {
       title: json['title'],
       body: json['body'],
       date: DateTime.parse(json['date'] ?? json['createdAt']),
+      isRead: json['isRead'] ?? false,
       // date: DateTime.parse(json['date']),
       page: json['page'],
       productId: json['productId'],
@@ -527,6 +583,7 @@ class Notifications {
       'title': title,
       'body': body,
       'date': date.toIso8601String(),
+      'isRead': isRead,
       'page': page,
       'productId': productId,
       'orderId': orderId,
@@ -559,9 +616,22 @@ class ShopSettings {
   final String name;
   final String phoneNumber;
   final String whatsappNumber;
+  final String email;
+  final String address;
+
+  // Payment / Optional fields
+  final String qrCode;
+  final String gpayNumber;
+  final String accountHolderName;
+  final String accountNumber;
+  final String ifscCode;
+  final String branchName;
+  final String note;
+
+  // Powered by
   final String poweredByImage;
   final String poweredByName;
-  final String link;
+  final String poweredByLink;
 
   ShopSettings({
     required this.websiteUrl,
@@ -571,12 +641,23 @@ class ShopSettings {
     required this.name,
     required this.phoneNumber,
     required this.whatsappNumber,
+    required this.email,
+    required this.address,
+    required this.qrCode,
+    required this.gpayNumber,
+    required this.accountHolderName,
+    required this.accountNumber,
+    required this.ifscCode,
+    required this.branchName,
+    required this.note,
     required this.poweredByImage,
     required this.poweredByName,
-    required this.link,
+    required this.poweredByLink,
   });
 
   factory ShopSettings.fromJson(Map<String, dynamic> json) {
+    final poweredBy = json['poweredBy'] ?? {};
+
     return ShopSettings(
       websiteUrl: json['websiteUrl'] ?? '',
       profileImage: json['profileImage'] ?? '',
@@ -585,9 +666,59 @@ class ShopSettings {
       name: json['name'] ?? '',
       phoneNumber: json['phoneNumber'] ?? '',
       whatsappNumber: json['whatsappNumber'] ?? '',
-      poweredByImage: json['poweredBy']?['image'] ?? '',
-      poweredByName: json['poweredBy']?['name'] ?? '',
-      link: json['poweredBy']?['link'] ?? '',
+      email: json['email'] ?? '',
+      address: json['address'] ?? '',
+      qrCode: json['qrCode'] ?? '',
+      gpayNumber: json['gpaynumber'] ?? '',
+      accountHolderName: json['accountHolderName'] ?? '',
+      accountNumber: json['accountNumber'] ?? '',
+      ifscCode: json['ifscCode'] ?? '',
+      branchName: json['branchName'] ?? '',
+      note: json['note'] ?? '',
+      poweredByImage: poweredBy['image'] ?? '',
+      poweredByName: poweredBy['name'] ?? '',
+      poweredByLink: poweredBy['link'] ?? '',
     );
   }
 }
+
+// class ShopSettings {
+//   final String websiteUrl;
+//   final String profileImage;
+//   final String mapLink;
+//   final String message;
+//   final String name;
+//   final String phoneNumber;
+//   final String whatsappNumber;
+//   final String poweredByImage;
+//   final String poweredByName;
+//   final String link;
+
+//   ShopSettings({
+//     required this.websiteUrl,
+//     required this.profileImage,
+//     required this.mapLink,
+//     required this.message,
+//     required this.name,
+//     required this.phoneNumber,
+//     required this.whatsappNumber,
+//     required this.poweredByImage,
+//     required this.poweredByName,
+//     required this.link,
+//   });
+
+//   factory ShopSettings.fromJson(Map<String, dynamic> json) {
+//     return ShopSettings(
+//       websiteUrl: json['websiteUrl'] ?? '',
+//       profileImage: json['profileImage'] ?? '',
+//       mapLink: json['mapLink'] ?? '',
+//       message: json['message'] ?? '',
+//       name: json['name'] ?? '',
+//       phoneNumber: json['phoneNumber'] ?? '',
+//       whatsappNumber: json['whatsappNumber'] ?? '',
+//       poweredByImage: json['poweredBy']?['image'] ?? '',
+//       poweredByName: json['poweredBy']?['name'] ?? '',
+//       link: json['poweredBy']?['link'] ?? '',
+//     );
+//   }
+// }

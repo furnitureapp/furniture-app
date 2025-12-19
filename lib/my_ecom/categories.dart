@@ -3,12 +3,15 @@ import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
 import 'package:furniture_ecom_app/core/services_ecom/cat_sub_banners.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/constants/colors.dart';
+import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/drawer.dart';
-import 'package:furniture_ecom_app/my_ecom/navbar/new_appbar.dart';
+// import 'package:furniture_ecom_app/my_ecom/navbar/new_appbar.dart';
 import 'package:furniture_ecom_app/my_ecom/subc_screen.dart';
 
 class CategoriesScreen extends StatefulWidget {
-  const CategoriesScreen({super.key});
+  final bool isPreview;
+
+  const CategoriesScreen({super.key, this.isPreview = false, });
 
   @override
   _CategoriesScreenState createState() => _CategoriesScreenState();
@@ -49,7 +52,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: NewAppbar(title: 'Categories'),
+        child: MyAppbar(title: "categories", isPreview: widget.isPreview),
       ),
       drawer: const CustomDrawer(),
       body: RefreshIndicator(
@@ -88,6 +91,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                               categoryId: category.id,
                               wishlist: _wishlist,
                               toggleWishlist: _toggleWishlist,
+                              isPreview: widget.isPreview,
                             ),
                           ),
                         );

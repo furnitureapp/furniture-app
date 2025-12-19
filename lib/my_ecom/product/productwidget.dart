@@ -7,11 +7,12 @@ import 'package:provider/provider.dart';
 class ProductWidget extends StatelessWidget {
   final Product product;
   final VoidCallback onTap;
-
+  final bool enableWishlist;
   const ProductWidget({
     super.key,
     required this.product,
     required this.onTap,
+    this.enableWishlist = true,
   });
 
   @override
@@ -24,9 +25,7 @@ class ProductWidget extends StatelessWidget {
       onTap: onTap,
       child: Card(
         elevation: 6,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         color: Colors.white,
         shadowColor: Colors.grey.shade300,
         child: Column(
@@ -35,8 +34,9 @@ class ProductWidget extends StatelessWidget {
             Stack(
               children: [
                 ClipRRect(
-                  borderRadius:
-                      const BorderRadius.vertical(top: Radius.circular(2)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(2),
+                  ),
                   child: Image.network(
                     product.images.isNotEmpty
                         ? product.images[0]
@@ -47,55 +47,59 @@ class ProductWidget extends StatelessWidget {
                     errorBuilder: (context, error, stackTrace) => Container(
                       height: isTablet ? 220 : 140 * scale,
                       color: Colors.grey.shade300,
-                      child: const Icon(Icons.broken_image,
-                          size: 50, color: Colors.grey),
+                      child: const Icon(
+                        Icons.broken_image,
+                        size: 50,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
                 ),
-                Positioned(
-                  top: 8,
-                  right: 8,
-                  child: Consumer<WishlistManager>(
-                    builder: (context, wishlistManager, child) {
-                      bool isInWishlist =
-                          wishlistManager.isInWishlist(product.id);
-                      final isLoading =
-                          wishlistManager.isLoadingFor(product.id);
+                if (enableWishlist)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Consumer<WishlistManager>(
+                      builder: (context, wishlistManager, child) {
+                        bool isInWishlist = wishlistManager.isInWishlist(
+                          product.id,
+                        );
+                        final isLoading = wishlistManager.isLoadingFor(
+                          product.id,
+                        );
 
-                      return GestureDetector(
-                        onTap: () async {
-                       
+                        return GestureDetector(
+                          onTap: () async {
                             wishlistManager.toggleWishlist(product.id, context);
-                          
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: Color.fromRGBO(255, 255, 255, 0.6),
-                            shape: BoxShape.circle,
-                          ),
-                          child: isLoading
-                              ? const SizedBox(
-                                  height: 18,
-                                  width: 18,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: Colors.grey,
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: const BoxDecoration(
+                              color: Color.fromRGBO(255, 255, 255, 0.6),
+                              shape: BoxShape.circle,
+                            ),
+                            child: isLoading
+                                ? const SizedBox(
+                                    height: 18,
+                                    width: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.grey,
+                                    ),
+                                  )
+                                : Icon(
+                                    isInWishlist
+                                        ? Icons.favorite
+                                        : Icons.favorite_border,
+                                    color: isInWishlist
+                                        ? Colors.red
+                                        : Color.fromARGB(255, 35, 34, 34),
                                   ),
-                                )
-                              : Icon(
-                                  isInWishlist
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: isInWishlist
-                                      ? Colors.red
-                                      : Color.fromARGB(255, 35, 34, 34),
-                                ),
-                        ),
-                      );
-                    },
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
               ],
             ),
             Expanded(
@@ -109,7 +113,7 @@ class ProductWidget extends StatelessWidget {
                       style: TextStyle(
                         fontSize: isTablet ? 20 : 12 * scale,
                         fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 44, 43, 43),
+                        color: const Color.fromARGB(255, 0, 0, 0),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -133,23 +137,27 @@ class ProductWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '₹${product.price. round()}',
+                              '₹${product.price.round()}',
                               style: TextStyle(
-                                  fontSize: isTablet ? 16 : 11 * scale,
-                                  color: const Color.fromARGB(255, 247, 82, 70),
-                                  fontWeight: FontWeight.bold,
-                                  decoration: TextDecoration.lineThrough,
-                                  decorationColor:
-                                      const Color.fromARGB(255, 134, 134, 134),
-                                  decorationThickness: 3),
+                                fontSize: isTablet ? 16 : 11 * scale,
+                                color:  const Color.fromARGB(
+                                  255,
+                                  134,
+                                  134,
+                                  134,
+                                ),
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.lineThrough,
+                                decorationColor: const Color.fromARGB(255, 66, 66, 66),
+                                decorationThickness: 2,
+                              ),
                             ),
                             Text(
-                              '₹${product.offerPrice. round()}',
+                              '₹${product.offerPrice.round()}',
                               style: TextStyle(
                                 fontSize: isTablet ? 21 : 14 * scale,
                                 fontWeight: FontWeight.bold,
                                 color: mythemecolor,
-
                               ),
                             ),
                           ],
@@ -186,4 +194,3 @@ class ProductWidget extends StatelessWidget {
     );
   }
 }
-

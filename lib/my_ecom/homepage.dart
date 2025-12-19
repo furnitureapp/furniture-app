@@ -3,13 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
 import 'package:furniture_ecom_app/core/services_ecom/marque_policy_terms.dart';
 import 'package:furniture_ecom_app/core/services_ecom/product_service.dart';
-import 'package:furniture_ecom_app/core/services_ecom/settings_service.dart';
 import 'package:furniture_ecom_app/my_ecom/banner_widget.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/categories_widget.dart';
 import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/appbar.dart';
-import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/drawer.dart';
 import 'package:furniture_ecom_app/my_ecom/offer/offer.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
@@ -24,7 +22,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 class Myhome extends StatefulWidget {
-  const Myhome({super.key});
+  final bool isPreview;
+  final int? typeOfProduct;
+  const Myhome({super.key, this.isPreview = false, this.typeOfProduct});
+
+  // const Myhome({super.key});
 
   @override
   State<Myhome> createState() => _MyhomeState();
@@ -32,7 +34,6 @@ class Myhome extends StatefulWidget {
 
 class _MyhomeState extends State<Myhome> {
   late Future<List<Product>> _productsFuture;
-  late Future<ShopSettings?> _shopSettingsFuture;
 
   bool _isLoggedIn = false;
   late Future<Marquees?> _marqueeFuture;
@@ -40,16 +41,24 @@ class _MyhomeState extends State<Myhome> {
   @override
   void initState() {
     super.initState();
-    _shopSettingsFuture = SettingsService.fetchShopSettings();
-    _marqueeFuture = MarqueePolicyTermsService.fetchMarquee();
-
-    _productsFuture = ProductService.fetchAllProducts();
-
+    _loadAllData();
     _checkLoginStatus();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<CartProvider>(context, listen: false).fetchCartCount();
+      if (!widget.isPreview) {
+        Provider.of<CartProvider>(context, listen: false).fetchCartCount();
+      }
     });
+  }
+
+  void _loadAllData() {
+    _marqueeFuture = MarqueePolicyTermsService.fetchMarquee();
+
+    _productsFuture = widget.isPreview
+        ? ProductService.fetchAllProductsforAdmin(
+            typeOfProduct: widget.typeOfProduct,
+          )
+        : ProductService.fetchAllProducts();
   }
 
   Future<void> _checkLoginStatus() async {
@@ -70,12 +79,18 @@ class _MyhomeState extends State<Myhome> {
     }
   }
 
+  // Future<void> _refreshData() async {
+  //   Navigator.pushAndRemoveUntil(
+  //     context,
+  //     MaterialPageRoute(builder: (context) => const BottomNavBar()),
+  //     (route) => false,
+  //   );
+  // }
+
   Future<void> _refreshData() async {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const BottomNavBar()),
-      (route) => false,
-    );
+    setState(() {
+      _loadAllData();
+    });
   }
 
   @override
@@ -86,21 +101,8 @@ class _MyhomeState extends State<Myhome> {
     return Scaffold(
       backgroundColor: Colors.white,
       drawer: const CustomDrawer(),
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60),
-        child: FutureBuilder<ShopSettings?>(
-          future: _shopSettingsFuture,
-          builder: (context, snapshot) {
-            String title = "KAI";
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              title = "KAI";
-            } else if (snapshot.hasData && snapshot.data != null) {
-              title = snapshot.data!.name;
-            }
-            return MyAppbar(title: title);
-          },
-        ),
-      ),
+      appBar: MyAppbar(title: "Wood Pecker", isPreview: widget.isPreview),
+     
 
       body: RefreshIndicator(
         onRefresh: _refreshData,
@@ -113,8 +115,10 @@ class _MyhomeState extends State<Myhome> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 5),
-              if (!isTablet) const SearchScreens(),
-              const MyCategoriesWidget(),
+              if (!isTablet && !widget.isPreview) const SearchScreens(),
+
+              // if (!isTablet) const SearchScreens(),
+               MyCategoriesWidget(isPreview:widget.isPreview,),
               Padding(
                 padding: const EdgeInsets.all(2),
                 child: FutureBuilder<Marquees?>(
@@ -180,7 +184,7 @@ class _MyhomeState extends State<Myhome> {
                 ),
               ),
               const SizedBox(height: 10),
-              const OfferGridWidget(),
+               OfferGridWidget(isPreview: widget.isPreview,),
               const SizedBox(height: 10),
               const Center(
                 child: Text(
@@ -220,17 +224,17 @@ class _MyhomeState extends State<Myhome> {
                     itemCount: products.length,
                     itemBuilder: (context, index) {
                       final product = products[index];
-
-                      // debugPrint(
-                      //     'Navigating to product: ${product.title}, Stock: ${product.stock}');
-
                       return ProductWidget(
+                        enableWishlist: !widget.isPreview,
                         product: product,
                         onTap: () => Navigator.push(
                           context,
+
                           MaterialPageRoute(
-                            builder: (context) =>
-                                ProductDetailPagep(product: product),
+                            builder: (context) => ProductDetailPagep(
+                              product: product,
+                              isPreview: widget.isPreview,
+                            ),
                           ),
                         ),
                       );

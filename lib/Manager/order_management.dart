@@ -250,7 +250,7 @@ class _OrdersPageManagerState extends State<OrdersPageManager>
                   child: _customDropdown(
                     label: "Payment",
                     value: _selectedPayment,
-                    items: ['All', 'cod', 'online'],
+                    items: ['All', 'COD', 'ONLINE'],
                     onChanged: (v) => setState(() => _selectedPayment = v),
                   ),
                 ),

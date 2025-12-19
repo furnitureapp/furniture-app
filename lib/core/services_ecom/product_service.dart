@@ -5,8 +5,9 @@ import '../models_ecom/model_file.dart';
 
 class ProductService {
   static Future<List<Product>> fetchAllProducts() async {
-    final response = await ApiClient.get('/api/getallp', auth: true);
 
+    final response = await ApiClient.get('/api/getallp', auth: true);
+ 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       debugPrint('API Response: ${response.body}');
@@ -23,10 +24,32 @@ class ProductService {
       }
     } else {
       throw Exception(
-        'Failed to connect to the API (status code: ${response.statusCode})',
+        'Failed to connect to the API (status code: ${ response.statusCode})',
       );
     }
   }
+
+static Future<List<Product>> fetchAllProductsforAdmin({int? typeOfProduct}) async {
+  String endpoint = '/api/admin';
+
+  final response = await ApiClient.get(
+    endpoint,
+    auth: true,
+    queryParams: typeOfProduct != null
+        ? {'typeOfProduct': typeOfProduct.toString()}
+        : null,
+  );
+debugPrint('FINAL URL => ${ApiClient.baseUrl}/api/admin');
+
+  if (response.statusCode == 200) {
+    final data = json.decode(response.body);
+    return (data['products'] as List)
+        .map((e) => Product.fromJson(e))
+        .toList();
+  } else {
+    throw Exception(response.body);
+  }
+}
 
   static Future<Map<String, dynamic>> getProductById(String productId) async {
     final response = await ApiClient.get(
