@@ -33,28 +33,54 @@ class _OfferPageState extends State<OfferPage> {
     fetchOffers();
   }
 
+  // Future<void> fetchOffers() async {
+  //   setState(() {
+  //     isLoading = true;
+  //     noResults = false;
+  //   });
+
+  //   try {
+  //     List<Product> fetchedProducts = await ProductService.fetchAllProducts();
+
+  //     setState(() {
+  //       products = fetchedProducts;
+  //       isLoading = false;
+  //       noResults = fetchedProducts.isEmpty;
+  //     });
+  //   } catch (e) {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+
+  //     showTopSnackBar(context, "Failed to load offers");
+  //   }
+  // }
+
   Future<void> fetchOffers() async {
+  setState(() {
+    isLoading = true;
+    noResults = false;
+  });
+
+  try {
+    final fetchedProducts = widget.isPreview
+        ? await ProductService.fetchAllProductsforAdmin()
+        : await ProductService.fetchAllProducts();
+
     setState(() {
-      isLoading = true;
-      noResults = false;
+      products = fetchedProducts;
+      isLoading = false;
+      noResults = fetchedProducts.isEmpty;
+    });
+  } catch (e) {
+    setState(() {
+      isLoading = false;
     });
 
-    try {
-      List<Product> fetchedProducts = await ProductService.fetchAllProducts();
-
-      setState(() {
-        products = fetchedProducts;
-        isLoading = false;
-        noResults = fetchedProducts.isEmpty;
-      });
-    } catch (e) {
-      setState(() {
-        isLoading = false;
-      });
-
-      showTopSnackBar(context, "Failed to load offers");
-    }
+    showTopSnackBar(context, "Failed to load offers");
   }
+}
+
 
   @override
   Widget build(BuildContext context) {

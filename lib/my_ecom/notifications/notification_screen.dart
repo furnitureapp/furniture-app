@@ -4,7 +4,6 @@ import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
 import 'package:furniture_ecom_app/core/services_ecom/notif_maitence.dart';
 import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
 import 'package:furniture_ecom_app/constants/colors.dart';
-import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:furniture_ecom_app/my_ecom/notifications/notif_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/offer/offer_page.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_detail.dart';
@@ -79,10 +78,9 @@ void handleNotificationTap(
     );
   }
   else if (page == '/myhome') {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const BottomNavBar()),
-    );
-  }
+  Navigator.of(context).pushNamed('/myhome');
+}
+
 
   NotifMaintenanceService.markNotificationAsRead(notificationId);
 }

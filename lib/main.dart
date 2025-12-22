@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:furniture_ecom_app/app_preview/preview_mode_provider.dart';
 import 'package:furniture_ecom_app/core/storage/secure_storage.dart';
 import 'package:furniture_ecom_app/firebase_options.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
@@ -14,6 +13,7 @@ import 'package:furniture_ecom_app/my_ecom/authentication/user_profile.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/my_ecom/cart/cart_screen.dart';
 import 'package:furniture_ecom_app/my_ecom/categories.dart';
+import 'package:furniture_ecom_app/my_ecom/homepage.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/bottom_navbar.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/favorites.dart';
 import 'package:furniture_ecom_app/my_ecom/navbar/privacy_contents/banking_info.dart';
@@ -28,6 +28,7 @@ import 'package:furniture_ecom_app/my_ecom/orders/order_list.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 import 'package:furniture_ecom_app/my_ecom/wishlist/wishlist_manager.dart';
 import 'package:furniture_ecom_app/base/my_splash_screen.dart';
+import 'package:furniture_ecom_app/preveiw_app/preview_state.dart';
 
 import 'package:provider/provider.dart';
 import 'my_ecom/offer/offer_page.dart';
@@ -68,7 +69,6 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (context) => CartProvider()),
         ChangeNotifierProvider(create: (context) => WishlistManager()),
         ChangeNotifierProvider(create: (_) => SelectedAddressProvider()),
-        ChangeNotifierProvider(create: (_) => AppModeProvider()),
       ChangeNotifierProvider(
         create: (context) {
           final provider = NotificationProvider();
@@ -130,17 +130,15 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: "Wood Pecker",
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       home: const SplashScreenMY(),
       routes: {
-        '/homeoffer': (context) => const OfferPage(),
-        '/category': (context) => const CategoriesScreen(),
         '/product/:productId': (context) => const ProductDetailPagep(),
         '/cart': (context) => const CartScreen(),
         '/wishlist': (context) => const FavoritesPage(),
         '/login': (context) => const LoginScreen(),
-        '/myhome': (context) => const BottomNavBar(),
         '/profile': (context) => const ProfileScreen(),
         '/myorders': (context) => const OrderListPage(),
         '/notification': (context) => const NotificationScreen(),
@@ -161,32 +159,69 @@ class _MyAppState extends State<MyApp> {
       onUnknownRoute: (settings) {
         return MaterialPageRoute(builder: (context) => NotFoundPage());
       },
+
       onGenerateRoute: (settings) {
-        if (settings.name == '/order-details') {
-          final args = settings.arguments as Map<String, dynamic>?;
-          if (args != null && args.containsKey('orderId')) {
-            final orderId = args['orderId'] as String;
-            debugPrint(orderId);
-            return MaterialPageRoute(
-              builder: (context) => OrderDetailsScreen(orderId: orderId),
-            );
-          } else {
-            return MaterialPageRoute(builder: (context) => const ErrorPage());
-          }
-        }
 
-        if (settings.name == '/productdetailpagep') {
-          final productId = settings.arguments as String;
-          debugPrint(
-            "Navigating to ProductDetailPage with productId: $productId",
-          );
-          return MaterialPageRoute(
-            builder: (context) => ProductDetailPagep(productId: productId),
-          );
-        }
+  if (settings.name == '/myhome') {
+    if (AppPreviewState.isPreview) {
+      return MaterialPageRoute(
+        builder: (_) => Myhome(
+          isPreview: true,
+          typeOfProduct: AppPreviewState.typeOfProduct,
+        ),
+      );
+    } else {
+      return MaterialPageRoute(
+        builder: (_) => const BottomNavBar(),
+      );
+    }
+  }
+ if (settings.name == '/category') {
+  return MaterialPageRoute(
+    builder: (_) => CategoriesScreen(
+      isPreview: AppPreviewState.isPreview,
+    ),
+  );
+}
 
-        return null;
-      },
+
+if (settings.name == '/homeoffer') {
+  if (AppPreviewState.isPreview) {
+    return MaterialPageRoute(
+      builder: (_) => const OfferPage(isPreview: true),
+    );
+  } else {
+    return MaterialPageRoute(
+      builder: (_) => const OfferPage(),
+    );
+  }
+}
+
+
+  if (settings.name == '/order-details') {
+    final args = settings.arguments as Map<String, dynamic>?;
+    if (args != null && args.containsKey('orderId')) {
+      final orderId = args['orderId'] as String;
+      return MaterialPageRoute(
+        builder: (context) => OrderDetailsScreen(orderId: orderId),
+      );
+    } else {
+      return MaterialPageRoute(
+        builder: (context) => const ErrorPage(),
+      );
+    }
+  }
+
+  if (settings.name == '/productdetailpagep') {
+    final productId = settings.arguments as String;
+    return MaterialPageRoute(
+      builder: (context) => ProductDetailPagep(productId: productId),
+    );
+  }
+
+  return null;
+},
+
     );
   }
 }
@@ -203,6 +238,38 @@ class ErrorPage extends StatelessWidget {
   }
 }
 
+
+
+
+
+      
+      // onGenerateRoute: (settings) {
+      //   if (settings.name == '/order-details') {
+      //     final args = settings.arguments as Map<String, dynamic>?;
+      //     if (args != null && args.containsKey('orderId')) {
+      //       final orderId = args['orderId'] as String;
+      //       debugPrint(orderId);
+      //       return MaterialPageRoute(
+      //         builder: (context) => OrderDetailsScreen(orderId: orderId),
+      //       );
+      //     } else {
+      //       return MaterialPageRoute(builder: (context) => const ErrorPage());
+      //     }
+      //   }
+
+      //   if (settings.name == '/productdetailpagep') {
+      //     final productId = settings.arguments as String;
+      //     debugPrint(
+      //       "Navigating to ProductDetailPage with productId: $productId",
+      //     );
+      //     return MaterialPageRoute(
+      //       builder: (context) => ProductDetailPagep(productId: productId),
+      //     );
+      //   }
+
+      //   return null;
+      // },
+      
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_messaging/firebase_messaging.dart';
 // import 'package:flutter/gestures.dart';

@@ -1,20 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/administration_app/super_admin_app/super_admin_home.dart';
 import 'package:furniture_ecom_app/constants/colors.dart';
-import 'package:furniture_ecom_app/my_ecom/homepage.dart';
+import 'package:furniture_ecom_app/preveiw_app/preview_state.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppPreviewSA extends StatelessWidget {
   const AppPreviewSA({super.key});
 
-  void _open(BuildContext context, int type) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => Myhome(isPreview: true, typeOfProduct: type),
-      ),
-    );
-  }
+  // void _open(BuildContext context, int type) {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (_) => Myhome(isPreview: true, typeOfProduct: type),
+  //     ),
+  //   );
+  // }
+
+  
+void _open(BuildContext context, int type) {
+  AppPreviewState.isPreview = true;
+  AppPreviewState.typeOfProduct = type;
+
+  Navigator.pushNamed(context, '/myhome');
+}
 
   @override
   Widget build(BuildContext context) {
