@@ -134,7 +134,7 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
             );
           },
         );
-           if (isPreview) {
+        if (isPreview) {
           return icon;
         }
         if (notifProvider.unreadCount > 0) {
@@ -165,20 +165,31 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          // Logo → Home
           GestureDetector(
-            onTap: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const BottomNavBar()),
-                (route) => false,
-              );
-            },
+            onTap: isPreview
+                ? () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Myhome(isPreview: true),
+                      ),
+                      (route) => false,
+                    );
+                  }
+                : () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const BottomNavBar(),
+                      ),
+                      (route) => false,
+                    );
+                  },
             child: Image.asset(
               'assets/images/woodpecker_logo.png',
-              height: 80,
+              height: 90,
               fit: BoxFit.contain,
             ),
           ),
@@ -190,13 +201,16 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
             ),
           ),
 
-          Row(
-            children: [
-              _buildNotificationBadge(context),
-
-              const SizedBox(width: 10),
-              _buildCartBadge(context, isLoggedIn),
-            ],
+          Padding(
+            padding: const EdgeInsets.only(right: 30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildNotificationBadge(context),
+                const SizedBox(width: 20),
+                _buildCartBadge(context, isLoggedIn),
+              ],
+            ),
           ),
         ],
       ),
@@ -267,7 +281,7 @@ class MyAppbar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(70);
+  Size get preferredSize => const Size.fromHeight(75);
 }
 
 

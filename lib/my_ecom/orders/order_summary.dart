@@ -1324,18 +1324,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                     ),
                   ),
                   ElevatedButton(
-                    // onPressed:
-                    //     (_minOrderAmount != null &&
-                    //         _totalAmount < _minOrderAmount!)
-                    //     ? null
-                    //     : () {
-                    //         if (!_isAddressSelected) {
-                    //           showTopSnackBar(
-                    //             context,
-                    //             "Please select a delivery address.",
-                    //           );
-                    //           return;
-                    //         }
+                   
                     onPressed: isBelowMin
                         ? null
                         : () async {
@@ -1382,9 +1371,9 @@ class _OrderSummaryState extends State<OrderSummary> {
                     child: const Text(
                       "CONTINUE",
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: mythemecolor,
+                        color: Colors.white,
                       ),
                     ),
                   ),

@@ -7,6 +7,7 @@ import 'package:furniture_ecom_app/my_ecom/cart/cart_provider.dart';
 import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/constants/snackbar.dart';
 import 'package:furniture_ecom_app/my_ecom/offer/offer_detail.dart';
+import 'package:furniture_ecom_app/my_ecom/offer/offer_reuable.dart';
 import 'package:furniture_ecom_app/my_ecom/orders/order_confirmationpage.dart';
 import 'package:furniture_ecom_app/my_ecom/product/reuasble_related_card.dart';
 
@@ -660,6 +661,358 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
     );
   }
 
+
+  Widget _buildRelatedOfferProducts(BuildContext context, String productId) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isTablet = screenWidth > 600;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            'You Might Like These Products!',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+        const SizedBox(height: 16),
+        FutureBuilder<List<Offer>>(
+          future: OfferService.fetchOfferProductsAsOffers(),
+          builder: (context, relatedSnapshot) {
+            if (relatedSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(color: mythemecolor),
+              );
+            } else if (relatedSnapshot.hasError) {
+              return Center(
+                child: Text(
+                  'Failed to load related products: ${relatedSnapshot.error}',
+                ),
+              );
+            } else if (!relatedSnapshot.hasData ||
+                relatedSnapshot.data!.isEmpty) {
+              return const Center(
+                child: Text('No related products available.'),
+              );
+            }
+
+            final relatedOffers = relatedSnapshot.data!;
+
+            return SizedBox(
+              height: isTablet ? 420 : 250,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                itemCount: relatedOffers.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  final relatedOffer = relatedOffers[index];
+                  return SizedBox(
+                    width: isTablet ? 300 : 190,
+                    child: MyOfferWidget(
+                      offer: relatedOffer,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProductDetailPage(
+                              offer: relatedOffer,
+                              isPreview: widget.isPreview,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  // Widget _buildRelatedOfferProducts(BuildContext context) {
+  //   final isTablet = MediaQuery.of(context).size.width > 600;
+
+  //   return FutureBuilder<List<Offer>>(
+  //     future: OfferService.fetchOfferProductsAsOffers(),
+  //     builder: (context, snapshot) {
+  //       if (snapshot.connectionState == ConnectionState.waiting) {
+  //         return const Center(
+  //           child: CircularProgressIndicator(color: mythemecolor),
+  //         );
+  //       }
+
+  //       if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+  //         return const Center(child: Text('No offer products available.'));
+  //       }
+
+  //       final offers = snapshot.data!;
+
+  //       return SizedBox(
+  //         height: isTablet ? 450 : _listHeight,
+  //         child: ListView.separated(
+  //           scrollDirection: Axis.horizontal,
+  //           padding: _horizontalPadding,
+  //           itemCount: offers.length,
+  //           separatorBuilder: (_, __) => const SizedBox(width: 12),
+  //           itemBuilder: (context, index) {
+  //             final offer = offers[index];
+
+  //             final discountPercentage =
+  //                 ((offer.actualPrice - offer.offerPrice) / offer.actualPrice) *
+  //                 100;
+
+  //             return SizedBox(
+  //               width: isTablet ? _tabletCardWidth : _mobileCardWidth,
+  //               child: GestureDetector(
+  //                 onTap: () {
+  //                   Navigator.push(
+  //                     context,
+  //                     MaterialPageRoute(
+  //                       builder: (_) => ProductDetailPage(offer: offer, isPreview: widget.isPreview),
+  //                     ),
+  //                   );
+  //                 },
+  //                 child: Container(
+  //                   decoration: BoxDecoration(
+  //                     borderRadius: BorderRadius.circular(12),
+  //                     color: const Color.fromARGB(255, 224, 234, 224),
+  //                     boxShadow: [
+  //                       BoxShadow(
+  //                         color: Colors.grey.withOpacity(0.2),
+  //                         blurRadius: 5,
+  //                         spreadRadius: 2,
+  //                         offset: const Offset(0, 2),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                   child: Column(
+  //                     crossAxisAlignment: CrossAxisAlignment.start,
+  //                     children: [
+  //                       // IMAGE + DISCOUNT
+  //                       Stack(
+  //                         children: [
+  //                           ClipRRect(
+  //                             borderRadius: const BorderRadius.vertical(
+  //                               top: Radius.circular(12),
+  //                             ),
+  //                             child: Image.network(
+  //                               offer.images.isNotEmpty
+  //                                   ? offer.images.first
+  //                                   : 'https://via.placeholder.com/150',
+  //                               width: double.infinity,
+  //                               height: isTablet ? 150 : 160,
+  //                               fit: BoxFit.contain,
+  //                             ),
+  //                           ),
+  //                           if (offer.actualPrice > offer.offerPrice)
+  //                             Positioned(
+  //                               top: 8,
+  //                               right: 8,
+  //                               child: Container(
+  //                                 padding: const EdgeInsets.symmetric(
+  //                                   horizontal: 8,
+  //                                   vertical: 4,
+  //                                 ),
+  //                                 decoration: BoxDecoration(
+  //                                   color: Colors.red,
+  //                                   borderRadius: BorderRadius.circular(6),
+  //                                 ),
+  //                                 child: Text(
+  //                                   '${discountPercentage.round()}% OFF',
+  //                                   style: const TextStyle(
+  //                                     color: Colors.white,
+  //                                     fontSize: 12,
+  //                                     fontWeight: FontWeight.bold,
+  //                                   ),
+  //                                 ),
+  //                               ),
+  //                             ),
+  //                         ],
+  //                       ),
+
+  //                       // DETAILS
+  //                       Padding(
+  //                         padding: const EdgeInsets.all(8),
+  //                         child: Column(
+  //                           crossAxisAlignment: CrossAxisAlignment.start,
+  //                           children: [
+  //                             Text(
+  //                               offer.title,
+  //                               maxLines: 1,
+  //                               overflow: TextOverflow.ellipsis,
+  //                               style: const TextStyle(
+  //                                 fontSize: 14,
+  //                                 fontWeight: FontWeight.bold,
+  //                               ),
+  //                             ),
+  //                             const SizedBox(height: 6),
+  //                             Row(
+  //                               children: [
+  //                                 Text(
+  //                                   '₹${offer.offerPrice.round()}',
+  //                                   style: TextStyle(
+  //                                     fontSize: 16,
+  //                                     fontWeight: FontWeight.bold,
+  //                                     color: Colors.green.shade700,
+  //                                   ),
+  //                                 ),
+  //                                 const SizedBox(width: 6),
+  //                                 Text(
+  //                                   '₹${offer.actualPrice.round()}',
+  //                                   style: const TextStyle(
+  //                                     fontSize: 12,
+  //                                     color: Colors.red,
+  //                                     decoration: TextDecoration.lineThrough,
+  //                                   ),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ],
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //                 ),
+  //               ),
+  //             );
+  //           },
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
+
+  Widget _buildNoResultsUI(BuildContext context) {
+    final isTablet = MediaQuery.of(context).size.width >= 600;
+
+    return FutureBuilder<List<Product>>(
+      future: ProductService.fetchAllProducts(),
+      builder: (context, relatedSnapshot) {
+        if (relatedSnapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: CircularProgressIndicator(color: mythemecolor),
+          );
+        }
+
+        if (relatedSnapshot.hasError) {
+          return Center(
+            child: Text('Failed to load products: ${relatedSnapshot.error}'),
+          );
+        }
+
+        if (!relatedSnapshot.hasData || relatedSnapshot.data!.isEmpty) {
+          return const Center(child: Text('No products available.'));
+        }
+
+        final relatedProducts = relatedSnapshot.data!;
+
+        return SizedBox(
+          height: isTablet ? 450 : _listHeight,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: _horizontalPadding,
+            itemCount: relatedProducts.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final product = relatedProducts[index];
+
+              return SizedBox(
+                width: isTablet ? _tabletCardWidth : _mobileCardWidth,
+                child: MyrelatedproductWidget(
+                  product: product,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProductDetailPagep(product: product, isPreview: widget.isPreview),
+                      ),
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildRelatedProducts(Product product, BuildContext context) {
+    final isTablet = MediaQuery.of(context).size.width >= 600;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            'You Might Like These Products!',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+        ),
+        const SizedBox(height: 16),
+        FutureBuilder<List<Product>>(
+          future: ProductService.getRelatedProducts(product.id),
+          builder: (context, relatedSnapshot) {
+            if (relatedSnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(color: mythemecolor),
+              );
+            }
+
+            if (relatedSnapshot.hasError) {
+              return _buildRelatedOfferProducts(context, product.id);
+            }
+
+            if (!relatedSnapshot.hasData || relatedSnapshot.data!.isEmpty) {
+              return _buildNoResultsUI(context);
+            }
+
+            final relatedProducts = relatedSnapshot.data!;
+
+            return SizedBox(
+              height: isTablet ? 450 : _listHeight,
+              child: ListView.separated(
+                scrollDirection: Axis.horizontal,
+                padding: _horizontalPadding,
+                itemCount: relatedProducts.length,
+                separatorBuilder: (_, __) => const SizedBox(width: 12),
+                itemBuilder: (context, index) {
+                  final relatedProduct = relatedProducts[index];
+
+                  return SizedBox(
+                    width: isTablet ? _tabletCardWidth : _mobileCardWidth,
+                    child: MyrelatedproductWidget(
+                      product: relatedProduct,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                ProductDetailPagep(product: relatedProduct, isPreview: widget.isPreview,),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+
+
+
   // Widget _buildRelatedOfferProducts(BuildContext context) {
   //   final screenWidth = MediaQuery.of(context).size.width;
   //   final bool isTablet = screenWidth > 600;
@@ -809,279 +1162,3 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
   //     },
   //   );
   // }
-
-  Widget _buildRelatedOfferProducts(BuildContext context) {
-    final isTablet = MediaQuery.of(context).size.width > 600;
-
-    return FutureBuilder<List<Offer>>(
-      future: OfferService.fetchOfferProductsAsOffers(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: mythemecolor),
-          );
-        }
-
-        if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No offer products available.'));
-        }
-
-        final offers = snapshot.data!;
-
-        return SizedBox(
-          height: _listHeight,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: _horizontalPadding,
-            itemCount: offers.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
-            itemBuilder: (context, index) {
-              final offer = offers[index];
-
-              final discountPercentage =
-                  ((offer.actualPrice - offer.offerPrice) / offer.actualPrice) *
-                  100;
-
-              return SizedBox(
-                width: isTablet ? _tabletCardWidth : _mobileCardWidth,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ProductDetailPage(offer: offer, isPreview: widget.isPreview),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: const Color.fromARGB(255, 224, 234, 224),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          blurRadius: 5,
-                          spreadRadius: 2,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // IMAGE + DISCOUNT
-                        Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(12),
-                              ),
-                              child: Image.network(
-                                offer.images.isNotEmpty
-                                    ? offer.images.first
-                                    : 'https://via.placeholder.com/150',
-                                width: double.infinity,
-                                height: isTablet ? 150 : 160,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            if (offer.actualPrice > offer.offerPrice)
-                              Positioned(
-                                top: 8,
-                                right: 8,
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8,
-                                    vertical: 4,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.red,
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    '${discountPercentage.round()}% OFF',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-
-                        // DETAILS
-                        Padding(
-                          padding: const EdgeInsets.all(8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                offer.title,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Row(
-                                children: [
-                                  Text(
-                                    '₹${offer.offerPrice.round()}',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.green.shade700,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    '₹${offer.actualPrice.round()}',
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.red,
-                                      decoration: TextDecoration.lineThrough,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildNoResultsUI(BuildContext context) {
-    final isTablet = MediaQuery.of(context).size.width >= 600;
-
-    return FutureBuilder<List<Product>>(
-      future: ProductService.fetchAllProducts(),
-      builder: (context, relatedSnapshot) {
-        if (relatedSnapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(color: mythemecolor),
-          );
-        }
-
-        if (relatedSnapshot.hasError) {
-          return Center(
-            child: Text('Failed to load products: ${relatedSnapshot.error}'),
-          );
-        }
-
-        if (!relatedSnapshot.hasData || relatedSnapshot.data!.isEmpty) {
-          return const Center(child: Text('No products available.'));
-        }
-
-        final relatedProducts = relatedSnapshot.data!;
-
-        return SizedBox(
-          height: _listHeight,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            padding: _horizontalPadding,
-            itemCount: relatedProducts.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
-            itemBuilder: (context, index) {
-              final product = relatedProducts[index];
-
-              return SizedBox(
-                width: isTablet ? _tabletCardWidth : _mobileCardWidth,
-                child: MyrelatedproductWidget(
-                  product: product,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => ProductDetailPagep(product: product, isPreview: widget.isPreview),
-                      ),
-                    );
-                  },
-                ),
-              );
-            },
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildRelatedProducts(Product product, BuildContext context) {
-    final isTablet = MediaQuery.of(context).size.width >= 600;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          child: Text(
-            'You Might Like These Products!',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(height: 16),
-        FutureBuilder<List<Product>>(
-          future: ProductService.getRelatedProducts(product.id),
-          builder: (context, relatedSnapshot) {
-            if (relatedSnapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(color: mythemecolor),
-              );
-            }
-
-            if (relatedSnapshot.hasError) {
-              return _buildRelatedOfferProducts(context);
-            }
-
-            if (!relatedSnapshot.hasData || relatedSnapshot.data!.isEmpty) {
-              return _buildNoResultsUI(context);
-            }
-
-            final relatedProducts = relatedSnapshot.data!;
-
-            return SizedBox(
-              height: _listHeight,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                padding: _horizontalPadding,
-                itemCount: relatedProducts.length,
-                separatorBuilder: (_, __) => const SizedBox(width: 12),
-                itemBuilder: (context, index) {
-                  final relatedProduct = relatedProducts[index];
-
-                  return SizedBox(
-                    width: isTablet ? _tabletCardWidth : _mobileCardWidth,
-                    child: MyrelatedproductWidget(
-                      product: relatedProduct,
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) =>
-                                ProductDetailPagep(product: relatedProduct, isPreview: widget.isPreview,),
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
-}

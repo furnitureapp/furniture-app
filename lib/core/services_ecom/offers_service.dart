@@ -1,15 +1,18 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
+
 import '../api_management_service/api_client.dart';
 import '../models_ecom/model_file.dart';
 
 class OfferService {
   static Future<List<Offer>> fetchOffers() async {
-    final response = await ApiClient.get('/api/offers');
+    final response = await ApiClient.get('/api/offers',auth: true);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
-       print('Response status of fetch offers: ${response.statusCode}');
-    print('Response bodyof fetch offers: ${response.body}');
+     debugPrint('API Response of offers: ${response.body}');
+      debugPrint('Response status of fetch offer products: ${response.statusCode}');
+      debugPrint('Response body of fetch offer products: ${response.body}');
       final offers = data['offers'] as List;
       return offers.map((offer) => Offer.fromJson(offer)).toList();
     } else {
@@ -18,10 +21,13 @@ class OfferService {
   }
 
   static Future<List<Offer>> fetchOfferProductsAsOffers() async {
-    final response = await ApiClient.get('/api/offers');
+    final response = await ApiClient.get('/api/offers', auth: true);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
+      debugPrint('API Response: ${response.body}');
+      print('Response status of fetch all offers: ${response.statusCode}');
+      print('Response body of fetch all offers: ${response.body}');
       final offers = data['offers'] as List;
       return offers.map((offerJson) => Offer.fromJson(offerJson)).toList();
     } else {
@@ -30,7 +36,10 @@ class OfferService {
   }
 
   static Future<List<double>> fetchOnlyOfferPrices(String orderId) async {
-    final response = await ApiClient.get('/api/orders/history/$orderId', auth: true);
+    final response = await ApiClient.get(
+      '/api/orders/history/$orderId',
+      auth: true,
+    );
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);

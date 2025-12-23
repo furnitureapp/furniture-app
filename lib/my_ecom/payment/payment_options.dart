@@ -1,3 +1,514 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/core/services_ecom/checkout_payment.dart';
+import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
+import 'package:furniture_ecom_app/constants/snackbar.dart';
+import 'package:furniture_ecom_app/my_ecom/orders/order_success.dart';
+import 'package:furniture_ecom_app/my_ecom/payment/payment_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+class ExpansionTileControllers extends StatefulWidget {
+  final double totalAmount;
+  final String type;
+  final String? productId;
+  final String? offerId;
+  final String? selectedDeliveryId;
+  final String? quantity;
+
+  const ExpansionTileControllers({
+    super.key,
+    required this.totalAmount,
+    required this.type,
+    this.productId,
+    this.quantity,
+    this.offerId,
+    this.selectedDeliveryId,
+  });
+
+  @override
+  State<ExpansionTileControllers> createState() =>
+      _ExpansionTileControllersState();
+}
+
+class _ExpansionTileControllersState extends State<ExpansionTileControllers> {
+  bool _isLoading = false;
+  bool _codButtonDisabled = false;
+  bool _isCODExpanded = false;
+  bool _isOnlineExpanded = false;
+
+  List<Map<String, dynamic>> _cartSummary = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCartSummary();
+  }
+
+  Future<void> _loadCartSummary() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String>? data = prefs.getStringList('cart_summary_items');
+    if (data != null) {
+      _cartSummary = data.map((line) {
+        final parts = line.split('|');
+        return {
+          'title': parts[0],
+          'quantity': int.parse(parts[1]),
+          'totalWithGST': double.parse(parts[2]),
+          'gst': double.parse(parts[3]),
+        };
+      }).toList();
+    }
+    setState(() {});
+  }
+
+  Future<void> _handleCheckout(String paymentMethod) async {
+    setState(() => _isLoading = true);
+    try {
+      final String mappedType = widget.type == 'cartNow' ? 'cartNow' : 'buyNow';
+
+      final Map<String, dynamic> requestBody = {
+        'paymentMethod': paymentMethod,
+        'type': mappedType,
+        'deliveryId': widget.selectedDeliveryId,
+      };
+
+      if (mappedType == 'buyNow') {
+        requestBody['productId'] = widget.productId;
+        requestBody['quantity'] = int.tryParse(widget.quantity ?? '1') ?? 1;
+        if (widget.offerId != null && widget.offerId!.isNotEmpty) {
+          requestBody['offerId'] = widget.offerId;
+        }
+      }
+
+      debugPrint("Checkout Payload: ${jsonEncode(requestBody)}");
+
+      if (paymentMethod == 'online') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => PaymentScreen(
+              type: mappedType,
+              productId: widget.productId,
+              offerId: widget.offerId,
+              deliveryId: widget.selectedDeliveryId,
+              quantity: widget.quantity,
+              totalAmount: widget.totalAmount,
+            ),
+          ),
+        );
+      } else {
+        final result = await CheckoutPaymentService.checkout(requestBody);
+        final orderId = result['orderId'] ?? result['raw']['order']['_id'];
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+            builder: (_) => OrderSuccessScreen(orderId: orderId),
+          ),
+          (route) => false,
+        );
+      }
+    } catch (e) {
+      showTopSnackBar(context, 'Error during checkout: $e');
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _showCODConfirmation() {
+    final bool isTablet = MediaQuery.of(context).size.width >= 600;
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+      ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => Padding(
+          padding: const EdgeInsets.all(25),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Confirm Cash on Delivery order?",
+                style: TextStyle(
+                  fontSize: isTablet ? 20 : 14,
+                  fontWeight: FontWeight.bold,
+                  color: mythemecolor,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              Image.asset(
+                'assets/images/confirm.png',
+                height: isTablet ? 200 : 120,
+                fit: BoxFit.fitWidth,
+              ),
+              const SizedBox(height: 5),
+              SafeArea(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: mythemecolor1,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                      ),
+                      child: Text(
+                        "CANCEL",
+                        style: TextStyle(
+                          fontSize: isTablet ? 20 : 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      onPressed: _codButtonDisabled
+                          ? null
+                          : () {
+                              setState(() => _codButtonDisabled = true);
+                              _handleCheckout('cod');
+                            },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: _codButtonDisabled
+                            ? Colors.grey
+                            : mythemecolor,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                      ),
+                      child: Text(
+                        _codButtonDisabled ? "CONFIRMED" : "CONFIRM",
+                        style: TextStyle(
+                          fontSize: isTablet ? 20 : 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSummary() {
+    if (_cartSummary.isEmpty) return const Text("No summary available.");
+    if (widget.type == 'buyNow') {
+      final item = _cartSummary[0];
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            item['title'],
+            style: GoogleFonts.poppins(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            "Quantity: ${item['quantity']}",
+            style: GoogleFonts.poppins(fontSize: 12),
+          ),
+          Text(
+            "Price + GST: ₹${item['totalWithGST'].round()}",
+            style: GoogleFonts.poppins(fontSize: 12),
+          ),
+          Text(
+            "GST: ${item['gst'].round()}%",
+            style: GoogleFonts.poppins(fontSize: 12),
+          ),
+        ],
+      );
+    } else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: _cartSummary.map((item) {
+          return Padding(
+            padding: const EdgeInsets.all(6),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  item['title'],
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  "Quantity: ${item['quantity']}",
+                  style: GoogleFonts.poppins(fontSize: 12),
+                ),
+                Text(
+                  "Price + GST: ₹${item['totalWithGST'].round()}",
+                  style: GoogleFonts.poppins(fontSize: 12),
+                ),
+                Text(
+                  "GST: ${item['gst'].round()}%",
+                  style: GoogleFonts.poppins(fontSize: 12),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      );
+    }
+  }
+
+  Widget _buildPaymentTile({
+    required IconData icon,
+    required String title,
+    required bool isExpanded,
+    required VoidCallback onPressed,
+    required VoidCallback onTileExpand,
+    required String buttonText,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Theme(
+        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+        child: ExpansionTile(
+          onExpansionChanged: (_) => onTileExpand(),
+          leading: Icon(
+            icon,
+            color: isExpanded ? Colors.black87 : const Color(0xFF292929),
+          ),
+          title: Text(
+            title,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          children: [
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10),
+              width: 200,
+              child: ElevatedButton(
+                onPressed: onPressed,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: mythemecolor1,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                child: Text(
+                  buttonText,
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // final bool isTablet = MediaQuery.of(context).size.width >= 600;
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [mythemecolor1, mythemecolor],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+          child: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            title: const Text(
+              "Mode of Payment",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            centerTitle: true,
+          ),
+        ),
+      ),
+      body: _isLoading
+          ? const Center(child: AnimationPage1())
+          : RefreshIndicator(
+              onRefresh: () async => setState(() {}),
+              color: mythemecolor,
+              backgroundColor: const Color.fromARGB(255, 245, 240, 242),
+              displacement: 40,
+              strokeWidth: 2.5,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: ExpansionTile(
+                        tilePadding: EdgeInsets.zero,
+                        iconColor: Colors.grey,
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Total Amount:',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              '₹${widget.totalAmount.round()}',
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        children: [
+                          const Divider(),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: _buildSummary(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 40),
+                    _buildPaymentTile(
+                      icon: Icons.money,
+                      title: "Cash On Delivery",
+                      isExpanded: _isCODExpanded,
+                      onPressed: _showCODConfirmation,
+                      onTileExpand: () =>
+                          setState(() => _isCODExpanded = !_isCODExpanded),
+                      buttonText: _codButtonDisabled
+                          ? "CONFIRMED"
+                          : "PLACE ORDER",
+                    ),
+                    _buildPaymentTile(
+                      icon: Icons.payment,
+                      title: "Online Payment",
+                      isExpanded: _isOnlineExpanded,
+                      onPressed: () => _handleCheckout('online'),
+                      onTileExpand: () => setState(
+                        () => _isOnlineExpanded = !_isOnlineExpanded,
+                      ),
+                      buttonText: "PROCEED FOR TRANSACTION",
+                    ),
+                    const SizedBox(height: 40),
+                    _buildSecurityInfo(),
+                  ],
+                ),
+              ),
+            ),
+    );
+  }
+
+  Widget _buildSecurityInfo() {
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: const [
+            Icon(Icons.lock, size: 16, color: Colors.black54),
+            SizedBox(width: 8),
+            Text(
+              'Secure 256-bit SSL encrypted payment',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Center(
+          child: Wrap(
+            alignment: WrapAlignment.center,
+            spacing: 20,
+            runSpacing: 10,
+            children: [
+              Image.asset('assets/images/rupay.png', height: 14),
+              Image.asset('assets/images/master.png', height: 14),
+              Image.asset('assets/images/upi.png', height: 16),
+              Image.asset('assets/images/visa.png', height: 14),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Card(
+          color: Colors.white.withOpacity(0.5),
+          margin: const EdgeInsets.all(16),
+          elevation: 5,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [Color(0xFF5F5F5E), Color(0xFFA8A7A6)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: const Icon(
+                    Icons.lock_outline,
+                    size: 20,
+                    color: Colors.white,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Text(
+                    "100% Secure Transactions\nWe guarantee secure payments and trustable delivery options.",
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+
+
 // import 'dart:convert';
 
 // import 'package:flutter/material.dart';
@@ -848,427 +1359,3 @@
 //     );
 //   }
 // }
-
-
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:furniture_ecom_app/core/services_ecom/checkout_payment.dart';
-import 'package:furniture_ecom_app/my_ecom/animations/animation.dart';
-import 'package:furniture_ecom_app/constants/colors.dart';
-import 'package:furniture_ecom_app/constants/snackbar.dart';
-import 'package:furniture_ecom_app/my_ecom/orders/order_success.dart';
-import 'package:furniture_ecom_app/my_ecom/payment/payment_screen.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-class ExpansionTileControllers extends StatefulWidget {
-  final double totalAmount;
-  final String type;
-  final String? productId;
-  final String? offerId;
-  final String? selectedDeliveryId;
-  final String? quantity;
-
-  const ExpansionTileControllers({
-    super.key,
-    required this.totalAmount,
-    required this.type,
-    this.productId,
-    this.quantity,
-    this.offerId,
-    this.selectedDeliveryId,
-  });
-
-  @override
-  State<ExpansionTileControllers> createState() =>
-      _ExpansionTileControllersState();
-}
-
-class _ExpansionTileControllersState extends State<ExpansionTileControllers> {
-  bool _isLoading = false;
-  bool _codButtonDisabled = false;
-  bool _isCODExpanded = false;
-  bool _isOnlineExpanded = false;
-
-  List<Map<String, dynamic>> _cartSummary = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _loadCartSummary();
-  }
-
-  Future<void> _loadCartSummary() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String>? data = prefs.getStringList('cart_summary_items');
-    if (data != null) {
-      _cartSummary = data.map((line) {
-        final parts = line.split('|');
-        return {
-          'title': parts[0],
-          'quantity': int.parse(parts[1]),
-          'totalWithGST': double.parse(parts[2]),
-          'gst': double.parse(parts[3]),
-        };
-      }).toList();
-    }
-    setState(() {});
-  }
-
-  Future<void> _handleCheckout(String paymentMethod) async {
-    setState(() => _isLoading = true);
-    try {
-      final String mappedType = widget.type == 'cartNow' ? 'cartNow' : 'buyNow';
-
-      final Map<String, dynamic> requestBody = {
-        'paymentMethod': paymentMethod,
-        'type': mappedType,
-        'deliveryId': widget.selectedDeliveryId,
-      };
-
-      if (mappedType == 'buyNow') {
-        requestBody['productId'] = widget.productId;
-        requestBody['quantity'] = int.tryParse(widget.quantity ?? '1') ?? 1;
-        if (widget.offerId != null && widget.offerId!.isNotEmpty) {
-          requestBody['offerId'] = widget.offerId;
-        }
-      }
-
-      debugPrint("Checkout Payload: ${jsonEncode(requestBody)}");
-
-      if (paymentMethod == 'online') {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => PaymentScreen(
-              type: mappedType,
-              productId: widget.productId,
-              offerId: widget.offerId,
-              deliveryId: widget.selectedDeliveryId,
-              quantity: widget.quantity,
-              totalAmount: widget.totalAmount,
-            ),
-          ),
-        );
-      } else {
-        final result = await CheckoutPaymentService.checkout(requestBody);
-        final orderId = result['orderId'] ?? result['raw']['order']['_id'];
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-            builder: (_) => OrderSuccessScreen(orderId: orderId),
-          ),
-          (route) => false,
-        );
-      }
-    } catch (e) {
-      showTopSnackBar(context, 'Error during checkout: $e');
-    } finally {
-      setState(() => _isLoading = false);
-    }
-  }
-
-  void _showCODConfirmation() {
-    final bool isTablet = MediaQuery.of(context).size.width >= 600;
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
-      ),
-      builder: (context) => StatefulBuilder(
-        builder: (context, setState) => Padding(
-          padding: const EdgeInsets.all(25),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "Confirm Cash on Delivery order?",
-                style: TextStyle(
-                  fontSize: isTablet ? 20 : 14,
-                  fontWeight: FontWeight.bold,
-                  color: mythemecolor,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10),
-              Image.asset(
-                'assets/images/confirm.png',
-                height: isTablet ? 200 : 120,
-                fit: BoxFit.fitWidth,
-              ),
-              const SizedBox(height: 5),
-              SafeArea(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: mythemecolor1,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                      ),
-                      child: Text(
-                        "CANCEL",
-                        style: TextStyle(
-                          fontSize: isTablet ? 20 : 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                    ElevatedButton(
-                      onPressed: _codButtonDisabled
-                          ? null
-                          : () {
-                              setState(() => _codButtonDisabled = true);
-                              _handleCheckout('cod');
-                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            _codButtonDisabled ? Colors.grey : mythemecolor,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                      ),
-                      child: Text(
-                        _codButtonDisabled ? "CONFIRMED" : "CONFIRM",
-                        style: TextStyle(
-                          fontSize: isTablet ? 20 : 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSummary() {
-    if (_cartSummary.isEmpty) return const Text("No summary available.");
-    if (widget.type == 'buyNow') {
-      final item = _cartSummary[0];
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(item['title'],
-              style: GoogleFonts.poppins(fontSize: 13, fontWeight: FontWeight.w600)),
-          const SizedBox(height: 4),
-          Text("Quantity: ${item['quantity']}", style: GoogleFonts.poppins(fontSize: 12)),
-          Text("Price + GST: ₹${item['totalWithGST'].round()}",
-              style: GoogleFonts.poppins(fontSize: 12)),
-          Text("GST: ${item['gst'].round()}%", style: GoogleFonts.poppins(fontSize: 12)),
-        ],
-      );
-    } else {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: _cartSummary.map((item) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(item['title'],
-                    style: GoogleFonts.poppins(
-                        fontSize: 13, fontWeight: FontWeight.w600)),
-                const SizedBox(height: 4),
-                Text("Quantity: ${item['quantity']}", style: GoogleFonts.poppins(fontSize: 12)),
-                Text("Price + GST: ₹${item['totalWithGST'].round()}",
-                    style: GoogleFonts.poppins(fontSize: 12)),
-                Text("GST: ${item['gst'].round()}%", style: GoogleFonts.poppins(fontSize: 12)),
-              ],
-            ),
-          );
-        }).toList(),
-      );
-    }
-  }
-
-  Widget _buildPaymentTile({
-    required IconData icon,
-    required String title,
-    required bool isExpanded,
-    required VoidCallback onPressed,
-    required VoidCallback onTileExpand,
-    required String buttonText,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Theme(
-        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-        child: ExpansionTile(
-          onExpansionChanged: (_) => onTileExpand(),
-          leading: Icon(icon, color: isExpanded ? Colors.black87 : const Color(0xFF292929)),
-          title: Text(
-            title,
-            style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
-          ),
-          children: [
-            Container(
-              margin: const EdgeInsets.symmetric(vertical: 10),
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: onPressed,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: mythemecolor1,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                ),
-                child: Text(buttonText,
-                    style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black)),
-              ),
-            ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // final bool isTablet = MediaQuery.of(context).size.width >= 600;
-    return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(colors: [mythemecolor1, mythemecolor], begin: Alignment.topLeft, end: Alignment.bottomRight),
-          ),
-          child: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            title: const Text("Mode of Payment", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w500)),
-            centerTitle: true,
-          ),
-        ),
-      ),
-      body: _isLoading
-          ? const Center(child: AnimationPage1())
-          : RefreshIndicator(
-              onRefresh: () async => setState(() {}),
-              color: mythemecolor,
-              backgroundColor: const Color.fromARGB(255, 245, 240, 242),
-              displacement: 40,
-              strokeWidth: 2.5,
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: ExpansionTile(
-                        tilePadding: EdgeInsets.zero,
-                        iconColor: Colors.grey,
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Total Amount:', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-                            Text('₹${widget.totalAmount.round()}', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                        children: [const Divider(), _buildSummary()],
-                      ),
-                    ),
-                    const SizedBox(height: 40),
-                    _buildPaymentTile(
-                      icon: Icons.money,
-                      title: "Cash On Delivery",
-                      isExpanded: _isCODExpanded,
-                      onPressed: _showCODConfirmation,
-                      onTileExpand: () => setState(() => _isCODExpanded = !_isCODExpanded),
-                      buttonText: _codButtonDisabled ? "CONFIRMED" : "PLACE ORDER",
-                    ),
-                    _buildPaymentTile(
-                      icon: Icons.payment,
-                      title: "Online Payment",
-                      isExpanded: _isOnlineExpanded,
-                      onPressed: () => _handleCheckout('online'),
-                      onTileExpand: () => setState(() => _isOnlineExpanded = !_isOnlineExpanded),
-                      buttonText: "PROCEED FOR TRANSACTION",
-                    ),
-                    const SizedBox(height: 40),
-                    _buildSecurityInfo(),
-                  ],
-                ),
-              ),
-            ),
-    );
-  }
-
-  Widget _buildSecurityInfo() {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.lock, size: 16, color: Colors.black54),
-            SizedBox(width: 8),
-            Text('Secure 256-bit SSL encrypted payment', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Center(
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            spacing: 20,
-            runSpacing: 10,
-            children: [
-              Image.asset('assets/images/rupay.png', height: 14),
-              Image.asset('assets/images/master.png', height: 14),
-              Image.asset('assets/images/upi.png', height: 16),
-              Image.asset('assets/images/visa.png', height: 14),
-            ],
-          ),
-        ),
-        const SizedBox(height: 20),
-        Card(
-          color: Colors.white.withOpacity(0.5),
-          margin: const EdgeInsets.all(16),
-          elevation: 5,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [Color(0xFF5F5F5E), Color(0xFFA8A7A6)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                  child: const Icon(Icons.lock_outline, size: 20, color: Colors.white),
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  child: Text(
-                    "100% Secure Transactions\nWe guarantee secure payments and trustable delivery options.",
-                    style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const SizedBox(height: 10),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-

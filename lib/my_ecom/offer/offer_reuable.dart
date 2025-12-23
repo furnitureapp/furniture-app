@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/core/models_ecom/model_file.dart';
 
 
@@ -77,7 +78,7 @@ class MyOfferWidget extends StatelessWidget {
                           fontSize: isTablet ? 18 : 10 * scale,
                           color: const Color.fromARGB(255, 100, 99, 99),
                         ),
-                        maxLines: isTablet ? 5 : 2,
+                        maxLines: isTablet ? 5 : 4,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -104,7 +105,7 @@ class MyOfferWidget extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: isTablet ? 21 : 14 * scale,
                                 fontWeight: FontWeight.bold,
-                                color: const Color.fromARGB(255, 26, 82, 29),
+                                color: mythemecolor,
                               ),
                             ),
                           ],

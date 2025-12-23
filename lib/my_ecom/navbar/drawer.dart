@@ -34,14 +34,11 @@ class CustomDrawer extends StatelessWidget {
           } else if (!snapshot.hasData || snapshot.data == null) {
             return const Center(child: Text("No shop settings available"));
           }
-
           final settings = snapshot.data!;
-
           return Column(
             children: [
-              const SizedBox(height: 10),
               Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
@@ -58,8 +55,8 @@ class CustomDrawer extends StatelessWidget {
                   children: [
                     Image.asset(
                       'assets/images/woodpecker_logo.png',
-                      height: 120,
-                      width: 160,
+                      height: 100,
+                      width: 130,
                       fit: BoxFit.contain,
                     ),
                   ],

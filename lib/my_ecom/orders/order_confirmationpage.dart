@@ -82,7 +82,6 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
     }
   }
 
-  
   void _loadAddressFromProvider() {
     final address = context.read<SelectedAddressProvider>().selectedAddress;
 
@@ -188,11 +187,11 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
           child: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            title: const Text(
+            title: Text(
               "Order Confirmation",
               style: TextStyle(
                 color: Colors.white,
-                fontSize: 18,
+                fontSize: isTablet ? 22 : 16,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -306,32 +305,6 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                     );
                                   },
 
-                            // : () async {
-                            //     if (selectedDeliveryId == null ||
-                            //        _userName  == "No Name") {
-                            //       showTopSnackBar(
-                            //         context,
-                            //         "Please select a delivery address.",
-                            //       );
-                            //       return;
-                            //     }
-                            //     await _storeBuyNowSummaryForPayment();
-                            //     Navigator.push(
-                            //       context,
-                            //       MaterialPageRoute(
-                            //         builder: (context) =>
-                            //             ExpansionTileControllers(
-                            //               totalAmount: totalAmount,
-                            //               type: 'buyNow',
-                            //               productId: widget.product.id,
-                            //               selectedDeliveryId:
-                            //                   selectedDeliveryId,
-                            //               quantity: quantity.toString(),
-                            //               offerId: widget.offerId,
-                            //             ),
-                            //       ),
-                            //     );
-                            //   },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: mythemecolor,
                               padding: const EdgeInsets.symmetric(
@@ -364,34 +337,6 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                           ),
                         ),
                         ElevatedButton(
-                          // onPressed: isBelowMin
-                          //     ? null
-                          //     : () async {
-                          //         if (selectedDeliveryId == null ||
-                          //             _houseNo == "No HouseNo") {
-                          //           showTopSnackBar(
-                          //             context,
-                          //             "Please select a delivery address.",
-                          //           );
-                          //           return;
-                          //         }
-                          //         await _storeBuyNowSummaryForPayment();
-                          //         Navigator.push(
-                          //           context,
-                          //           MaterialPageRoute(
-                          //             builder: (context) =>
-                          //                 ExpansionTileControllers(
-                          //                   totalAmount: totalAmount,
-                          //                   type: 'buyNow',
-                          //                   productId: widget.product.id,
-                          //                   selectedDeliveryId:
-                          //                       selectedDeliveryId,
-                          //                   quantity: quantity.toString(),
-                          //                   offerId: widget.offerId,
-                          //                 ),
-                          //           ),
-                          //         );
-                          //       },
                           onPressed: isBelowMin
                               ? null
                               : () async {
@@ -498,220 +443,206 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                       "Item to Purchase:",
                       style: TextStyle(
                         color: mythemecolor,
-                        fontSize: 24,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 10),
                     Card(
-                      color: Colors.white,
-                      elevation: 4,
+                      color: const Color.fromARGB(255, 228, 215, 226),
+                      elevation: 5,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          maxWidth: 800, // Adjust this based on your needs
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 215, // Reduced width
-                              height: 215, // Square aspect ratio
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(12),
-                                  bottomLeft: Radius.circular(12),
-                                ),
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                    product.images.isNotEmpty
-                                        ? product.images.first
-                                        : 'https://via.placeholder.com/150',
+                        constraints: BoxConstraints(maxWidth: 800),
+                        child: Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(18),
+                                child: Container(
+                                  width: 255, // Reduced width
+                                  height: 230, // Square aspect ratio
+                                  decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(20),
+                                    ),
+                                    image: DecorationImage(
+                                      image: NetworkImage(
+                                        product.images.isNotEmpty
+                                            ? product.images.first
+                                            : 'https://via.placeholder.com/150',
+                                      ),
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
-                                  fit: BoxFit.cover,
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      product.title,
-                                      style: const TextStyle(
-                                        fontSize: 22,
-                                        fontWeight: FontWeight.bold,
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        product.title,
+                                        style: const TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
                                       ),
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      product.description,
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        color: Color.fromARGB(255, 88, 86, 86),
-                                      ),
-                                    ),
-                                    Text(
-                                      'Gst Percentage: ${product.gstPercentage}%',
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w500,
-                                        color: mythemecolor,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    const SizedBox(height: 12),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            if (product.price >
-                                                product.offerPrice)
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                  right: 8.0,
-                                                ),
-                                                child: Text(
-                                                  '₹${product.price.round()}',
-                                                  style: const TextStyle(
-                                                    fontSize: 19,
-                                                    color: Colors.grey,
-                                                    decoration: TextDecoration
-                                                        .lineThrough,
-                                                  ),
+                                      const SizedBox(height: 10),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Original Price: ₹${product.offerPrice.round()}',
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: mythemecolor,
                                                 ),
                                               ),
-                                            Text(
-                                              '₹${product.offerPrice.round()}',
-                                              style: const TextStyle(
-                                                fontSize: 22,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color.fromARGB(
-                                                  255,
-                                                  8,
-                                                  69,
-                                                  8,
+                                            ],
+                                          ),
+                                          if (product.price >
+                                              product.offerPrice)
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 8,
+                                                    vertical: 4,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: mythemecolor,
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                              ),
+                                              child: Text(
+                                                '${(((product.price - product.offerPrice) / product.price) * 100).round()}% OFF',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold,
                                                 ),
                                               ),
                                             ),
-                                          ],
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+
+                                      Text(
+                                        'Gst Percentage: ${product.gstPercentage}%',
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500,
+                                          color: mythemecolor,
                                         ),
-                                        if (product.price > product.offerPrice)
+                                      ),
+
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        '₹${_baseAmount.round()} + ₹${_gstAmount.round()} = ₹${totalAmount.round()}',
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black54,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        'Total Amount with GST: ₹${totalAmount.round()}',
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w500,
+                                          color: mythemecolor,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 12),
+
+                                      Row(
+                                        children: [
+                                          const Text(
+                                            "Quantity:",
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              color: mythemecolor,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          const SizedBox(width: 10),
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.remove_circle,
+                                              color: mythemecolor1,
+                                              size: 35,
+                                            ),
+                                            padding: EdgeInsets.zero,
+                                            constraints: const BoxConstraints(),
+                                            onPressed: () {
+                                              if (quantity > 1) {
+                                                _updateQuantity(quantity - 1);
+                                              }
+                                            },
+                                          ),
+                                          const SizedBox(width: 5),
                                           Container(
+                                            margin: const EdgeInsets.symmetric(
+                                              horizontal: 4,
+                                            ),
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: 8,
-                                              vertical: 4,
+                                              vertical: 2,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: const Color.fromARGB(
-                                                255,
-                                                249,
-                                                48,
-                                                21,
+                                              border: Border.all(
+                                                color: mythemecolor,
+                                                width: 2,
                                               ),
                                               borderRadius:
-                                                  BorderRadius.circular(6),
+                                                  BorderRadius.circular(4),
                                             ),
                                             child: Text(
-                                              '${(((product.price - product.offerPrice) / product.price) * 100).round()}% OFF',
+                                              '$quantity',
                                               style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 17,
-                                                fontWeight: FontWeight.bold,
+                                                fontSize: 22,
                                               ),
                                             ),
                                           ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 12),
-                                    Row(
-                                      children: [
-                                        const Text(
-                                          "Quantity:",
-                                          style: TextStyle(
-                                            fontSize: 17,
-                                            color: Color.fromARGB(
-                                              255,
-                                              224,
-                                              129,
-                                              5,
-                                            ),
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const SizedBox(width: 10),
-                                        IconButton(
-                                          icon: const Icon(
-                                            Icons.remove_circle,
-                                            color: mythemecolor1,
-                                            size: 35,
-                                          ),
-                                          padding: EdgeInsets.zero,
-                                          constraints: const BoxConstraints(),
-                                          onPressed: () {
-                                            if (quantity > 1)
-                                              _updateQuantity(quantity - 1);
-                                          },
-                                        ),
-                                        const SizedBox(width: 5),
-                                        Container(
-                                          margin: const EdgeInsets.symmetric(
-                                            horizontal: 4,
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 8,
-                                            vertical: 2,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
+                                          const SizedBox(width: 5),
+                                          IconButton(
+                                            icon: const Icon(
+                                              Icons.add_circle,
                                               color: mythemecolor,
-                                              width: 2,
+                                              size: 35,
                                             ),
-                                            borderRadius: BorderRadius.circular(
-                                              4,
-                                            ),
+                                            padding: EdgeInsets.zero,
+                                            constraints: const BoxConstraints(),
+                                            onPressed: () {
+                                              _updateQuantity(quantity + 1);
+                                            },
                                           ),
-                                          child: Text(
-                                            '$quantity',
-                                            style: const TextStyle(
-                                              fontSize: 22,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 5),
-                                        IconButton(
-                                          icon: const Icon(
-                                            Icons.add_circle,
-                                            color: mythemecolor,
-                                            size: 35,
-                                          ),
-                                          padding: EdgeInsets.zero,
-                                          constraints: const BoxConstraints(),
-                                          onPressed: () {
-                                            _updateQuantity(quantity + 1);
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ],
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                    const SizedBox(height: 30),
+                    const SizedBox(height: 20),
                     const Text(
                       "Deliver To:",
                       style: TextStyle(
@@ -727,7 +658,8 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                           vertical: 10.0,
                         ),
                         child: Card(
-                          elevation: 6,
+                          color: Colors.white,
+                          elevation: 10,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -740,7 +672,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                   children: [
                                     const Icon(
                                       Icons.location_on,
-                                      size: 40,
+                                      size: 30,
                                       color: mythemecolor,
                                     ),
                                     const SizedBox(width: 10),
@@ -761,7 +693,6 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                     fontSize: 18,
                                     color: Colors.grey[700],
                                   ),
-                                  textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 16),
                                 ElevatedButton.icon(
@@ -775,7 +706,9 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                             ),
                                       ),
                                     );
+
                                     if (result == true && mounted) {
+                                      // ✅ Load the updated address from Provider
                                       _loadAddressFromProvider();
                                       setState(() {
                                         calculateTotalAmount();
@@ -783,8 +716,8 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    minimumSize: const Size(200, 50),
+                                    backgroundColor: mythemecolor,
+                                    minimumSize: const Size(200, 40),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8),
                                     ),
@@ -792,7 +725,6 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                   icon: const Icon(
                                     Icons.edit_location_alt,
                                     color: Colors.white,
-                                    size: 24,
                                   ),
                                   label: const Text(
                                     "Add Delivery Details",
@@ -829,7 +761,7 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                       const Text(
                                         "Delivery Address",
                                         style: TextStyle(
-                                          fontSize: 22,
+                                          fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                           color: mythemecolor,
                                         ),
@@ -1271,7 +1203,6 @@ class _OrderConfirmationPageState extends State<OrderConfirmationPage> {
                                                   ),
                                             ),
                                           );
-                                          
 
                                           if (result == true && mounted) {
                                             _loadAddressFromProvider();
