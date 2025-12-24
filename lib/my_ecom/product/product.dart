@@ -36,8 +36,8 @@ class _ProductPageState extends State<ProductPage> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final bool isTablet = screenWidth >= 600;
-
+    final bool isTabletPortrait = screenWidth >= 600 && screenWidth < 900;
+    final bool isTabletLandscape = screenWidth >= 900;
     return Consumer<WishlistManager>(
       builder: (context, wishlistManager, child) {
         return Scaffold(
@@ -77,12 +77,14 @@ class _ProductPageState extends State<ProductPage> {
                 padding: const EdgeInsets.all(10),
                 child: GridView.builder(
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: isTablet ? 4 : 2,
+                    crossAxisCount: isTabletLandscape ? 4 : isTabletPortrait ? 3 : 2,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio: isTablet
+                    childAspectRatio: isTabletLandscape
                         ? 0.7
-                        : 0.72, // Adjusted to reduce empty space
+                        : isTabletPortrait
+                        ? 0.55
+                        : 0.72, 
                   ),
                   itemCount: products.length,
                   itemBuilder: (context, index) {

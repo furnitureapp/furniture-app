@@ -56,7 +56,7 @@ class _OrderListPageState extends State<OrderListPage> {
 
   @override
   Widget build(BuildContext context) {
-    bool isTablet = MediaQuery.of(context).size.width > 600;
+    bool isTabletlandscape = MediaQuery.of(context).size.width >= 900;
 
     if (_isLoading) {
       return const Scaffold(
@@ -98,7 +98,7 @@ class _OrderListPageState extends State<OrderListPage> {
                   children: [
                     Positioned.fill(
                       child: Image.asset(
-                        isTablet
+                        isTabletlandscape
                             ? 'assets/images/theme.png'
                             : 'assets/images/theme.png',
                         fit: BoxFit.cover,
@@ -106,14 +106,14 @@ class _OrderListPageState extends State<OrderListPage> {
                     ),
                     Center(
                       child: Padding(
-                        padding: EdgeInsets.all(isTablet ? 40 : 20),
+                        padding: EdgeInsets.all(isTabletlandscape ? 40 : 20),
                         child: Card(
                           elevation: 10,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: Container(
-                            padding: EdgeInsets.all(isTablet ? 30 : 20),
+                            padding: EdgeInsets.all(isTabletlandscape ? 30 : 20),
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(20),
                               color: mythemecolor1.withOpacity(0.5),
@@ -128,12 +128,12 @@ class _OrderListPageState extends State<OrderListPage> {
                                   height: 130,
                                   fit: BoxFit.contain,
                                 ),
-                                if (!isTablet) const SizedBox(height: 5),
+                                if (!isTabletlandscape) const SizedBox(height: 5),
                                 Text(
                                   "Issues in fetching orders!",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: isTablet ? 24 : 16,
+                                    fontSize: isTabletlandscape ? 24 : 16,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
@@ -143,7 +143,7 @@ class _OrderListPageState extends State<OrderListPage> {
                                   "Retry or place your Orders!",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
-                                    fontSize: isTablet ? 18 : 14,
+                                    fontSize: isTabletlandscape ? 18 : 14,
                                     color: Colors.grey.shade700,
                                   ),
                                 ),
@@ -154,11 +154,11 @@ class _OrderListPageState extends State<OrderListPage> {
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: mythemecolor,
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: isTablet ? 40 : 30,
-                                      vertical: isTablet ? 14 : 12,
+                                      horizontal: isTabletlandscape ? 40 : 30,
+                                      vertical: isTabletlandscape ? 14 : 12,
                                     ),
                                     textStyle: TextStyle(
-                                      fontSize: isTablet ? 18 : 14,
+                                      fontSize: isTabletlandscape ? 18 : 14,
                                       fontWeight: FontWeight.bold,
                                     ),
                                     foregroundColor: Colors.white,
@@ -191,13 +191,15 @@ class _OrderListPageState extends State<OrderListPage> {
   }
 
   Widget buildOrderListView(List<Order> orders) {
+      // bool isTabletlandscape = MediaQuery.of(context).size.width >= 900;
+     bool isTabletPortrait =  MediaQuery.of(context).size.width >= 600 &&  MediaQuery.of(context).size.width < 900;
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth > 600) {
           return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              childAspectRatio: 0.85,
+            gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount:  isTabletPortrait ? 2 :   4,
+              childAspectRatio:  isTabletPortrait ? 1.0 :0.85,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
             ),
@@ -384,7 +386,7 @@ class _OrderListPageState extends State<OrderListPage> {
   }
 
   Widget noitemsOrdered() {
-    bool isTablet = MediaQuery.of(context).size.width > 600;
+    bool isTabletlandscape = MediaQuery.of(context).size.width > 600;
 
     return SizedBox.expand(
       child: Stack(
@@ -392,14 +394,14 @@ class _OrderListPageState extends State<OrderListPage> {
          
           Center(
             child: Padding(
-              padding: EdgeInsets.all(isTablet ? 40 : 20),
+              padding: EdgeInsets.all(isTabletlandscape ? 40 : 20),
               child: Card(
                 elevation: 10,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Container(
-                  padding: EdgeInsets.all(isTablet ? 30 : 20),
+                  padding: EdgeInsets.all(isTabletlandscape ? 30 : 20),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     color: mythemecolor1.withOpacity(0.5),
@@ -410,8 +412,8 @@ class _OrderListPageState extends State<OrderListPage> {
                     children: [
                       Lottie.asset(
                         'assets/json/em.json',
-                        width: isTablet ? 150 : 130,
-                        height: isTablet ? 150 : 130,
+                        width: isTabletlandscape ? 150 : 130,
+                        height: isTabletlandscape ? 150 : 130,
                         fit: BoxFit.contain,
                       ),
                       const SizedBox(height: 20),
@@ -419,7 +421,7 @@ class _OrderListPageState extends State<OrderListPage> {
                         "No orders found!",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: isTablet ? 24 : 16,
+                          fontSize: isTabletlandscape ? 24 : 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
                         ),
@@ -429,7 +431,7 @@ class _OrderListPageState extends State<OrderListPage> {
                         "Please do Shop & place your orders!",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: isTablet ? 18 : 14,
+                          fontSize: isTabletlandscape ? 18 : 14,
                           color: Colors.grey.shade700,
                         ),
                       ),

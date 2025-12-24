@@ -150,7 +150,7 @@ class CustomDrawer extends StatelessWidget {
                         color: mythemecolor,
                       ),
                       title: Text(
-                        "Banking Information",
+                         "Banking Information",
                         style: TextStyle(fontSize: isTablet ? 19 : 14),
                       ),
                       onTap: () {

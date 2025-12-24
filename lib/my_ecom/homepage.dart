@@ -16,7 +16,6 @@ import 'package:furniture_ecom_app/my_ecom/wishlist/products.dart';
 import 'package:furniture_ecom_app/my_ecom/wishlist/wishlist_manager.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:marquee/marquee.dart';
-
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
@@ -95,14 +94,18 @@ class _MyhomeState extends State<Myhome> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final bool isTablet = screenWidth >= 600;
+    // final screenWidth = MediaQuery.of(context).size.width;
+    // final bool isTablet = screenWidth >= 600;
+    final width = MediaQuery.of(context).size.width;
+
+    final bool isMobile = width < 600;
+    final bool isTabletPortrait = width >= 600 && width < 900;
+    final bool isTabletLandscape = width >= 900;
 
     return Scaffold(
       backgroundColor: Colors.white,
       drawer: const CustomDrawer(),
       appBar: MyAppbar(title: "Wood Pecker", isPreview: widget.isPreview),
-     
 
       body: RefreshIndicator(
         onRefresh: _refreshData,
@@ -115,10 +118,9 @@ class _MyhomeState extends State<Myhome> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 5),
-              if (!isTablet && !widget.isPreview) const SearchScreens(),
-
-              // if (!isTablet) const SearchScreens(),
-               MyCategoriesWidget(isPreview:widget.isPreview,),
+              if (!isTabletLandscape && !isTabletPortrait && !widget.isPreview)
+                const SearchScreens(),
+              MyCategoriesWidget(isPreview: widget.isPreview),
               Padding(
                 padding: const EdgeInsets.all(2),
                 child: FutureBuilder<Marquees?>(
@@ -184,7 +186,7 @@ class _MyhomeState extends State<Myhome> {
                 ),
               ),
               const SizedBox(height: 10),
-               OfferGridWidget(isPreview: widget.isPreview,),
+              OfferGridWidget(isPreview: widget.isPreview),
               const SizedBox(height: 10),
               const Center(
                 child: Text(
@@ -215,12 +217,27 @@ class _MyhomeState extends State<Myhome> {
                     padding: const EdgeInsets.all(7),
                     physics: const NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
+                    // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    //   crossAxisCount: isTablet ? 4 : 2,
+                    //   crossAxisSpacing: isTablet ? 12 : 5,
+                    //   mainAxisSpacing: isTablet ? 12 : 5,
+                    //   childAspectRatio: isTablet ? 0.7 : 0.75,
+                    // ),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: isTablet ? 4 : 2,
-                      crossAxisSpacing: isTablet ? 12 : 5,
-                      mainAxisSpacing: isTablet ? 12 : 5,
-                      childAspectRatio: isTablet ? 0.7 : 0.75,
+                      crossAxisCount: isTabletPortrait
+                          ? 3 // ✅ TABLET PORTRAIT → 3 ITEMS PER ROW
+                          : isTabletLandscape
+                          ? 4 // ✅ TABLET LANDSCAPE → 4 ITEMS
+                          : 2, // ✅ MOBILE
+                      crossAxisSpacing: isMobile ? 6 : 14,
+                      mainAxisSpacing: isMobile ? 6 : 14,
+                      childAspectRatio: isTabletPortrait
+                          ? 0.65
+                          : isTabletLandscape
+                          ? 0.7
+                          : 0.7,
                     ),
+
                     itemCount: products.length,
                     itemBuilder: (context, index) {
                       final product = products[index];

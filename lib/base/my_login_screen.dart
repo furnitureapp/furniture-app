@@ -249,23 +249,9 @@ class _MyLoginScreenState extends State<MyLoginScreen> {
 
                     const SizedBox(height: 14),
 
-                    // Align(
-                    //   alignment: Alignment.centerRight,
-                    //   child: TextButton(
-                    //     onPressed: () {},
-                    //     child: Text(
-                    //       "Forgot Password?",
-                    //       style: GoogleFonts.poppins(
-                    //         color: mythemecolor,
-                    //         fontWeight: FontWeight.w500,
-                    //         fontSize: inputFontSize + 1,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
+                 
                     const SizedBox(height: 10),
 
-                    // Login Button
                     Center(
                       child: SizedBox(
                         width: isTablet ? 200 : 150,
@@ -292,7 +278,7 @@ class _MyLoginScreenState extends State<MyLoginScreen> {
                               : Text(
                                   "Login",
                                   style: GoogleFonts.poppins(
-                                    fontSize: isTablet ? 22 : 18,
+                                    fontSize: isTablet ? 22 : 14,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.white,
                                   ),

@@ -1007,7 +1007,7 @@ class _OrderSummaryState extends State<OrderSummary> {
                                                 const UpdateAddressScreen(),
                                           ),
                                         );
-                                   if (result == true && mounted) {
+                                    if (result == true && mounted) {
                                       _loadAddressFromProvider();
                                       setState(() {
                                         _fetchCartItems();
@@ -1324,7 +1324,6 @@ class _OrderSummaryState extends State<OrderSummary> {
                     ),
                   ),
                   ElevatedButton(
-                   
                     onPressed: isBelowMin
                         ? null
                         : () async {

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:furniture_ecom_app/core/api_management_service/dealers_api_service.dart';
 import 'package:furniture_ecom_app/marketers/pagination_widget.dart';
@@ -71,7 +70,6 @@ class _SuperAdActivitylogState extends State<SuperAdActivitylog> {
 
   // Filters
   String _searchQuery = '';
-  // String _selectedStatus = 'All';
   String selectedDateFilter = 'All Dates';
   DateTime? specificDate;
   DateTime? fromDate;
@@ -84,18 +82,6 @@ class _SuperAdActivitylogState extends State<SuperAdActivitylog> {
   int currentPage = 1;
   final int pageSize = 6;
   int totalPages = 1;
-
-  // final Map<String, String> actionTypeMap = {
-  //   'All': 'All',
-  //   'CREATED DEALERS': 'CREATE_DEALER',
-  //   'ACTIVATED DEALERS': 'ACTIVATE_DEALER',
-  //   'DEACTIVATED DEALERS': 'DEACTIVATE_DEALER',
-  //   'APPROVED DEALERS': 'APPROVE_DEALER',
-  //   'REJECTED DEALERS': 'REJECT_DEALER',
-  //   'VERIFIED GST': 'VERIFY_GST',
-  //   'LOGGED IN': 'LOGIN',
-  // };
-
 
   @override
   void initState() {
@@ -143,7 +129,7 @@ class _SuperAdActivitylogState extends State<SuperAdActivitylog> {
         return actionType.contains(query) ||
             userName.contains(query) ||
             role.contains(query) ||
-            description.contains(query) ;
+            description.contains(query);
       }).toList();
     }
 
@@ -246,8 +232,8 @@ class _SuperAdActivitylogState extends State<SuperAdActivitylog> {
       body: isLoading
           ? const AnimationPage1()
           : RefreshIndicator(
-            color: mythemecolor,
-            strokeWidth: 3,
+              color: mythemecolor,
+              strokeWidth: 3,
               onRefresh: () async {
                 currentPage = 1;
                 await _loadActivities();
@@ -257,7 +243,6 @@ class _SuperAdActivitylogState extends State<SuperAdActivitylog> {
 
                 child: Column(
                   children: [
-                    
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 4,
@@ -287,7 +272,6 @@ class _SuperAdActivitylogState extends State<SuperAdActivitylog> {
                       ),
                     ),
 
-                  
                     Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 4,
@@ -393,33 +377,6 @@ class _SuperAdActivitylogState extends State<SuperAdActivitylog> {
                       ),
                     ),
 
-                    // ───────────────────────────────
-                    // ROW 3 → STATUS FILTER
-                    // ───────────────────────────────
-                    // Padding(
-                    //   padding: const EdgeInsets.symmetric(
-                    //     horizontal: 4,
-                    //     vertical: 4,
-                    //   ),
-                    //   child: DropdownButton<String>(
-                    //     isExpanded: true,
-                    //     value: _selectedStatus,
-                    //     items: actionTypeMap.keys.map((label) {
-                    //       return DropdownMenuItem(
-                    //         value: label,
-                    //         child: Text(label),
-                    //       );
-                    //     }).toList(),
-                    //     onChanged: (value) {
-                    //       setState(() {
-                    //         _selectedStatus = value!;
-                    //         _selectedStatusValue = actionTypeMap[value]!;
-                    //       });
-                    //       _onFiltersChanged();
-                    //     },
-                    //   ),
-                    // ),
-
                     const SizedBox(height: 6),
 
                     // Logs list
@@ -429,129 +386,129 @@ class _SuperAdActivitylogState extends State<SuperAdActivitylog> {
                     _paginationWidget(),
                   ],
                 ),
-
-             
               ),
             ),
     );
   }
 
-Widget _buildLogsArea() {
-  final filtered = _applyFilters();
+  Widget _buildLogsArea() {
+    final filtered = _applyFilters();
 
-  if (filtered.isEmpty) {
-    return const Center(child: Text("No activity logs available"));
-  }
+    if (filtered.isEmpty) {
+      return const Center(child: Text("No activity logs available"));
+    }
 
-  // ensure page logs match filters/page
-  _updatePageLogs(filtered: filtered);
+    double getTabletAspectRatio(BuildContext context) {
+      final size = MediaQuery.of(context).size;
+      final isLandscape = size.width > size.height;
 
-  final isTablet = MediaQuery.of(context).size.shortestSide >= 600;
+      if (isLandscape) {
+        return 2.5; 
+      } else {
+        return 1.6; 
+      }
+    }
 
-  // ✅ MOBILE VIEW (UNCHANGED LISTVIEW)
-  if (!isTablet) {
-    return ListView.builder(
-      itemCount: pageLogs.length,
-      itemBuilder: (context, index) {
-        final log = pageLogs[index];
+    _updatePageLogs(filtered: filtered);
 
-        return Card(
-          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-          child: ListTile(
-            title: Text(
-              log["actionType"] ?? "",
-              style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
-            ),
-            subtitle: Text("""
+    final width = MediaQuery.of(context).size.width;
+
+    final bool isTablet = width >= 600;
+    if (!isTablet) {
+      return ListView.builder(
+        itemCount: pageLogs.length,
+        itemBuilder: (context, index) {
+          final log = pageLogs[index];
+
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+            child: ListTile(
+              title: Text(
+                log["actionType"] ?? "",
+                style: GoogleFonts.poppins(fontWeight: FontWeight.w600),
+              ),
+              subtitle: Text("""
 User: ${log["userName"] ?? ''}
 Role: ${log["role"] ?? ''}
 Status: ${log["status"] ?? '-'}
 Time: ${DateTime.tryParse(log["createdAt"] ?? '')?.toLocal() ?? ''}
 Description: ${log["description"] ?? ''}
               """, style: GoogleFonts.poppins(fontSize: 13)),
+            ),
+          );
+        },
+      );
+    }
+
+    // ✅ TABLET VIEW — PREMIUM TWO-COLUMN GRID
+    return GridView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2, // ✅ Two logs per row
+        mainAxisSpacing: 14,
+        crossAxisSpacing: 14,
+        childAspectRatio: getTabletAspectRatio(context),
+      ),
+      itemCount: pageLogs.length,
+      itemBuilder: (context, index) {
+        final log = pageLogs[index];
+
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 10,
+                offset: const Offset(2, 4),
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      log["actionType"] ?? "",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: Text("""
+User: ${log["userName"] ?? ''}
+Role: ${log["role"] ?? ''}
+Status: ${log["status"] ?? '-'}
+Time: ${DateTime.tryParse(log["createdAt"] ?? '')?.toLocal() ?? ''}
+                """, style: GoogleFonts.poppins(fontSize: 18, height: 1.25)),
+              ),
+              Divider(color: Colors.white.withOpacity(.4)),
+              Text(
+                log["description"] ?? '',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ],
           ),
         );
       },
     );
   }
-
-  // ✅ TABLET VIEW — PREMIUM TWO-COLUMN GRID
-  return GridView.builder(
-    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2,                 // ✅ Two logs per row
-      mainAxisSpacing: 14,
-      crossAxisSpacing: 14,
-      childAspectRatio: 2.5,             // ✅ Balanced layout esthetics
-    ),
-    itemCount: pageLogs.length,
-    itemBuilder: (context, index) {
-      final log = pageLogs[index];
-
-      return Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.08),
-              blurRadius: 10,
-              offset: const Offset(2, 4),
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-             
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    log["actionType"] ?? "",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: Text(
-                """
-User: ${log["userName"] ?? ''}
-Role: ${log["role"] ?? ''}
-Status: ${log["status"] ?? '-'}
-Time: ${DateTime.tryParse(log["createdAt"] ?? '')?.toLocal() ?? ''}
-                """,
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  height: 1.25,
-                ),
-              ),
-            ),
-            Divider(color: Colors.white.withOpacity(.4)),
-            Text(
-              log["description"] ?? '',
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontStyle: FontStyle.italic,
-              ),
-            )
-          ],
-        ),
-      );
-    },
-  );
-}
-
 
   Widget _paginationWidget() {
     // ensure totalPages is based on filtered list
@@ -598,6 +555,3 @@ Time: ${DateTime.tryParse(log["createdAt"] ?? '')?.toLocal() ?? ''}
     );
   }
 }
-
-
-

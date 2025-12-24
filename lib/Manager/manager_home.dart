@@ -163,7 +163,7 @@ class _ManagerHomeState extends State<ManagerHome> {
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: _buildKpiCard(
-                                        'Total Admin',
+                                        ' Admin',
                                         '$adminCount',
                                         Icons.admin_panel_settings,
                                         onTap: () {
@@ -181,7 +181,7 @@ class _ManagerHomeState extends State<ManagerHome> {
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: _buildKpiCard(
-                                        'Total Marketers',
+                                        ' Marketers',
                                         '$marketerCount',
                                         Icons.group,
                                         onTap: () {
@@ -199,7 +199,7 @@ class _ManagerHomeState extends State<ManagerHome> {
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: _buildKpiCard(
-                                        'Total Dealers',
+                                        ' Dealers',
                                         '$dealerCount',
                                         Icons.store,
                                         onTap: () {
@@ -255,7 +255,7 @@ class _ManagerHomeState extends State<ManagerHome> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: _buildKpiCard(
-                                      'Total Admin',
+                                      ' Admin',
                                       '$adminCount',
                                       Icons.admin_panel_settings,
                                       onTap: () {
@@ -285,7 +285,7 @@ class _ManagerHomeState extends State<ManagerHome> {
                                           ),
                                         );
                                       },
-                                      'Total Marketers',
+                                      ' Marketers',
                                       '$marketerCount',
                                       Icons.group,
                                       const Color.fromARGB(255, 33, 92, 35),
@@ -294,7 +294,7 @@ class _ManagerHomeState extends State<ManagerHome> {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: _buildKpiCard(
-                                      'Total Dealers',
+                                      ' Dealers',
                                       '$dealerCount',
                                       Icons.store,
                                       onTap: () {
@@ -355,7 +355,7 @@ class _ManagerHomeState extends State<ManagerHome> {
               Text(
                 title,
                 style: GoogleFonts.poppins(
-                  fontSize: isTablet(context) ? 20 : 13,
+                  fontSize: isTablet(context) ? 18: 13,
                   fontWeight: FontWeight.w500,
                 ),
               ),
@@ -363,7 +363,7 @@ class _ManagerHomeState extends State<ManagerHome> {
               Text(
                 count,
                 style: GoogleFonts.poppins(
-                  fontSize: isTablet(context) ? 22 : 14,
+                  fontSize: isTablet(context) ? 18 : 14,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),

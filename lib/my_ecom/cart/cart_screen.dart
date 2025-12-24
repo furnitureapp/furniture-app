@@ -175,7 +175,11 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   Widget build(BuildContext context) {
-    bool isTablet = MediaQuery.of(context).size.width > 600;
+    final width = MediaQuery.of(context).size.width;
+
+    final bool isTabletLandscape = width >= 900;
+
+    // bool isTablet = MediaQuery.of(context).size.width > 600;
     if (_isLoading) {
       return Scaffold(
         appBar: PreferredSize(
@@ -207,7 +211,6 @@ class _CartScreenState extends State<CartScreen> {
       );
     }
 
-
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
@@ -237,17 +240,16 @@ class _CartScreenState extends State<CartScreen> {
       body: _cartItems.isEmpty
           ? Stack(
               children: [
-                
                 Center(
                   child: Padding(
-                    padding: EdgeInsets.all(isTablet ? 40 : 20),
+                    padding: EdgeInsets.all(isTabletLandscape ? 40 : 20),
                     child: Card(
                       elevation: 10,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Container(
-                        padding: EdgeInsets.all(isTablet ? 30 : 20),
+                        padding: EdgeInsets.all(isTabletLandscape ? 30 : 20),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
                           color: mythemecolor1.withOpacity(0.5),
@@ -267,7 +269,7 @@ class _CartScreenState extends State<CartScreen> {
                               "Your Cart is Empty!",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: isTablet ? 24 : 16,
+                                fontSize: isTabletLandscape ? 24 : 16,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black,
                               ),
@@ -277,12 +279,11 @@ class _CartScreenState extends State<CartScreen> {
                               "Please do shop & add items to cart!",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: isTablet ? 18 : 14,
+                                fontSize: isTabletLandscape ? 18 : 14,
                                 color: Colors.grey.shade700,
                               ),
                             ),
                             const SizedBox(height: 25),
-                          
                           ],
                         ),
                       ),
@@ -291,9 +292,12 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               ],
             )
-          : isTablet
-          ? _buildCartUITablet()
-          : _buildCartUI(),
+          : isTabletLandscape
+          ? _buildCartUITablet() // ✅ only landscape tablet
+          : _buildCartUI(), // ✅ mobile + tablet portrait
+      // : isTablet
+      // ? _buildCartUITablet()
+      // : _buildCartUI(),
     );
   }
 
@@ -922,103 +926,3 @@ class _CartScreenState extends State<CartScreen> {
     );
   }
 }
-
-
-  
-
-
-   // child: Center(
-                  //   child: Card(
-                  //     elevation: 10,
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(20),
-                  //     ),
-                  //     margin: EdgeInsets.symmetric(
-                  //       horizontal: isTablet ? 40 : 20,
-                  //       vertical: isTablet ? 20 : 0,
-                  //     ),
-                  //     child: Container(
-                  //       padding: EdgeInsets.all(isTablet ? 30 : 20),
-                  //       decoration: BoxDecoration(
-                  //         borderRadius: BorderRadius.circular(20),
-                  //         color: isTablet ? null :   mythemecolor1.withOpacity(0.5),
-                  //         gradient: isTablet
-                  //             ? LinearGradient(
-                  //                 colors: [
-                  //                   mythemecolor.shade300,
-                  //                   mythemecolor.shade700
-                  //                 ],
-                  //                 begin: Alignment.topLeft,
-                  //                 end: Alignment.bottomRight,
-                  //               )
-                  //             : null,
-                  //       ),
-                  //       child: Column(
-                  //         mainAxisSize: MainAxisSize.min,
-                  //         mainAxisAlignment: MainAxisAlignment.start,
-                  //         children: [
-                  //           Image.asset(
-                  //             'assets/images/cc.png',
-                  //             width: isTablet ? 450 : 250,
-                  //             height: isTablet ? 350 : 250,
-                  //           ),
-                  //           const SizedBox(height: 20),
-                  //           Text(
-                  //             "You are not logged in!",
-                  //             textAlign: TextAlign.center,
-                  //             style: TextStyle(
-                  //               fontSize: isTablet ? 24 : 18,
-                  //               fontWeight: FontWeight.bold,
-                  //               color: isTablet ? Colors.white : Colors.black,
-                  //             ),
-                  //           ),
-                  //           const SizedBox(height: 10),
-                  //           Text(
-                  //             "Login to see your Cart Items",
-                  //             textAlign: TextAlign.center,
-                  //             style: TextStyle(
-                  //               fontSize: isTablet ? 18 : 14,
-                  //               color: isTablet
-                  //                   ? Colors.white70
-                  //                   : Colors.grey.shade700,
-                  //             ),
-                  //           ),
-                  //           const SizedBox(height: 20),
-                  //           ElevatedButton(
-                  //             onPressed: () async {
-                  //               SharedPreferences prefs =
-                  //                   await SharedPreferences.getInstance();
-                  //               await prefs.setString('redirectRoute', '/cart');
-
-                  //               Navigator.push(
-                  //                 context,
-                  //                 MaterialPageRoute(
-                  //                   builder: (context) => const LoginScreen(),
-                  //                 ),
-                  //               );
-                  //             },
-                  //             style: ElevatedButton.styleFrom(
-                  //               backgroundColor:
-                  //                   isTablet ? Colors.white : mythemecolor,
-                  //               padding: EdgeInsets.symmetric(
-                  //                 horizontal: isTablet ? 40 : 30,
-                  //                 vertical: isTablet ? 14 : 12,
-                  //               ),
-                  //               textStyle: TextStyle(
-                  //                 fontSize: isTablet ? 18 : 16,
-                  //                 fontWeight: FontWeight.bold,
-                  //               ),
-                  //               foregroundColor: isTablet
-                  //                   ? mythemecolor.shade700
-                  //                   : Colors.white,
-                  //               shape: RoundedRectangleBorder(
-                  //                 borderRadius: BorderRadius.circular(10),
-                  //               ),
-                  //             ),
-                  //             child: const Text("Go To Login"),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),

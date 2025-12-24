@@ -15,6 +15,7 @@ import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 const double _mobileCardWidth = 190;
+const double widePhoneCardWidth = 250;
 const double _tabletCardWidth = 300;
 const double _listHeight = 250;
 const EdgeInsets _horizontalPadding = EdgeInsets.symmetric(horizontal: 12);
@@ -23,7 +24,6 @@ class ProductDetailPagep extends StatefulWidget {
   final Product? product;
   final String? productId;
   final bool isPreview;
-
 
   const ProductDetailPagep({
     super.key,
@@ -320,7 +320,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                                   effect: const WormEffect(
                                     dotWidth: 8,
                                     dotHeight: 7,
-                                    activeDotColor: Colors.green,
+                                    activeDotColor: mythemecolor,
                                     dotColor: Colors.grey,
                                   ),
                                 ),
@@ -359,7 +359,11 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                                   style: const TextStyle(fontSize: 20),
                                 ),
                                 const SizedBox(height: 20),
-                                _buildActionButtons(product),
+                                if (!widget.isPreview)
+                                  SafeArea(
+                                    bottom: true,
+                                    child: _buildActionButtons(product),
+                                  ),
                               ],
                             ),
                           ),
@@ -424,8 +428,7 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                             style: const TextStyle(fontSize: 20),
                           ),
                           const SizedBox(height: 20),
-                          if (!widget.isPreview)
-                            _buildActionButtons(product),
+                          if (!widget.isPreview) _buildActionButtons(product),
                         ],
                       );
               },
@@ -643,7 +646,9 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                   ? () => handleBuyNow(product, context)
                   : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: product.stock > 0 ? adminPrimaryColor : Colors.grey,
+                backgroundColor: product.stock > 0
+                    ? adminPrimaryColor
+                    : Colors.grey,
                 padding: const EdgeInsets.all(8),
               ),
               child: const Text(
@@ -661,10 +666,10 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
     );
   }
 
-
   Widget _buildRelatedOfferProducts(BuildContext context, String productId) {
     final screenWidth = MediaQuery.of(context).size.width;
     final bool isTablet = screenWidth > 600;
+    final bool isWidePhone = screenWidth >= 360 && screenWidth < 600;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -700,7 +705,11 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
             final relatedOffers = relatedSnapshot.data!;
 
             return SizedBox(
-              height: isTablet ? 420 : 250,
+              height: isTablet
+                  ? 420
+                  : isWidePhone
+                  ? 300
+                  : 250,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -709,7 +718,11 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                 itemBuilder: (context, index) {
                   final relatedOffer = relatedOffers[index];
                   return SizedBox(
-                    width: isTablet ? 300 : 190,
+                    width: isTablet
+                        ? _tabletCardWidth
+                        : isWidePhone
+                        ? widePhoneCardWidth
+                        : _mobileCardWidth,
                     child: MyOfferWidget(
                       offer: relatedOffer,
                       onTap: () {
@@ -734,162 +747,11 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
     );
   }
 
-  // Widget _buildRelatedOfferProducts(BuildContext context) {
-  //   final isTablet = MediaQuery.of(context).size.width > 600;
-
-  //   return FutureBuilder<List<Offer>>(
-  //     future: OfferService.fetchOfferProductsAsOffers(),
-  //     builder: (context, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return const Center(
-  //           child: CircularProgressIndicator(color: mythemecolor),
-  //         );
-  //       }
-
-  //       if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
-  //         return const Center(child: Text('No offer products available.'));
-  //       }
-
-  //       final offers = snapshot.data!;
-
-  //       return SizedBox(
-  //         height: isTablet ? 450 : _listHeight,
-  //         child: ListView.separated(
-  //           scrollDirection: Axis.horizontal,
-  //           padding: _horizontalPadding,
-  //           itemCount: offers.length,
-  //           separatorBuilder: (_, __) => const SizedBox(width: 12),
-  //           itemBuilder: (context, index) {
-  //             final offer = offers[index];
-
-  //             final discountPercentage =
-  //                 ((offer.actualPrice - offer.offerPrice) / offer.actualPrice) *
-  //                 100;
-
-  //             return SizedBox(
-  //               width: isTablet ? _tabletCardWidth : _mobileCardWidth,
-  //               child: GestureDetector(
-  //                 onTap: () {
-  //                   Navigator.push(
-  //                     context,
-  //                     MaterialPageRoute(
-  //                       builder: (_) => ProductDetailPage(offer: offer, isPreview: widget.isPreview),
-  //                     ),
-  //                   );
-  //                 },
-  //                 child: Container(
-  //                   decoration: BoxDecoration(
-  //                     borderRadius: BorderRadius.circular(12),
-  //                     color: const Color.fromARGB(255, 224, 234, 224),
-  //                     boxShadow: [
-  //                       BoxShadow(
-  //                         color: Colors.grey.withOpacity(0.2),
-  //                         blurRadius: 5,
-  //                         spreadRadius: 2,
-  //                         offset: const Offset(0, 2),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                   child: Column(
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       // IMAGE + DISCOUNT
-  //                       Stack(
-  //                         children: [
-  //                           ClipRRect(
-  //                             borderRadius: const BorderRadius.vertical(
-  //                               top: Radius.circular(12),
-  //                             ),
-  //                             child: Image.network(
-  //                               offer.images.isNotEmpty
-  //                                   ? offer.images.first
-  //                                   : 'https://via.placeholder.com/150',
-  //                               width: double.infinity,
-  //                               height: isTablet ? 150 : 160,
-  //                               fit: BoxFit.contain,
-  //                             ),
-  //                           ),
-  //                           if (offer.actualPrice > offer.offerPrice)
-  //                             Positioned(
-  //                               top: 8,
-  //                               right: 8,
-  //                               child: Container(
-  //                                 padding: const EdgeInsets.symmetric(
-  //                                   horizontal: 8,
-  //                                   vertical: 4,
-  //                                 ),
-  //                                 decoration: BoxDecoration(
-  //                                   color: Colors.red,
-  //                                   borderRadius: BorderRadius.circular(6),
-  //                                 ),
-  //                                 child: Text(
-  //                                   '${discountPercentage.round()}% OFF',
-  //                                   style: const TextStyle(
-  //                                     color: Colors.white,
-  //                                     fontSize: 12,
-  //                                     fontWeight: FontWeight.bold,
-  //                                   ),
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                         ],
-  //                       ),
-
-  //                       // DETAILS
-  //                       Padding(
-  //                         padding: const EdgeInsets.all(8),
-  //                         child: Column(
-  //                           crossAxisAlignment: CrossAxisAlignment.start,
-  //                           children: [
-  //                             Text(
-  //                               offer.title,
-  //                               maxLines: 1,
-  //                               overflow: TextOverflow.ellipsis,
-  //                               style: const TextStyle(
-  //                                 fontSize: 14,
-  //                                 fontWeight: FontWeight.bold,
-  //                               ),
-  //                             ),
-  //                             const SizedBox(height: 6),
-  //                             Row(
-  //                               children: [
-  //                                 Text(
-  //                                   '₹${offer.offerPrice.round()}',
-  //                                   style: TextStyle(
-  //                                     fontSize: 16,
-  //                                     fontWeight: FontWeight.bold,
-  //                                     color: Colors.green.shade700,
-  //                                   ),
-  //                                 ),
-  //                                 const SizedBox(width: 6),
-  //                                 Text(
-  //                                   '₹${offer.actualPrice.round()}',
-  //                                   style: const TextStyle(
-  //                                     fontSize: 12,
-  //                                     color: Colors.red,
-  //                                     decoration: TextDecoration.lineThrough,
-  //                                   ),
-  //                                 ),
-  //                               ],
-  //                             ),
-  //                           ],
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //               ),
-  //             );
-  //           },
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
   Widget _buildNoResultsUI(BuildContext context) {
     final isTablet = MediaQuery.of(context).size.width >= 600;
-
+    final bool isWidePhone =
+        MediaQuery.of(context).size.width >= 360 &&
+        MediaQuery.of(context).size.width < 600;
     return FutureBuilder<List<Product>>(
       future: ProductService.fetchAllProducts(),
       builder: (context, relatedSnapshot) {
@@ -912,7 +774,11 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
         final relatedProducts = relatedSnapshot.data!;
 
         return SizedBox(
-          height: isTablet ? 450 : _listHeight,
+          height: isTablet
+              ? 450
+              : isWidePhone
+              ? 300
+              : 250,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             padding: _horizontalPadding,
@@ -922,14 +788,21 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
               final product = relatedProducts[index];
 
               return SizedBox(
-                width: isTablet ? _tabletCardWidth : _mobileCardWidth,
+                width: isTablet
+                    ? _tabletCardWidth
+                    : isWidePhone
+                    ? widePhoneCardWidth
+                    : _mobileCardWidth,
                 child: MyrelatedproductWidget(
                   product: product,
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => ProductDetailPagep(product: product, isPreview: widget.isPreview),
+                        builder: (_) => ProductDetailPagep(
+                          product: product,
+                          isPreview: widget.isPreview,
+                        ),
                       ),
                     );
                   },
@@ -944,7 +817,9 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
 
   Widget _buildRelatedProducts(Product product, BuildContext context) {
     final isTablet = MediaQuery.of(context).size.width >= 600;
-
+    final bool isWidePhone =
+        MediaQuery.of(context).size.width >= 360 &&
+        MediaQuery.of(context).size.width < 600;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -976,7 +851,11 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
             final relatedProducts = relatedSnapshot.data!;
 
             return SizedBox(
-              height: isTablet ? 450 : _listHeight,
+              height: isTablet
+                  ? 450
+                  : isWidePhone
+                  ? 300
+                  : _listHeight,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: _horizontalPadding,
@@ -986,15 +865,21 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
                   final relatedProduct = relatedProducts[index];
 
                   return SizedBox(
-                    width: isTablet ? _tabletCardWidth : _mobileCardWidth,
+                    width: isTablet
+                        ? _tabletCardWidth
+                        : isWidePhone
+                        ? widePhoneCardWidth
+                        : _mobileCardWidth,
                     child: MyrelatedproductWidget(
                       product: relatedProduct,
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) =>
-                                ProductDetailPagep(product: relatedProduct, isPreview: widget.isPreview,),
+                            builder: (_) => ProductDetailPagep(
+                              product: relatedProduct,
+                              isPreview: widget.isPreview,
+                            ),
                           ),
                         );
                       },
@@ -1009,156 +894,3 @@ class _ProductDetailPagepState extends State<ProductDetailPagep> {
     );
   }
 }
-
-
-
-
-  // Widget _buildRelatedOfferProducts(BuildContext context) {
-  //   final screenWidth = MediaQuery.of(context).size.width;
-  //   final bool isTablet = screenWidth > 600;
-
-  //   return FutureBuilder<List<Offer>>(
-  //     future: OfferService.fetchOfferProductsAsOffers(),
-  //     builder: (context, snapshot) {
-  //       if (snapshot.connectionState == ConnectionState.waiting) {
-  //         return const Center(
-  //           child: CircularProgressIndicator(color: mythemecolor),
-  //         );
-  //       } else if (snapshot.hasError) {
-  //         return Center(
-  //           child: Text('Failed to load offers: ${snapshot.error}'),
-  //         );
-  //       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-  //         return const Center(child: Text('No offer products available.'));
-  //       }
-
-  //       final offers = snapshot.data!;
-
-  //       return SizedBox(
-  //         height: isTablet ? 250 : 250,
-  //         child: ListView.builder(
-  //           scrollDirection: Axis.horizontal,
-  //           padding: const EdgeInsets.symmetric(horizontal: 16),
-  //           itemCount: offers.length,
-  //           itemBuilder: (context, index) {
-  //             final offer = offers[index];
-  //             final discountPercentage =
-  //                 ((offer.actualPrice - offer.offerPrice) / offer.actualPrice) *
-  //                 100;
-
-  //             return GestureDetector(
-  //               onTap: () {
-  //                 Navigator.push(
-  //                   context,
-  //                   MaterialPageRoute(
-  //                     builder: (context) => ProductDetailPage(offer: offer),
-  //                   ),
-  //                 );
-  //               },
-  //               child: Container(
-  //                 width: isTablet ? 180 : 190,
-  //                 margin: const EdgeInsets.only(right: 12),
-  //                 decoration: BoxDecoration(
-  //                   borderRadius: BorderRadius.circular(12),
-  //                   color: const Color.fromARGB(255, 224, 234, 224),
-  //                   boxShadow: [
-  //                     BoxShadow(
-  //                       color: Colors.grey.withOpacity(0.2),
-  //                       blurRadius: 5,
-  //                       spreadRadius: 2,
-  //                       offset: const Offset(0, 2),
-  //                     ),
-  //                   ],
-  //                 ),
-  //                 child: Column(
-  //                   crossAxisAlignment: CrossAxisAlignment.start,
-  //                   children: [
-  //                     Stack(
-  //                       children: [
-  //                         ClipRRect(
-  //                           borderRadius: const BorderRadius.vertical(
-  //                             top: Radius.circular(12),
-  //                           ),
-  //                           child: Image.network(
-  //                             offer.images.isNotEmpty
-  //                                 ? offer.images.first
-  //                                 : 'https://via.placeholder.com/150',
-  //                             fit: BoxFit.cover,
-  //                             width: double.infinity,
-  //                             height: isTablet ? 140 : 160,
-  //                           ),
-  //                         ),
-  //                         if (offer.actualPrice > offer.offerPrice)
-  //                           Positioned(
-  //                             top: 8,
-  //                             right: 8,
-  //                             child: Container(
-  //                               padding: const EdgeInsets.symmetric(
-  //                                 horizontal: 8,
-  //                                 vertical: 4,
-  //                               ),
-  //                               decoration: BoxDecoration(
-  //                                 color: Colors.red.shade600,
-  //                                 borderRadius: BorderRadius.circular(6),
-  //                               ),
-  //                               child: Text(
-  //                                 '${discountPercentage.round()}% OFF',
-  //                                 style: const TextStyle(
-  //                                   color: Colors.white,
-  //                                   fontSize: 12,
-  //                                   fontWeight: FontWeight.bold,
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                           ),
-  //                       ],
-  //                     ),
-  //                     Padding(
-  //                       padding: const EdgeInsets.all(8.0),
-  //                       child: Column(
-  //                         crossAxisAlignment: CrossAxisAlignment.start,
-  //                         children: [
-  //                           Text(
-  //                             offer.title,
-  //                             style: const TextStyle(
-  //                               fontSize: 14,
-  //                               fontWeight: FontWeight.bold,
-  //                             ),
-  //                             maxLines: 1,
-  //                             overflow: TextOverflow.ellipsis,
-  //                           ),
-  //                           const SizedBox(height: 4),
-  //                           Row(
-  //                             children: [
-  //                               Text(
-  //                                 '₹${offer.offerPrice.round()}',
-  //                                 style: TextStyle(
-  //                                   fontSize: 16,
-  //                                   fontWeight: FontWeight.bold,
-  //                                   color: Colors.green.shade700,
-  //                                 ),
-  //                               ),
-  //                               const SizedBox(width: 6),
-  //                               Text(
-  //                                 '₹${offer.actualPrice.round()}',
-  //                                 style: const TextStyle(
-  //                                   fontSize: 12,
-  //                                   color: Colors.red,
-  //                                   decoration: TextDecoration.lineThrough,
-  //                                 ),
-  //                               ),
-  //                             ],
-  //                           ),
-  //                         ],
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //             );
-  //           },
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }

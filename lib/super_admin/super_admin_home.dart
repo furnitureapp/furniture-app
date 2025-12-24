@@ -9,6 +9,7 @@ import 'package:furniture_ecom_app/base/my_login_screen.dart';
 import 'package:furniture_ecom_app/super_admin/activity_super_admin.dart';
 import 'package:furniture_ecom_app/super_admin/app_preview.dart';
 import 'package:furniture_ecom_app/super_admin/order_manage_sa.dart';
+import 'package:furniture_ecom_app/super_admin/responsive/responsive_body.dart';
 import 'package:furniture_ecom_app/super_admin/total_admin.dart';
 import 'package:furniture_ecom_app/super_admin/total_manager_sa.dart';
 import 'package:furniture_ecom_app/super_admin/total_marketers.dart';
@@ -73,402 +74,192 @@ class _SuperAdminHomeState extends State<SuperAdminHome> {
     });
   }
 
+  int _kpiColumnCount(double width) {
+    if (width >= 1100) return 6; // Tablet landscape
+    if (width >= 850) return 3; // Tablet portrait
+    return 2; // Mobile
+  }
+
   @override
   Widget build(BuildContext context) {
+    final formatter = NumberFormat.decimalPattern('en_IN');
+    final formattedRevenue = formatter.format(totalrevenue);
+
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(80.0),
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color.fromARGB(255, 227, 211, 244),
-                Colors.white,
-                Color.fromARGB(255, 227, 211, 244),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(50),
-              bottomRight: Radius.circular(50),
-            ),
-          ),
-          child: AppBar(
-            iconTheme: const IconThemeData(color: mythemecolor),
-            title: Padding(
-              padding: const EdgeInsets.only(top: 5),
-              child: Text(
-                'SUPER ADMIN DASHBOARD',
-                style: GoogleFonts.poppins(
-                  fontSize: isTablet(context) ? 22 : 12,
-                  fontWeight: FontWeight.w600,
-                  color: mythemecolor,
-                ),
-              ),
-            ),
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            centerTitle: true,
-          ),
-        ),
-      ),
-
+      appBar: _buildAppBar(context),
       drawer: const SuperAdminDrawer(currentPage: "Dashboard"),
-
       body: _isLoading
           ? const Center(child: AnimationPage1())
-          : LayoutBuilder(
-              builder: (context, constraints) {
-                final formatter = NumberFormat.decimalPattern('en_IN');
-                final formattedRevenue = formatter.format(totalrevenue);
+          : ResponsiveBody(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final columnCount = _kpiColumnCount(constraints.maxWidth);
 
-                final bool tablet = constraints.maxWidth >= 600;
+                  return RefreshIndicator(
+                    onRefresh: _fetchDashboardCounts,
+                    child: ListView(
+                      padding: const EdgeInsets.all(20),
+                      children: [
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: columnCount,
+                                crossAxisSpacing: 12,
+                                mainAxisSpacing: 12,
 
-                return RefreshIndicator(
-                  color: mythemecolor,
-                  strokeWidth: 3,
+                                // 🔥 THIS IS THE KEY FIX
+                                mainAxisExtent: constraints.maxWidth >= 1100
+                                    ? 170
+                                    : 150,
+                              ),
+                          itemCount: 6,
+                          itemBuilder: (context, index) {
+                            final items = [
+                              (
+                                "Total Orders",
+                                "$totalOrders",
+                                Icons.shopping_cart,
+                                const Color(0xff10334F),
+                              ),
+                              (
+                                " Revenue",
+                                formattedRevenue,
+                                Icons.payments,
+                                const Color(0xff7B561D),
+                              ),
+                              (
+                                " Marketers",
+                                "$marketerCount",
+                                Icons.people,
+                                const Color(0xff215C23),
+                              ),
+                              (
+                                " Dealers",
+                                "$dealerCount",
+                                Icons.store,
+                                const Color(0xff6E2621),
+                              ),
+                              (
+                                " Managers",
+                                "$managercount",
+                                Icons.group,
+                                const Color(0xff215C23),
+                              ),
+                              (
+                                " Admins",
+                                "$adminCount",
+                                Icons.admin_panel_settings,
+                                const Color(0xff10334F),
+                              ),
+                            ];
 
-                  onRefresh: () async {
-                    if (!_isLoading) {
-                      await _fetchDashboardCounts();
-                      ();
-                    }
-                  },
-
-                  child: ListView(
-                    padding: EdgeInsets.all(tablet ? 24 : 16),
-
-                    children: [
-                      // ───────────────────────────────
-                      // KPI CARDS GRID (Responsive)
-                      // ───────────────────────────────
-                      LayoutBuilder(
-                        builder: (context, c) {
-                          final bool tablet = c.maxWidth >= 600;
-
-                          if (tablet) {
-                            // 🔥 TABLET → 4 Cards in One Row
-                            return Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: _buildKpiCard(
-                                        'Total Orders',
-                                        '$totalOrders',
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) =>
-                                                  const OrdersPageSuperAdmin(),
-                                            ),
-                                          );
-                                        },
-                                        Icons.shopping_cart,
-                                        const Color.fromARGB(255, 16, 51, 79),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-
-                                    _buildKpiCard(
-                                      'Total Revenue', // title
-                                      formattedRevenue, // formatted count
-                                      Icons.admin_panel_settings, // icon
-                                      const Color.fromARGB(
-                                        255,
-                                        123,
-                                        86,
-                                        29,
-                                      ), // color
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                const OrdersPageSuperAdmin(),
-                                          ),
-                                        );
-                                      },
-                                    ),
-
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: _buildKpiCard(
-                                        'Total Marketers',
-                                        '$marketerCount',
-                                        Icons.group,
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) =>
-                                                  const TotalMarketersSA(),
-                                            ),
-                                          );
-                                        },
-                                        const Color.fromARGB(255, 33, 92, 35),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: _buildKpiCard(
-                                        'Total Dealers',
-                                        '$dealerCount',
-                                        Icons.store,
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) =>
-                                                  const TotalUsersSA(),
-                                            ),
-                                          );
-                                        },
-                                        const Color.fromARGB(255, 110, 38, 33),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-
-                                    Expanded(
-                                      child: _buildKpiCard(
-                                        'Total Revenue',
-                                        formattedRevenue, // formatted with commas
-                                        Icons.payments,
-                                        const Color.fromARGB(255, 123, 86, 29),
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) =>
-                                                  const OrdersPageSuperAdmin(),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                    ),
-
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: _buildKpiCard(
-                                        'Total Managers',
-                                        '$managercount',
-                                        Icons.group,
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (_) =>
-                                                  const TotalManagerSA(),
-                                            ),
-                                          );
-                                        },
-                                        const Color.fromARGB(255, 33, 92, 35),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 20),
-                                Text(
-                                  'Orders Overview',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: tablet ? 22 : 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 20),
-                                const ApprovalPieChartManager(),
-                                const SizedBox(height: 30),
-                              ],
+                            final item = items[index];
+                            return _buildKpiCard(
+                              item.$1,
+                              item.$2,
+                              item.$3,
+                              item.$4,
                             );
-                          }
+                          },
+                        ),
 
-                          return Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _buildKpiCard(
-                                      'Total Orders',
-                                      '$totalOrders',
-                                      Icons.shopping_cart,
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                const OrdersPageSuperAdmin(),
-                                          ),
-                                        );
-                                      },
-                                      const Color.fromARGB(255, 16, 51, 79),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: _buildKpiCard(
-                                      'Total Revenue',
-                                      formattedRevenue, // formatted with commas
-                                      Icons.payments,
-                                      const Color.fromARGB(255, 123, 86, 29),
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                const OrdersPageSuperAdmin(),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _buildKpiCard(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                const TotalMarketersSA(),
-                                          ),
-                                        );
-                                      },
-                                      'Total Marketers',
-                                      '$marketerCount',
-                                      Icons.people,
-                                      const Color.fromARGB(255, 33, 92, 35),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: _buildKpiCard(
-                                      'Total Dealers',
-                                      '$dealerCount',
-                                      Icons.group,
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                const TotalUsersSA(),
-                                          ),
-                                        );
-                                      },
-                                      const Color.fromARGB(255, 110, 38, 33),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _buildKpiCard(
-                                      'Total Managers',
-                                      '$managercount',
-                                      Icons.admin_panel_settings,
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                const TotalManagerSA(),
-                                          ),
-                                        );
-                                      },
-                                      const Color.fromARGB(255, 16, 51, 79),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
-                                  Expanded(
-                                    child: _buildKpiCard(
-                                      'Total Admins',
-                                      '$adminCount',
-                                      Icons.admin_panel_settings,
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                const TotalAdminSA(),
-                                          ),
-                                        );
-                                      },
-                                      const Color.fromARGB(255, 123, 86, 29),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 20),
-                              Text(
-                                'Orders Overview',
-                                style: GoogleFonts.poppins(
-                                  fontSize: tablet ? 22 : 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              const ApprovalPieChartManager(),
-                              const SizedBox(height: 30),
-                            ],
-                          );
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
+                        const SizedBox(height: 30),
+
+                        Center(
+                          child: Text(
+                            "Orders Overview",
+                            style: GoogleFonts.poppins(
+                              fontSize: constraints.maxWidth >= 850 ? 22 : 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+                        const ApprovalPieChartManager(),
+                        const SizedBox(height: 40),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
     );
   }
 
-  Widget _buildKpiCard(
-    String title,
-    String count,
-    IconData icon,
-    Color color, {
-    VoidCallback? onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        color: Color.fromARGB(255, 227, 211, 244),
-        elevation: 3,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              Icon(icon, color: color, size: 28),
-              const SizedBox(height: 8),
-              Text(
-                title,
-                style: GoogleFonts.poppins(
-                  fontSize: isTablet(context) ? 20 : 13,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                count,
-                style: GoogleFonts.poppins(
-                  fontSize: isTablet(context) ? 22 : 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
+  AppBar _buildAppBar(BuildContext context) {
+    final bool tablet = MediaQuery.of(context).size.width >= 600;
+
+    return AppBar(
+      centerTitle: true,
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      title: Text(
+        "SUPER ADMIN DASHBOARD",
+        style: GoogleFonts.poppins(
+          fontSize: tablet ? 22 : 14,
+          fontWeight: FontWeight.w600,
+          color: mythemecolor,
+        ),
+      ),
+      iconTheme: const IconThemeData(color: mythemecolor),
+      flexibleSpace: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 227, 211, 244),
+              Colors.white,
+              Color.fromARGB(255, 227, 211, 244),
             ],
           ),
+          borderRadius: BorderRadius.vertical(bottom: Radius.circular(40)),
         ),
       ),
     );
   }
+}
+
+Widget _buildKpiCard(String title, String value, IconData icon, Color color) {
+  return Card(
+    elevation: 3,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    color: const Color.fromARGB(255, 227, 211, 244),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, color: color, size: 30),
+          const SizedBox(height: 10),
+
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+
+          const SizedBox(height: 6),
+
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.poppins(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 class SuperAdminDrawer extends StatelessWidget {
@@ -479,7 +270,7 @@ class SuperAdminDrawer extends StatelessWidget {
   final String currentPage;
   const SuperAdminDrawer({super.key, required this.currentPage});
 
- Future<void> _logout(BuildContext context) async {
+  Future<void> _logout(BuildContext context) async {
     final result = await UserService.logout();
 
     if (result["success"] == true) {
@@ -702,3 +493,436 @@ class SuperAdminDrawer extends StatelessWidget {
     );
   }
 }
+
+
+
+  //   Widget _buildKpiCard(String title, String value, IconData icon, Color color) {
+  //     return Card(
+  //       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+  //       color: const Color.fromARGB(255, 227, 211, 244),
+  //       child: Padding(
+  //         padding: const EdgeInsets.all(16),
+  //         child: Column(
+  //           mainAxisAlignment: MainAxisAlignment.center,
+  //           children: [
+  //             Icon(icon, color: color, size: 30),
+  //             const SizedBox(height: 10),
+  //             Text(
+  //               title,
+  //               textAlign: TextAlign.center,
+  //               style: GoogleFonts.poppins(
+  //                 fontSize: 14,
+  //                 fontWeight: FontWeight.w500,
+  //               ),
+  //             ),
+  //             const SizedBox(height: 6),
+  //             Text(
+  //               value,
+  //               style: GoogleFonts.poppins(
+  //                 fontSize: 18,
+  //                 fontWeight: FontWeight.bold,
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     );
+  //   }
+  
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: PreferredSize(
+//         preferredSize: const Size.fromHeight(80.0),
+//         child: Container(
+//           decoration: const BoxDecoration(
+//             gradient: LinearGradient(
+//               colors: [
+//                 Color.fromARGB(255, 227, 211, 244),
+//                 Colors.white,
+//                 Color.fromARGB(255, 227, 211, 244),
+//               ],
+//               begin: Alignment.topLeft,
+//               end: Alignment.bottomRight,
+//             ),
+//             borderRadius: BorderRadius.only(
+//               bottomLeft: Radius.circular(50),
+//               bottomRight: Radius.circular(50),
+//             ),
+//           ),
+//           child: AppBar(
+//             iconTheme: const IconThemeData(color: mythemecolor),
+//             title: Padding(
+//               padding: const EdgeInsets.only(top: 5),
+//               child: Text(
+//                 'SUPER ADMIN DASHBOARD',
+//                 style: GoogleFonts.poppins(
+//                   fontSize: isTablet(context) ? 22 : 12,
+//                   fontWeight: FontWeight.w600,
+//                   color: mythemecolor,
+//                 ),
+//               ),
+//             ),
+//             backgroundColor: Colors.transparent,
+//             elevation: 0,
+//             centerTitle: true,
+//           ),
+//         ),
+//       ),
+
+//       drawer: const SuperAdminDrawer(currentPage: "Dashboard"),
+
+//       body: _isLoading
+//           ? const Center(child: AnimationPage1())
+//           : LayoutBuilder(
+//               builder: (context, constraints) {
+//                 final formatter = NumberFormat.decimalPattern('en_IN');
+//                 final formattedRevenue = formatter.format(totalrevenue);
+
+//                 final bool tablet = constraints.maxWidth >= 600;
+
+//                 return RefreshIndicator(
+//                   color: mythemecolor,
+//                   strokeWidth: 3,
+
+//                   onRefresh: () async {
+//                     if (!_isLoading) {
+//                       await _fetchDashboardCounts();
+//                       ();
+//                     }
+//                   },
+
+//                   child: ListView(
+//                     padding: EdgeInsets.all(tablet ? 24 : 16),
+
+//                     children: [
+//                       // ───────────────────────────────
+//                       // KPI CARDS GRID (Responsive)
+//                       // ───────────────────────────────
+//                       LayoutBuilder(
+//                         builder: (context, c) {
+//                           final bool tablet = c.maxWidth >= 600;
+
+//                           if (tablet) {
+//                             // 🔥 TABLET → 4 Cards in One Row
+//                             return Column(
+//                               children: [
+//                                 Row(
+//                                   children: [
+//                                     Expanded(
+//                                       child: _buildKpiCard(
+//                                         'Total Orders',
+//                                         '$totalOrders',
+//                                         onTap: () {
+//                                           Navigator.push(
+//                                             context,
+//                                             MaterialPageRoute(
+//                                               builder: (_) =>
+//                                                   const OrdersPageSuperAdmin(),
+//                                             ),
+//                                           );
+//                                         },
+//                                         Icons.shopping_cart,
+//                                         const Color.fromARGB(255, 16, 51, 79),
+//                                       ),
+//                                     ),
+//                                     const SizedBox(width: 12),
+
+//                                     _buildKpiCard(
+//                                       'Total Revenue', // title
+//                                       formattedRevenue, // formatted count
+//                                       Icons.admin_panel_settings, // icon
+//                                       const Color.fromARGB(
+//                                         255,
+//                                         123,
+//                                         86,
+//                                         29,
+//                                       ), // color
+//                                       onTap: () {
+//                                         Navigator.push(
+//                                           context,
+//                                           MaterialPageRoute(
+//                                             builder: (_) =>
+//                                                 const OrdersPageSuperAdmin(),
+//                                           ),
+//                                         );
+//                                       },
+//                                     ),
+
+//                                     const SizedBox(width: 12),
+//                                     Expanded(
+//                                       child: _buildKpiCard(
+//                                         'Total Marketers',
+//                                         '$marketerCount',
+//                                         Icons.group,
+//                                         onTap: () {
+//                                           Navigator.push(
+//                                             context,
+//                                             MaterialPageRoute(
+//                                               builder: (_) =>
+//                                                   const TotalMarketersSA(),
+//                                             ),
+//                                           );
+//                                         },
+//                                         const Color.fromARGB(255, 33, 92, 35),
+//                                       ),
+//                                     ),
+//                                     const SizedBox(width: 12),
+//                                     Expanded(
+//                                       child: _buildKpiCard(
+//                                         'Total Dealers',
+//                                         '$dealerCount',
+//                                         Icons.store,
+//                                         onTap: () {
+//                                           Navigator.push(
+//                                             context,
+//                                             MaterialPageRoute(
+//                                               builder: (_) =>
+//                                                   const TotalUsersSA(),
+//                                             ),
+//                                           );
+//                                         },
+//                                         const Color.fromARGB(255, 110, 38, 33),
+//                                       ),
+//                                     ),
+//                                     const SizedBox(width: 12),
+
+//                                     Expanded(
+//                                       child: _buildKpiCard(
+//                                         'Total Revenue',
+//                                         formattedRevenue, // formatted with commas
+//                                         Icons.payments,
+//                                         const Color.fromARGB(255, 123, 86, 29),
+//                                         onTap: () {
+//                                           Navigator.push(
+//                                             context,
+//                                             MaterialPageRoute(
+//                                               builder: (_) =>
+//                                                   const OrdersPageSuperAdmin(),
+//                                             ),
+//                                           );
+//                                         },
+//                                       ),
+//                                     ),
+
+//                                     const SizedBox(width: 12),
+//                                     Expanded(
+//                                       child: _buildKpiCard(
+//                                         'Total Managers',
+//                                         '$managercount',
+//                                         Icons.group,
+//                                         onTap: () {
+//                                           Navigator.push(
+//                                             context,
+//                                             MaterialPageRoute(
+//                                               builder: (_) =>
+//                                                   const TotalManagerSA(),
+//                                             ),
+//                                           );
+//                                         },
+//                                         const Color.fromARGB(255, 33, 92, 35),
+//                                       ),
+//                                     ),
+//                                   ],
+//                                 ),
+//                                 const SizedBox(height: 20),
+//                                 Text(
+//                                   'Orders Overview',
+//                                   style: GoogleFonts.poppins(
+//                                     fontSize: tablet ? 22 : 18,
+//                                     fontWeight: FontWeight.w600,
+//                                   ),
+//                                 ),
+//                                 const SizedBox(height: 20),
+//                                 const ApprovalPieChartManager(),
+//                                 const SizedBox(height: 30),
+//                               ],
+//                             );
+//                           }
+
+//                           return Column(
+//                             children: [
+//                               Row(
+//                                 children: [
+//                                   Expanded(
+//                                     child: _buildKpiCard(
+//                                       'Total Orders',
+//                                       '$totalOrders',
+//                                       Icons.shopping_cart,
+//                                       onTap: () {
+//                                         Navigator.push(
+//                                           context,
+//                                           MaterialPageRoute(
+//                                             builder: (_) =>
+//                                                 const OrdersPageSuperAdmin(),
+//                                           ),
+//                                         );
+//                                       },
+//                                       const Color.fromARGB(255, 16, 51, 79),
+//                                     ),
+//                                   ),
+//                                   const SizedBox(width: 12),
+//                                   Expanded(
+//                                     child: _buildKpiCard(
+//                                       'Total Revenue',
+//                                       formattedRevenue, // formatted with commas
+//                                       Icons.payments,
+//                                       const Color.fromARGB(255, 123, 86, 29),
+//                                       onTap: () {
+//                                         Navigator.push(
+//                                           context,
+//                                           MaterialPageRoute(
+//                                             builder: (_) =>
+//                                                 const OrdersPageSuperAdmin(),
+//                                           ),
+//                                         );
+//                                       },
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                               const SizedBox(height: 10),
+//                               Row(
+//                                 children: [
+//                                   Expanded(
+//                                     child: _buildKpiCard(
+//                                       onTap: () {
+//                                         Navigator.push(
+//                                           context,
+//                                           MaterialPageRoute(
+//                                             builder: (_) =>
+//                                                 const TotalMarketersSA(),
+//                                           ),
+//                                         );
+//                                       },
+//                                       'Total Marketers',
+//                                       '$marketerCount',
+//                                       Icons.people,
+//                                       const Color.fromARGB(255, 33, 92, 35),
+//                                     ),
+//                                   ),
+//                                   const SizedBox(width: 12),
+//                                   Expanded(
+//                                     child: _buildKpiCard(
+//                                       'Total Dealers',
+//                                       '$dealerCount',
+//                                       Icons.group,
+//                                       onTap: () {
+//                                         Navigator.push(
+//                                           context,
+//                                           MaterialPageRoute(
+//                                             builder: (_) =>
+//                                                 const TotalUsersSA(),
+//                                           ),
+//                                         );
+//                                       },
+//                                       const Color.fromARGB(255, 110, 38, 33),
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                               const SizedBox(height: 10),
+//                               Row(
+//                                 children: [
+//                                   Expanded(
+//                                     child: _buildKpiCard(
+//                                       'Total Managers',
+//                                       '$managercount',
+//                                       Icons.admin_panel_settings,
+//                                       onTap: () {
+//                                         Navigator.push(
+//                                           context,
+//                                           MaterialPageRoute(
+//                                             builder: (_) =>
+//                                                 const TotalManagerSA(),
+//                                           ),
+//                                         );
+//                                       },
+//                                       const Color.fromARGB(255, 16, 51, 79),
+//                                     ),
+//                                   ),
+//                                   const SizedBox(width: 12),
+//                                   Expanded(
+//                                     child: _buildKpiCard(
+//                                       'Total Admins',
+//                                       '$adminCount',
+//                                       Icons.admin_panel_settings,
+//                                       onTap: () {
+//                                         Navigator.push(
+//                                           context,
+//                                           MaterialPageRoute(
+//                                             builder: (_) =>
+//                                                 const TotalAdminSA(),
+//                                           ),
+//                                         );
+//                                       },
+//                                       const Color.fromARGB(255, 123, 86, 29),
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                               const SizedBox(height: 20),
+//                               Text(
+//                                 'Orders Overview',
+//                                 style: GoogleFonts.poppins(
+//                                   fontSize: tablet ? 22 : 18,
+//                                   fontWeight: FontWeight.w600,
+//                                 ),
+//                               ),
+//                               const SizedBox(height: 12),
+//                               const ApprovalPieChartManager(),
+//                               const SizedBox(height: 30),
+//                             ],
+//                           );
+//                         },
+//                       ),
+//                     ],
+//                   ),
+//                 );
+//               },
+//             ),
+//     );
+//   }
+
+//   Widget _buildKpiCard(
+//     String title,
+//     String count,
+//     IconData icon,
+//     Color color, {
+//     VoidCallback? onTap,
+//   }) {
+//     return GestureDetector(
+//       onTap: onTap,
+//       child: Card(
+//         color: Color.fromARGB(255, 227, 211, 244),
+//         elevation: 3,
+//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+//         child: Padding(
+//           padding: const EdgeInsets.all(16),
+//           child: Column(
+//             children: [
+//               Icon(icon, color: color, size: 28),
+//               const SizedBox(height: 8),
+//               Text(
+//                 title,
+//                 style: GoogleFonts.poppins(
+//                   fontSize: isTablet(context) ? 20 : 13,
+//                   fontWeight: FontWeight.w500,
+//                 ),
+//               ),
+//               const SizedBox(height: 4),
+//               Text(
+//                 count,
+//                 style: GoogleFonts.poppins(
+//                   fontSize: isTablet(context) ? 22 : 14,
+//                   fontWeight: FontWeight.bold,
+//                   color: Colors.black87,
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
+// }

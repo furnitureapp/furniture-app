@@ -200,7 +200,7 @@ class _MarketerHomeState extends State<MarketerHome> {
                                     const SizedBox(width: 12),
                                     Expanded(
                                       child: _buildKpiCard(
-                                        'Approvals done',
+                                        'Approvals',
                                         '$approvedCount',
                                         Icons.verified_user,
                                         const Color.fromARGB(255, 33, 92, 35),
@@ -296,7 +296,7 @@ class _MarketerHomeState extends State<MarketerHome> {
                                 children: [
                                   Expanded(
                                     child: _buildKpiCard(
-                                      'Approvals done',
+                                      'Approvals ',
                                       '$approvedCount',
                                       Icons.verified_user,
                                       const Color.fromARGB(255, 33, 92, 35),

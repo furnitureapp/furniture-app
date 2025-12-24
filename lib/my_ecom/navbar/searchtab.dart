@@ -6,9 +6,10 @@ import 'dart:async';
 import 'package:furniture_ecom_app/my_ecom/navbar/result_screen.dart';
 import 'package:furniture_ecom_app/my_ecom/product/product_detail.dart';
 
-
 class SearchScreensTablet extends StatefulWidget {
-  const SearchScreensTablet({super.key});
+  final bool isPreview;
+
+  const SearchScreensTablet({super.key, this.isPreview = false});
 
   @override
   State<SearchScreensTablet> createState() => _SearchScreensTabletState();
@@ -38,6 +39,8 @@ class _SearchScreensTabletState extends State<SearchScreensTablet> {
   }
 
   void _navigateToResultScreen(String query) {
+    if (widget.isPreview) return;
+
     if (query.trim().isEmpty) {
       setState(() {
         _searchError = 'Please enter a search item to proceed..';
@@ -52,14 +55,14 @@ class _SearchScreensTabletState extends State<SearchScreensTablet> {
     } else {
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => ResultScreen(query: query),
-        ),
+        MaterialPageRoute(builder: (context) => ResultScreen(query: query)),
       );
     }
   }
 
   void _onSearchChanged(String query) {
+    if (widget.isPreview) return;
+
     if (_debounce?.isActive ?? false) _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 400), () {
       if (query.isNotEmpty) {
@@ -74,6 +77,8 @@ class _SearchScreensTabletState extends State<SearchScreensTablet> {
   }
 
   Future<void> _searchProducts(String query) async {
+    if (widget.isPreview) return;
+
     try {
       final results = await SearchService.searchWithRelated(query);
       setState(() => _suggestions = results);
@@ -89,6 +94,8 @@ class _SearchScreensTabletState extends State<SearchScreensTablet> {
   }
 
   void _showOverlay() {
+    if (widget.isPreview) return;
+
     _removeOverlay();
     final overlay = Overlay.of(context);
 
@@ -107,7 +114,6 @@ class _SearchScreensTabletState extends State<SearchScreensTablet> {
                 maxHeight: MediaQuery.of(context).size.height * 0.4,
               ),
               child: Scrollbar(
-              
                 thickness: 8,
                 thumbVisibility: true,
                 trackVisibility: true,
@@ -130,7 +136,7 @@ class _SearchScreensTabletState extends State<SearchScreensTablet> {
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       subtitle: Text(
-                        '₹${product.offerPrice. round()}',
+                        '₹${product.offerPrice.round()}',
                         style: const TextStyle(
                           color: Colors.grey,
                           fontWeight: FontWeight.bold,
@@ -162,6 +168,8 @@ class _SearchScreensTabletState extends State<SearchScreensTablet> {
   }
 
   void _removeOverlay() {
+    if (widget.isPreview) return;
+
     _overlayEntry?.remove();
     _overlayEntry = null;
   }
@@ -180,7 +188,6 @@ class _SearchScreensTabletState extends State<SearchScreensTablet> {
     return CompositedTransformTarget(
       link: _layerLink,
       child: SizedBox(
-        
         width: 700,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -189,15 +196,17 @@ class _SearchScreensTabletState extends State<SearchScreensTablet> {
               height: 45,
               padding: const EdgeInsets.symmetric(horizontal: 10),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: widget.isPreview ? Colors.grey.shade100 : Colors.white,
                 border: Border.all(color: const Color(0xFFE0E0E0)),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: TextField(
                 controller: _searchController,
-                focusNode: _focusNode,
-                onChanged: _onSearchChanged,
-                onSubmitted: _navigateToResultScreen,
+                focusNode: widget.isPreview ? null : _focusNode,
+                enabled: !widget.isPreview,
+                readOnly: widget.isPreview,
+                onChanged: widget.isPreview ? null : _onSearchChanged,
+                onSubmitted: widget.isPreview ? null : _navigateToResultScreen,
                 decoration: InputDecoration(
                   hintText: 'Search products, category...',
                   border: InputBorder.none,
@@ -206,12 +215,16 @@ class _SearchScreensTabletState extends State<SearchScreensTablet> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.search),
-                        onPressed: () {
-                          _navigateToResultScreen(
-                              _searchController.text.trim());
-                        },
+                        onPressed: widget.isPreview
+                            ? null
+                            : () {
+                                _navigateToResultScreen(
+                                  _searchController.text.trim(),
+                                );
+                              },
                       ),
-                      if (_searchController.text.isNotEmpty)
+                      if (!widget.isPreview &&
+                          _searchController.text.isNotEmpty)
                         IconButton(
                           icon: const Icon(Icons.clear),
                           onPressed: () {
@@ -227,16 +240,48 @@ class _SearchScreensTabletState extends State<SearchScreensTablet> {
                   ),
                 ),
               ),
+
+              // TextField(
+              //   controller: _searchController,
+              //   focusNode: _focusNode,
+              //   onChanged: _onSearchChanged,
+              //   onSubmitted: _navigateToResultScreen,
+              //   decoration: InputDecoration(
+              //     hintText: 'Search products, category...',
+              //     border: InputBorder.none,
+              //     suffixIcon: Row(
+              //       mainAxisSize: MainAxisSize.min,
+              //       children: [
+              //         IconButton(
+              //           icon: const Icon(Icons.search),
+              //           onPressed: () {
+              //             _navigateToResultScreen(
+              //                 _searchController.text.trim());
+              //           },
+              //         ),
+              //         if (_searchController.text.isNotEmpty)
+              //           IconButton(
+              //             icon: const Icon(Icons.clear),
+              //             onPressed: () {
+              //               _searchController.clear();
+              //               setState(() {
+              //                 _suggestions = [];
+              //                 _searchError = '';
+              //               });
+              //               _removeOverlay();
+              //             },
+              //           ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
             ),
             if (_searchError.isNotEmpty)
               Padding(
                 padding: EdgeInsets.all(0),
                 child: Text(
                   _searchError,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12,
-                  ),
+                  style: const TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ),
           ],

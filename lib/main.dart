@@ -4,6 +4,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:furniture_ecom_app/base/orientation_gate.dart';
+import 'package:furniture_ecom_app/constants/colors.dart';
 import 'package:furniture_ecom_app/core/storage/secure_storage.dart';
 import 'package:furniture_ecom_app/firebase_options.dart';
 import 'package:furniture_ecom_app/my_ecom/authentication/login_user.dart';
@@ -60,7 +62,12 @@ Future<void> main() async {
   await NotificationHandler.initializeFCM();
   await NotificationHandler.requestNotificationPermission();
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+ SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]);
+
 
   runApp(
     MultiProvider(
@@ -102,126 +109,108 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _setOrientationBasedOnDevice();
-    });
-  }
-
-  void _setOrientationBasedOnDevice() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final screenWidth = MediaQuery.of(context).size.width;
-
-      if (screenWidth >= 600) {
-        SystemChrome.setPreferredOrientations([
-          DeviceOrientation.portraitUp,
-          DeviceOrientation.portraitDown,
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight,
-        ]);
-      } else {
-        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-      }
-    });
-  }
-
+ 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: "Wood Pecker",
-      navigatorKey: navigatorKey,
-      debugShowCheckedModeBanner: false,
-      home: const SplashScreenMY(),
-      routes: {
-        '/product/:productId': (context) => const ProductDetailPagep(),
-        '/cart': (context) => const CartScreen(),
-        '/wishlist': (context) => const FavoritesPage(),
-        '/login': (context) => const LoginScreen(),
-        '/profile': (context) => const ProfileScreen(),
-        '/myorders': (context) => const OrderListPage(),
-        '/notification': (context) => const NotificationScreen(),
-        '/privacy-policy': (context) => const PrivacyPolicyPage(),
-        '/terms-and-conditions': (context) => const TermsPage(),
-        '/banking-information': (context) => const BankingInfoPage(),
-        '/order-details': (context) {
-          final args = ModalRoute.of(context)?.settings.arguments;
-          if (args is Map<String, dynamic>) {
-            final orderId = args['orderId'] as String?;
-            if (orderId != null) {
-              return OrderDetailsScreen(orderId: orderId);
-            }
-          }
-          return const Scaffold(body: Center(child: Text("Invalid Order ID")));
-        },
-      },
-      onUnknownRoute: (settings) {
-        return MaterialPageRoute(builder: (context) => NotFoundPage());
-      },
-
-      onGenerateRoute: (settings) {
-
-  if (settings.name == '/myhome') {
-    if (AppPreviewState.isPreview) {
-      return MaterialPageRoute(
-        builder: (_) => Myhome(
-          isPreview: true,
-          typeOfProduct: AppPreviewState.typeOfProduct,
+    return OrientationGate(
+      child: MaterialApp(
+        title: "Wood Pecker",
+        theme: ThemeData(
+         colorScheme: ColorScheme.fromSeed(seedColor: mythemecolor),
+          useMaterial3: true,
         ),
-      );
-    } else {
+        navigatorKey: navigatorKey,
+        debugShowCheckedModeBanner: false,
+        home: const SplashScreenMY(),
+        routes: {
+          '/product/:productId': (context) => const ProductDetailPagep(),
+          '/cart': (context) => const CartScreen(),
+          '/wishlist': (context) => const FavoritesPage(),
+          '/login': (context) => const LoginScreen(),
+          '/profile': (context) => const ProfileScreen(),
+          '/myorders': (context) => const OrderListPage(),
+          '/notification': (context) => const NotificationScreen(),
+          '/privacy-policy': (context) => const PrivacyPolicyPage(),
+          '/terms-and-conditions': (context) => const TermsPage(),
+          '/banking-information': (context) => const BankingInfoPage(),
+          '/order-details': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments;
+            if (args is Map<String, dynamic>) {
+              final orderId = args['orderId'] as String?;
+              if (orderId != null) {
+                return OrderDetailsScreen(orderId: orderId);
+              }
+            }
+            return const Scaffold(body: Center(child: Text("Invalid Order ID")));
+          },
+        },
+        onUnknownRoute: (settings) {
+          return MaterialPageRoute(builder: (context) => NotFoundPage());
+        },
+      
+        onGenerateRoute: (settings) {
+      
+        if (settings.name == '/myhome') {
+      if (AppPreviewState.isPreview) {
+        return MaterialPageRoute(
+          builder: (_) => Myhome(
+            isPreview: true,
+            typeOfProduct: AppPreviewState.typeOfProduct,
+          ),
+        );
+      } else {
+        return MaterialPageRoute(
+          builder: (_) => const BottomNavBar(),
+        );
+      }
+        }
+       if (settings.name == '/category') {
+        return MaterialPageRoute(
+      builder: (_) => CategoriesScreen(
+        isPreview: AppPreviewState.isPreview,
+      ),
+        );
+      }
+      
+      
+      if (settings.name == '/homeoffer') {
+        if (AppPreviewState.isPreview) {
       return MaterialPageRoute(
-        builder: (_) => const BottomNavBar(),
+        builder: (_) => const OfferPage(isPreview: true),
       );
-    }
-  }
- if (settings.name == '/category') {
-  return MaterialPageRoute(
-    builder: (_) => CategoriesScreen(
-      isPreview: AppPreviewState.isPreview,
-    ),
-  );
-}
-
-
-if (settings.name == '/homeoffer') {
-  if (AppPreviewState.isPreview) {
-    return MaterialPageRoute(
-      builder: (_) => const OfferPage(isPreview: true),
-    );
-  } else {
-    return MaterialPageRoute(
-      builder: (_) => const OfferPage(),
-    );
-  }
-}
-
-
-  if (settings.name == '/order-details') {
-    final args = settings.arguments as Map<String, dynamic>?;
-    if (args != null && args.containsKey('orderId')) {
-      final orderId = args['orderId'] as String;
+        } else {
       return MaterialPageRoute(
-        builder: (context) => OrderDetailsScreen(orderId: orderId),
+        builder: (_) => const OfferPage(),
       );
-    } else {
+        }
+      }
+      
+      
+        if (settings.name == '/order-details') {
+      final args = settings.arguments as Map<String, dynamic>?;
+      if (args != null && args.containsKey('orderId')) {
+        final orderId = args['orderId'] as String;
+        return MaterialPageRoute(
+          builder: (context) => OrderDetailsScreen(orderId: orderId),
+        );
+      } else {
+        return MaterialPageRoute(
+          builder: (context) => const ErrorPage(),
+        );
+      }
+        }
+      
+        if (settings.name == '/productdetailpagep') {
+      final productId = settings.arguments as String;
       return MaterialPageRoute(
-        builder: (context) => const ErrorPage(),
+        builder: (context) => ProductDetailPagep(productId: productId),
       );
-    }
-  }
-
-  if (settings.name == '/productdetailpagep') {
-    final productId = settings.arguments as String;
-    return MaterialPageRoute(
-      builder: (context) => ProductDetailPagep(productId: productId),
-    );
-  }
-
-  return null;
-},
-
+        }
+      
+        return null;
+      },
+      
+      ),
     );
   }
 }

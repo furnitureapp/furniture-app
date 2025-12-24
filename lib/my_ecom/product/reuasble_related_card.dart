@@ -62,19 +62,18 @@ class MyrelatedproductWidget extends StatelessWidget {
               child: Padding(
                 padding: EdgeInsets.all(isTablet ? 8.0 : 8.0 * scale),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
                       product.title,
-                      maxLines: 1,
+                      maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: isTablet ? 20 : 12 * scale,
+                        fontSize: isTablet ? 20 : 11 * scale,
                         fontWeight: FontWeight.bold,
                         color: const Color(0xFF2C2B2B),
                       ),
                     ),
-                    const SizedBox(height: 4),
                     Expanded(
                       child: Text(
                         product.description,
@@ -86,7 +85,6 @@ class MyrelatedproductWidget extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    SizedBox(height: isTablet ? 5 : 5 * scale),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [

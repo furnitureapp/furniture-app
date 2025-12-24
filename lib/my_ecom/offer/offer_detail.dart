@@ -492,6 +492,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   Widget _buildRelatedProducts(BuildContext context, String productId) {
     final screenWidth = MediaQuery.of(context).size.width;
     final bool isTablet = screenWidth > 600;
+    final bool isWidePhone = screenWidth >= 360 && screenWidth < 600;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -527,7 +528,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
             final relatedOffers = relatedSnapshot.data!;
 
             return SizedBox(
-              height: isTablet ? 420 : 250,
+              height: isTablet
+                  ? 420
+                  : isWidePhone
+                  ? 330
+                  : 250,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -537,7 +542,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   final relatedOffer = relatedOffers[index];
 
                   return SizedBox(
-                    width: isTablet ? 300 : 190,
+                    width: isTablet ? 300 :  isWidePhone ? 330 : 190,
                     child: MyOfferWidget(
                       offer: relatedOffer,
                       onTap: () {
